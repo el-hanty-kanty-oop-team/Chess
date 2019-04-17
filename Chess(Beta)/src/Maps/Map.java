@@ -32,9 +32,9 @@ public abstract class Map extends AbstractAppState
     protected final Node localNode;
     protected final int numOfRows, numOfColumns;
     protected final float mapScale;
-    protected Material mat;
+    protected Material mat1, mat2;
     protected Node mapModel[][];
-    protected Texture texture;
+    protected Texture texture1, texture2;
     
     private final ViewPort viewPort;
     
@@ -74,13 +74,19 @@ public abstract class Map extends AbstractAppState
     
     private void setModel()
     {
+        int x = 0;
         for(int i = 0; i < numOfRows; i ++)
         {
             for(int j = 0; j < numOfColumns; j ++)
             {
-                mapModel[i][j].setMaterial(mat);
+                if((j + x) % 2 == 1)
+                    mapModel[i][j].setMaterial(mat1);
+                else
+                    mapModel[i][j].setMaterial(mat2);
             }
+            x ++;
         }
+        
         for(int i = 0; i < numOfRows; i ++)
         {
             for(int j = 0; j < numOfColumns; j ++)

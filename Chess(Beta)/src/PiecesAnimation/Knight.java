@@ -30,7 +30,7 @@ public class Knight extends Piece
             startPosition.x -= 2.0f;
         else
             startPosition.x += 2.0f;
-        
+        modelScale = 1.0f;
         destination.set(i, 0, j);
     }
     @Override

@@ -2,6 +2,7 @@ package mygame;
 
 import Maps.DefaultMap;
 import Maps.Map;
+import OriginPieces.OriginPiece;
 import PiecesAnimation.Bishop;
 import PiecesAnimation.Knight;
 import PiecesAnimation.Pawn;
@@ -32,6 +33,8 @@ public class Main extends SimpleApplication
     private Piece piece[][];
     private Map defaultMap; 
     private Pair currentSelected, lastSelected; 
+    private OriginPiece originPiece;
+    
     private final ActionListener actionListener = new ActionListener() 
     {
         @Override
@@ -67,19 +70,28 @@ public class Main extends SimpleApplication
                 // Collect intersections between ray and all nodes in results list.
                 rootNode.collideWith(ray, results);
                 Vector3f dimention = null;
-                Node selectedModel = results.getCollision(0).getGeometry().getParent();
-
-                dimention = getSelectedPiece(selectedModel);
-                if(dimention != null)
-                    currentSelected = new Pair(dimention, "Piece");
-
-                dimention = defaultMap.getCellIndex(selectedModel);
-                if(dimention != null)
-                    currentSelected = new Pair(dimention, "Map");
-                System.out.println(currentSelected + " " + lastSelected);
-
+                if(results.size() > 0)
+                {
+                    Node selectedModel = results.getCollision(0).getGeometry().getParent();
+                    
+                    if(lastSelected == null || !((String)lastSelected.getValue()).equalsIgnoreCase("Piece"))
+                        dimention = originPiece.getPieceIndex(selectedModel);
+                    if(dimention != null)
+                    {
+                        currentSelected = new Pair(dimention, "Piece");
+                        System.out.println(dimention);
+                    }
+                    else
+                    {
+                        dimention = defaultMap.getCellIndex(selectedModel);
+                        if(dimention != null)
+                            currentSelected = new Pair(dimention, "Map");
+        //                    System.out.println(currentSelected + " " + lastSelected);
+                    }
+                }
 
             }
+           
         }
     };
     
@@ -111,18 +123,18 @@ public class Main extends SimpleApplication
     {
         piece = new Piece[2][8];
         for(int i = 0; i < piece.length; i ++)
-            for(int j = 1; j < piece[i].length - 1; j ++)
+            for(int j = 1; j < piece[i].length; j ++)
                 piece[i][j] = new Pawn(this, i, j, true);
         piece[0][0] = new Bishop(this, 0, 0, true);
         piece[1][0] = new Bishop(this, 1, 0, true);
-        piece[0][7] = new Knight(this, 0, 7, true);
-        piece[1][7] = new Knight(this, 1, 7, true);
         
         
         defaultMap = new DefaultMap(this);
         
-        currentSelected = new Pair(new Vector3f(), new String());
-        lastSelected = new Pair(new Vector3f(), new String());
+        currentSelected = null;
+        lastSelected = null;
+        
+        originPiece = new OriginPiece(this);
     }
 
     public void initKeys()
@@ -136,7 +148,7 @@ public class Main extends SimpleApplication
     private void updatePieces()
     {
         
-        if(currentSelected != null && lastSelected != null)
+        if(currentSelected != null && lastSelected != null && !currentSelected.equals(lastSelected) && ((String)lastSelected.getValue()).equalsIgnoreCase("Piece"))
         {
             int fromRow = (int)((Vector3f)lastSelected.getKey()).x;
             int fromCol = (int)((Vector3f)lastSelected.getKey()).z;
@@ -144,9 +156,11 @@ public class Main extends SimpleApplication
             int toRow = (int)((Vector3f)lastSelected.getKey()).x;
             int toCol = (int)((Vector3f)lastSelected.getKey()).z;
             //System.out.println(((Vector3f)lastSelected.getKey()) + " Last selected");
-            Vector3f direction = (Vector3f)currentSelected.getKey();
+            Vector3f from = (Vector3f)lastSelected.getKey();
+            Vector3f to = (Vector3f)currentSelected.getKey();
+            originPiece.Move(from, to);
             
-            
+           /* 
             if(lastSelected.getValue().toString().equalsIgnoreCase("piece") && currentSelected.getValue().toString().equalsIgnoreCase("map"))
             {
                 piece[fromRow][fromCol].update(direction, "walk");
@@ -159,11 +173,11 @@ public class Main extends SimpleApplication
                 piece[fromRow][fromCol].update(direction, "attack");
               //  piece[toRow][toCol].update(direction, "death");
 
-            }
+            }*/
             currentSelected = null;
             lastSelected = null;
 
-            
+           
         }
     }
     
@@ -177,15 +191,26 @@ public class Main extends SimpleApplication
         for(int i = 0; i < piece.length; i ++)
             for(int j = 0; j < piece[i].length; j ++)
                 stateManager.attach(piece[i][j]);
+        stateManager.attach(originPiece);
         
         stateManager.attach(defaultMap);
     }    
+    
     
     @Override
     public void simpleUpdate(float tpf) 
     {
         //TODO: add update code
         updatePieces();
+        /*
+            hna 7rk el pieces bta3tk bra7tk
+            al3po hna mtl3po4 fe 7ta tnya
+            lw fe bug aw exception zhr 2b2 2oly
+            tb3n dh m4 el 25eer bs deh 7aga t3ml beha test le el engine
+            @1st paramter mkan el piece 3bara 3n vector3f (new Vector3f(r, 0, c))
+            @2nd paramter el mkan el 3awz trw7w bardo 3bara 3n vector3f (new Vector3f(r, 0, c))
+           originPiece.Move(Vector3f.UNIT_X, Vector3f.ZERO);
+        */
     }
 
     @Override

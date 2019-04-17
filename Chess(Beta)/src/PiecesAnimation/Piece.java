@@ -39,7 +39,6 @@ import com.jme3.scene.Spatial;
 public abstract class Piece extends AbstractAppState  implements AnimEventListener 
 {
     protected final AssetManager assetManager;
-    protected final float modelScale;
     protected final InputManager inputManager;
     protected final Node rootNode, localNode;
     protected final Vector3f playerWalkDirection, destination, upVector; 
@@ -47,6 +46,7 @@ public abstract class Piece extends AbstractAppState  implements AnimEventListen
     protected AnimControl control, attackAnimControl, deathAnimControl, standAnimControl, walkAnimControl;
     protected BitmapText headText;
     protected BitmapFont font;
+    protected float modelScale;
     protected int attackIteration;
     protected Material mat;
     protected Node attackNode, deathNode, standNode, walkNode;
@@ -155,7 +155,7 @@ public abstract class Piece extends AbstractAppState  implements AnimEventListen
         localNode.attachChild(headText);
         localNode.setLocalTranslation(playerWalkDirection);
         localNode.addLight(dl);
-        rootNode.attachChild(localNode);
+        //rootNode.attachChild(localNode);
         
         
         
@@ -165,9 +165,26 @@ public abstract class Piece extends AbstractAppState  implements AnimEventListen
     @Override
     public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) 
     {
+        if(destination.x != playerWalkDirection.x)
+        {
+            if(destination.x > playerWalkDirection.x)
+                x = 1.0f;
+            else 
+                x = -1.0f;
+        }
+        if(destination.z != playerWalkDirection.z)
+        {
+            if(destination.z > playerWalkDirection.z)
+                z = 1.0f;
+            else 
+                z = -1.0f;      
+        }
+        
+        //
         playerWalkDirection.addLocal(x, 0.f, z);
-        numOfIterations = (int) max(abs(playerWalkDirection.x - destination.x), abs(playerWalkDirection.z - destination.z));
-     //   System.out.println("anim cycle has been done" + playerWalkDirection + " " + numOfIterations);
+        localNode.setLocalTranslation(playerWalkDirection);  
+
+        System.out.println("anim cycle has been done" + playerWalkDirection + " " + numOfIterations);
         if(numOfIterations == 0)
         {
             localNode.detachAllChildren();
@@ -175,11 +192,16 @@ public abstract class Piece extends AbstractAppState  implements AnimEventListen
             localNode.lookAt(localNode.getLocalTranslation(), upVector);
             standCh.setLoopMode(LoopMode.Loop);
         }
+        else 
+        {
+            numOfIterations--;
+            if(animName.equals("Walk"))
+                walk = true;
+        }
         if(death)
         {
             playerWalkDirection.set(startPosition);
         }
-        localNode.setLocalTranslation(playerWalkDirection);  
     }
     
     @Override   
@@ -193,18 +215,19 @@ public abstract class Piece extends AbstractAppState  implements AnimEventListen
   /** Custom Keybinding: Map named actions to inputs. */
     protected void initKeys() 
     {
-      inputManager.addMapping("pick target", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-      
-      inputManager.addListener(actionListener, "Walk");
-      inputManager.addListener(analogListener, "pick target");
+        inputManager.addMapping("pick target", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+
+        inputManager.addListener(actionListener, "Walk");
+        inputManager.addListener(analogListener, "pick target");
     }
     
     public void update(Vector3f newDirection, String str)
     {
         
-       // System.out.println("update 1");
+        System.out.println(walkCh.getTime() + " " + walkCh.getAnimMaxTime());
         
         destination.set(newDirection);
+        numOfIterations = (int) max(abs(playerWalkDirection.x - destination.x), abs(playerWalkDirection.z - destination.z));
         
         if(str.equalsIgnoreCase("attack"))
             attack = true;
@@ -233,58 +256,26 @@ public abstract class Piece extends AbstractAppState  implements AnimEventListen
     @Override
     public void update(float tpf)
     {
-        headText.setLocalTranslation(playerWalkDirection); // position
+        //headText.setLocalTranslation(playerWalkDirection); // position
 
-        numOfIterations = (int) max(abs(playerWalkDirection.x - destination.x), abs(playerWalkDirection.z - destination.z));
         x = 0.0f;
         z = 0.0f;
-        if(destination.x != playerWalkDirection.x)
-        {
-            if(destination.x > playerWalkDirection.x)
-                x = 1.0f;
-            else 
-                x = -1.0f;
-        }
-        if(destination.z != playerWalkDirection.z)
-        {
-            if(destination.z > playerWalkDirection.z)
-                z = 1.0f;
-            else 
-                z = -1.0f;      
-        }
         
         if(attack && numOfIterations == attackIteration)
         {
-            if(!localNode.hasChild(attackNode))
-            {
-                localNode.detachChildAt(0);
-                localNode.attachChild(attackNode);
-            }
-            attackCh.setLoopMode(LoopMode.Loop);   
-            attackCh.setSpeed(1.0f * animSpeed);
+            attack();
+            attack = false;
         }
         else if((walk || attack) && numOfIterations != attackIteration)
         {
          //   System.out.println("Walk " + x + " "  + z);
-            if(!localNode.hasChild(walkNode))
-            {  
-                localNode.detachChildAt(0);
-                localNode.attachChild(walkNode);
-            }
-            localNode.lookAt(destination, upVector);
-            walkCh.setLoopMode(LoopMode.Loop);
-            walkCh.setSpeed(1.0f * animSpeed);
+            walk();
+            walk = false;
            
         }
         else if(death)
         {
-            if(!localNode.hasChild(deathNode))
-            {
-                localNode.detachChildAt(0);
-                localNode.attachChild(deathNode);
-            }
-            deathCh.setLoopMode(LoopMode.DontLoop);
-            deathCh.setSpeed(1.0f * animSpeed);
+            death();
         }
         
         if(numOfIterations == 0)
@@ -293,7 +284,41 @@ public abstract class Piece extends AbstractAppState  implements AnimEventListen
         }
     }
     
+    private void walk()
+    {
+        if(!localNode.hasChild(walkNode))
+        {  
+            localNode.detachChildAt(0);
+            localNode.attachChild(walkNode);
+        }
+        localNode.lookAt(destination, upVector);
+        walkCh.setLoopMode(LoopMode.Loop);
+        walkCh.setSpeed(1.0f * animSpeed);
+    }
     
+    private void attack()
+    {
+        
+        if(!localNode.hasChild(attackNode))
+        {
+            localNode.detachChildAt(0);
+            localNode.attachChild(attackNode);
+        }
+        attackCh.setLoopMode(LoopMode.Loop);   
+        attackCh.setSpeed(1.0f * animSpeed);
+    }
+    
+    private void death()
+    {
+        if(!localNode.hasChild(deathNode))
+        {
+            localNode.detachChildAt(0);
+            localNode.attachChild(deathNode);
+        }
+        deathCh.setLoopMode(LoopMode.DontLoop);
+        deathCh.setSpeed(1.0f * animSpeed);
+       
+    }
     public abstract boolean isEquale(Spatial selectedObject);
    // public abstract void vaildPositions();
     

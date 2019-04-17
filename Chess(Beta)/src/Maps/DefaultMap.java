@@ -35,10 +35,16 @@ public class DefaultMap extends Map
     @Override
     protected void LoadTexture()
     {
-        mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        texture = assetManager.loadTexture("Textures/Maps/defaultMap/Mossy_rock_01_2K_Base_Color.png");       
+        mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat2 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         
-        texture.setWrap(Texture.WrapMode.Repeat);
-        mat.setTexture("ColorMap", texture);      
+        texture1 = assetManager.loadTexture("Textures/Maps/DefaultMap/White.png");       
+        texture2 = assetManager.loadTexture("Textures/Maps/DefaultMap/Black.png");
+        
+        texture1.setWrap(Texture.WrapMode.Repeat);
+        texture2.setWrap(Texture.WrapMode.Repeat);
+        
+        mat1.setTexture("ColorMap", texture1);
+        mat2.setTexture("ColorMap", texture2);
     }
 }
