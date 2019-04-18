@@ -5,6 +5,7 @@
  */
 package Maps;
 
+import Tools.Vector3i;
 import com.jme3.animation.AnimControl;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
@@ -106,14 +107,14 @@ public abstract class Map extends AbstractAppState
                 mapModel[i][j] = (Node)assetManager.loadModel("Models/Maps/DefaultMap/DefaultMap.j3o");
     }
     
-    public Vector3f getCellIndex(Spatial cell)
+    public Vector3i getCellIndex(Spatial cell)
     {
         for(int i = 0; i < numOfRows; i ++)
         {
             for(int j = 0; j < numOfColumns; j ++)
             {
                 if(cell == (Spatial)mapModel[i][j].getChild("Plane"))
-                    return new Vector3f(i, 0 ,j);
+                    return new Vector3i(i, 0 ,j);
             }
         }
         return null;

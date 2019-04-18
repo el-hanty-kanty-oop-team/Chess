@@ -1,5 +1,6 @@
 package OriginPieces;
 
+import Tools.Vector3i;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
@@ -14,6 +15,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import javafx.util.Pair;
 
 /**
  *
@@ -21,9 +23,11 @@ import com.jme3.scene.Spatial;
  */
 public class OriginPiece extends AbstractAppState
 {
-    private Node localNode, rootNode, originPiece, piece[][];
     private AssetManager assetManager;
+    private boolean killed[][];
     private float modelScale;
+    private Node localNode, rootNode, originPiece, piece[][];
+    private Pair dimension[][];
     public OriginPiece(SimpleApplication app) 
     {
         modelScale = 0.15f;
@@ -31,6 +35,8 @@ public class OriginPiece extends AbstractAppState
         assetManager = app.getAssetManager();
         rootNode = app.getRootNode();
         piece = new Node[4][8];
+        dimension = new Pair[4][8];
+        killed = new boolean[4][8];
     }
     
     @Override
@@ -79,6 +85,7 @@ public class OriginPiece extends AbstractAppState
             {
                 piece[i][j].setLocalScale(modelScale);
                 piece[i][j].setLocalTranslation(i, up, j);
+                dimension[i][j] = new Pair(i, j);
                 localNode.attachChild(piece[i][j]);
             }
         }
@@ -94,6 +101,7 @@ public class OriginPiece extends AbstractAppState
             {
                 piece[i][j].setLocalScale(modelScale);
                 piece[i][j].setLocalTranslation(i + 4, up, j);
+                dimension[i][j] = new Pair(i + 4, j);
                 localNode.attachChild(piece[i][j]);
             }
         }
@@ -106,59 +114,77 @@ public class OriginPiece extends AbstractAppState
         rootNode.attachChild(localNode);
     }
 
- 
-    public Vector3f getPieceIndex(Spatial s)
+    public Vector3i getPieceDimension(Spatial s)
     {
-        System.out.println(s);
         for(int i = 0; i < piece.length; i ++)
         {
             for(int j = 0; j < piece[i].length; j ++)
             {
-              //  System.out.println(piece[i][j]);
                 if(s == piece[i][j])
-                    return new Vector3f(i, piece[i][j].getLocalTranslation().y, j);
+                    return new Vector3i((int)dimension[i][j].getKey(), 0, (int)dimension[i][j].getValue());
+            }
+        }
+        return null;
+    }
+ 
+    public Vector3i getPieceIndex(Spatial s)
+    {
+        for(int i = 0; i < piece.length; i ++)
+        {
+            for(int j = 0; j < piece[i].length; j ++)
+            {
+                if(s == piece[i][j])
+                    return new Vector3i(i, 0, j);
             }
         }
         return null;
     }
     
-    public void Move(Vector3f pieceIndex, Vector3f to)
+    public void Move(Vector3i pieceIndex, Vector3i to)
     {
-        System.out.println("piece index " + pieceIndex + "  to " + to);
+
+        int x = pieceIndex.x, z = pieceIndex.z;
+        float y = piece[x][z].getLocalTranslation().y;
+        Vector3f toF = new Vector3f(to.x, y, to.z);
+        dimension[x][z] = new Pair(to.x, to.z);
+        System.out.println((int)dimension[2][7].getKey() + " " + (int)dimension[2][7].getValue());
+        System.out.println((int)dimension[0][6].getKey() + " " + (int)dimension[0][6].getValue());
 
         MotionPath path = new MotionPath();
-        int x = (int)pieceIndex.x, z = (int)pieceIndex.z;
-        float y = pieceIndex.y;
-        to.set(to.x, y, to.z);
         path.addWayPoint(piece[x][z].getLocalTranslation());
-        path.addWayPoint(to);
-     //   path.enableDebugShape(assetManager, rootNode);
+        if((x == 0 || x == 3) && (z == 1 || z == 6))
+        {
+            Vector3f mid = new Vector3f((piece[x][z].getLocalTranslation().x + toF.x) / 2.0f, 1.0f, (piece[x][z].getLocalTranslation().z + toF.z) / 2.0f);
+            path.addWayPoint(mid);
+        }
+        path.addWayPoint(toF);
 
         MotionEvent motionControl = new MotionEvent(piece[x][z],path);
-        motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
+        //motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
         motionControl.setRotation(new Quaternion().fromAngleNormalAxis(-FastMath.HALF_PI, Vector3f.UNIT_Y));
         motionControl.setInitialDuration(10f);
         motionControl.setSpeed(10f);
         motionControl.play();
         
-        check(to);
+        check(x, z);
         
-        piece[x][z].setLocalTranslation(to);
+        piece[x][z].setLocalTranslation(toF);
 
     }
     
-    private void check(Vector3f to)
+    private void check(int x, int z)
     {
-        float x1 = to.x, z1 = to.z;
-        System.out.println(x1 + " " + z1);
         for(int i = 0; i < piece.length; i ++)
         {
             for(int j = 0; j < piece[i].length; j ++)
             {
-                float x2 = piece[i][j].getLocalTranslation().x, z2 = piece[i][j].getLocalTranslation().z;
-                if(isEqual(x1, x2) && isEqual(z1, z2))
+                if(i == x && j == z)
+                    continue;
+                
+                if(dimension[x][z].equals(dimension[i][j]) && !killed[i][j])
                 {
                     kill(piece[i][j]);
+                    killed[i][j] = true;
                     return;
                 }
             }
@@ -167,8 +193,8 @@ public class OriginPiece extends AbstractAppState
     
     private void kill(Node p)
     {
-        System.out.println("Kill" + p);
-        p.setLocalTranslation(0, 10, 0);
+        System.out.println("Kill " + p);
+        localNode.detachChild(p);
     }
     private boolean isEqual(float x1, float x2)
     {

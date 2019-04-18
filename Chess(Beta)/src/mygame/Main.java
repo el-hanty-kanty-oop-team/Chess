@@ -7,6 +7,7 @@ import PiecesAnimation.Bishop;
 import PiecesAnimation.Knight;
 import PiecesAnimation.Pawn;
 import PiecesAnimation.Piece;
+import Tools.Vector3i;
 import com.jme3.app.SimpleApplication;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.MouseInput;
@@ -69,7 +70,7 @@ public class Main extends SimpleApplication
                 Ray ray = new Ray(click3d, dir);
                 // Collect intersections between ray and all nodes in results list.
                 rootNode.collideWith(ray, results);
-                Vector3f dimention = null;
+                Vector3i dimention = null;
                 if(results.size() > 0)
                 {
                     Node selectedModel = results.getCollision(0).getGeometry().getParent();
@@ -83,10 +84,15 @@ public class Main extends SimpleApplication
                     }
                     else
                     {
-                        dimention = defaultMap.getCellIndex(selectedModel);
+                        
+                        dimention = originPiece.getPieceDimension(selectedModel);
                         if(dimention != null)
                             currentSelected = new Pair(dimention, "Map");
-        //                    System.out.println(currentSelected + " " + lastSelected);
+                        else
+                         dimention = defaultMap.getCellIndex(selectedModel);
+                        
+                        if(dimention != null)
+                            currentSelected = new Pair(dimention, "Map");
                     }
                 }
 
@@ -150,14 +156,9 @@ public class Main extends SimpleApplication
         
         if(currentSelected != null && lastSelected != null && !currentSelected.equals(lastSelected) && ((String)lastSelected.getValue()).equalsIgnoreCase("Piece"))
         {
-            int fromRow = (int)((Vector3f)lastSelected.getKey()).x;
-            int fromCol = (int)((Vector3f)lastSelected.getKey()).z;
-
-            int toRow = (int)((Vector3f)lastSelected.getKey()).x;
-            int toCol = (int)((Vector3f)lastSelected.getKey()).z;
             //System.out.println(((Vector3f)lastSelected.getKey()) + " Last selected");
-            Vector3f from = (Vector3f)lastSelected.getKey();
-            Vector3f to = (Vector3f)currentSelected.getKey();
+            Vector3i from = (Vector3i)lastSelected.getKey();
+            Vector3i to = (Vector3i)currentSelected.getKey();
             originPiece.Move(from, to);
             
            /* 
@@ -207,9 +208,9 @@ public class Main extends SimpleApplication
             al3po hna mtl3po4 fe 7ta tnya
             lw fe bug aw exception zhr 2b2 2oly
             tb3n dh m4 el 25eer bs deh 7aga t3ml beha test le el engine
-            @1st paramter mkan el piece 3bara 3n vector3f (new Vector3f(r, 0, c))
-            @2nd paramter el mkan el 3awz trw7w bardo 3bara 3n vector3f (new Vector3f(r, 0, c))
-           originPiece.Move(Vector3f.UNIT_X, Vector3f.ZERO);
+            @1st paramter mkan el piece 3bara 3n vector3i (new Vector3i(r, 0, c))
+            @2nd paramter el mkan el 3awz trw7w bardo 3bara 3n vector3i (new Vector3i(r, 0, c))
+           originPiece.Move(1st, 2nd);
         */
     }
 

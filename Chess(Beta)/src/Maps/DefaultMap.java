@@ -38,8 +38,8 @@ public class DefaultMap extends Map
         mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat2 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         
-        texture1 = assetManager.loadTexture("Textures/Maps/DefaultMap/White.png");       
-        texture2 = assetManager.loadTexture("Textures/Maps/DefaultMap/Black.png");
+        texture1 = assetManager.loadTexture("Textures/Maps/defaultMap/White.png");       
+        texture2 = assetManager.loadTexture("Textures/Maps/defaultMap/Black.png");
         
         texture1.setWrap(Texture.WrapMode.Repeat);
         texture2.setWrap(Texture.WrapMode.Repeat);
