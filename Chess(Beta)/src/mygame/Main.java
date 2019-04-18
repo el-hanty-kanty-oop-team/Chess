@@ -35,6 +35,7 @@ public class Main extends SimpleApplication
     private Map defaultMap; 
     private Pair currentSelected, lastSelected; 
     private OriginPiece originPiece;
+    private final Vector3f camLocation = new Vector3f(3.5f, 5.3f, 13.5f), camDirection = new Vector3f(3.5f, 0.0f, 3.5f);
     
     private final ActionListener actionListener = new ActionListener() 
     {
@@ -47,7 +48,10 @@ public class Main extends SimpleApplication
                 // System.out.println(keyPressed);
                 if(!keyPressed)
                 {   
-                    flyCam.setEnabled(false); 
+                    System.out.println(cam.getLocation());
+                    flyCam.setEnabled(false);
+                    cam.setLocation(camLocation);
+                    cam.lookAt(camDirection, Vector3f.ZERO);
                     inputManager.setCursorVisible(true);
                 }
                 else
@@ -192,9 +196,12 @@ public class Main extends SimpleApplication
         for(int i = 0; i < piece.length; i ++)
             for(int j = 0; j < piece[i].length; j ++)
                 stateManager.attach(piece[i][j]);
-        stateManager.attach(originPiece);
         
+        stateManager.attach(originPiece);
         stateManager.attach(defaultMap);
+        
+        cam.setLocation(camLocation);
+        cam.lookAt(camDirection, Vector3f.ZERO);
     }    
     
     
