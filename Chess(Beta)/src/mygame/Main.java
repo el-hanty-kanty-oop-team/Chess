@@ -2,17 +2,18 @@ package mygame;
 
 import Maps.DefaultMap;
 import Maps.Map;
-import OriginPieces.OriginPiece;
-import PiecesAnimation.Bishop;
-import PiecesAnimation.Knight;
-import PiecesAnimation.Pawn;
-import PiecesAnimation.Piece;
+import PiecesAndAnimation.OriginPieces.OriginPiece;
+import PiecesAnimation.DesertMode.Bishop;
+import PiecesAnimation.DesertMode.Desert;
+import PiecesAnimation.DesertMode.Knight;
+import PiecesAnimation.DesertMode.Pawn;
+import PiecesAnimation.DesertMode.Test;
+import PiecesAndAnimation.PiecesAnimation.PieceAnimation;
 import Tools.Vector3i;
 import com.jme3.app.SimpleApplication;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
@@ -30,8 +31,8 @@ import javafx.util.Pair;
 public class Main extends SimpleApplication
 {
     
-    private final float moveSpeed = 0.032f;
-    private Piece piece[][];
+    private Desert desertPiece;
+    private Test test;
     private Map defaultMap; 
     private Pair currentSelected, lastSelected; 
     private OriginPiece originPiece;
@@ -42,13 +43,10 @@ public class Main extends SimpleApplication
         @Override
         public void onAction(String name, boolean keyPressed, float tpf) 
         {
-               
-           if(name.equals("FlyByTheCam"))
+            if(name.equals("FlyByTheCam"))
             {
-                // System.out.println(keyPressed);
                 if(!keyPressed)
                 {   
-                    System.out.println(cam.getLocation());
                     flyCam.setEnabled(false);
                     cam.setLocation(camLocation);
                     cam.lookAt(camDirection, Vector3f.ZERO);
@@ -62,7 +60,7 @@ public class Main extends SimpleApplication
             }
             else if (name.equals("pick target") && !keyPressed) 
             {
-
+                
                 lastSelected = currentSelected;
                 // Reset results list.
                 CollisionResults results = new CollisionResults();
@@ -80,16 +78,15 @@ public class Main extends SimpleApplication
                     Node selectedModel = results.getCollision(0).getGeometry().getParent();
                     
                     if(lastSelected == null || !((String)lastSelected.getValue()).equalsIgnoreCase("Piece"))
-                        dimention = originPiece.getPieceIndex(selectedModel);
+                        dimention = desertPiece.getPieceIndex(selectedModel);
                     if(dimention != null)
                     {
                         currentSelected = new Pair(dimention, "Piece");
-                        System.out.println(dimention);
                     }
                     else
                     {
                         
-                        dimention = originPiece.getPieceDimension(selectedModel);
+                        dimention = desertPiece.getPieceDimension(selectedModel);
                         if(dimention != null)
                             currentSelected = new Pair(dimention, "Map");
                         else
@@ -98,6 +95,7 @@ public class Main extends SimpleApplication
                         if(dimention != null)
                             currentSelected = new Pair(dimention, "Map");
                     }
+                    System.out.println(currentSelected + " " + lastSelected);
                 }
 
             }
@@ -105,14 +103,6 @@ public class Main extends SimpleApplication
         }
     };
     
-    private final AnalogListener analogListener = new AnalogListener() 
-    {
-        @Override
-        public void onAnalog(String name, float intensity, float tpf) 
-        {
-             // else if ...
-        }
-    };
     
     public static void main(String[] args) 
     {
@@ -120,37 +110,23 @@ public class Main extends SimpleApplication
         app.start();
     }
 
-    public Vector3f getSelectedPiece(Spatial selectedModel)
-    {
-        for(int i = 0; i < piece.length; i ++)
-            for(int j = 0; j < piece[i].length; j ++)
-                if(piece[i][j].isEquale(selectedModel) == true)
-                    return new Vector3f(i, 0, j);
-        return null;
-    }
     
     public void initModels()
     {
-        piece = new Piece[2][8];
-        for(int i = 0; i < piece.length; i ++)
-            for(int j = 1; j < piece[i].length; j ++)
-                piece[i][j] = new Pawn(this, i, j, true);
-        piece[0][0] = new Bishop(this, 0, 0, true);
-        piece[1][0] = new Bishop(this, 1, 0, true);
-        
-        
         defaultMap = new DefaultMap(this);
         
         currentSelected = null;
         lastSelected = null;
         
         originPiece = new OriginPiece(this);
+        desertPiece = new Desert(this);
+        test = new Test(this);
     }
 
     public void initKeys()
     {
         inputManager.addMapping("FlyByTheCam", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
-        inputManager.addMapping("pick taregt", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+        inputManager.addMapping("pick target", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
         inputManager.addListener(actionListener, "FlyByTheCam");
         inputManager.addListener(actionListener, "pick target");
     }
@@ -161,28 +137,12 @@ public class Main extends SimpleApplication
         if(currentSelected != null && lastSelected != null && !currentSelected.equals(lastSelected) && ((String)lastSelected.getValue()).equalsIgnoreCase("Piece"))
         {
             //System.out.println(((Vector3f)lastSelected.getKey()) + " Last selected");
+            
             Vector3i from = (Vector3i)lastSelected.getKey();
             Vector3i to = (Vector3i)currentSelected.getKey();
-            originPiece.Move(from, to);
-            
-           /* 
-            if(lastSelected.getValue().toString().equalsIgnoreCase("piece") && currentSelected.getValue().toString().equalsIgnoreCase("map"))
-            {
-                piece[fromRow][fromCol].update(direction, "walk");
-            }
-            else if(!lastSelected.equals(currentSelected) && lastSelected.getValue().toString().equalsIgnoreCase("piece") && currentSelected.getValue().toString().equalsIgnoreCase("piece"))
-            {
-                System.out.println(fromRow + " " + fromCol);
-                System.out.println(toRow + " " + toCol);
-
-                piece[fromRow][fromCol].update(direction, "attack");
-              //  piece[toRow][toCol].update(direction, "death");
-
-            }*/
+            desertPiece.Move(from, to);
             currentSelected = null;
-            lastSelected = null;
-
-           
+            lastSelected = null;           
         }
     }
     
@@ -193,12 +153,10 @@ public class Main extends SimpleApplication
         initModels();
         inputManager.setCursorVisible(false);
       
-        for(int i = 0; i < piece.length; i ++)
-            for(int j = 0; j < piece[i].length; j ++)
-                stateManager.attach(piece[i][j]);
-        
-        stateManager.attach(originPiece);
+        //stateManager.attach(originPiece);
+        stateManager.attach(desertPiece);
         stateManager.attach(defaultMap);
+        stateManager.attach(test);
         
         cam.setLocation(camLocation);
         cam.lookAt(camDirection, Vector3f.ZERO);
@@ -209,7 +167,7 @@ public class Main extends SimpleApplication
     public void simpleUpdate(float tpf) 
     {
         //TODO: add update code
-        updatePieces();
+        updatePieces(); // user Interaction
         /*
             hna 7rk el pieces bta3tk bra7tk
             al3po hna mtl3po4 fe 7ta tnya

@@ -3,15 +3,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAnimation/King.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAnimation/Knight.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAnimation/DesertMode/Pawn.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/mygame/Main.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/OriginPieces/OriginPiece.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAnimation/Pawn.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAnimation/DesertMode/Desert.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAnimation/DesertMode/Test.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/Maps/DefaultMap.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/Maps/Map.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAnimation/Bishop.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAnimation/Piece.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAnimation/DesertMode/Castle.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/OriginPieces/OriginPiece.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAnimation/DesertMode/Knight.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/PieceAnimation.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/GamePackage/Cell.java</file>
         </group>
     </open-files>
 </project-private>

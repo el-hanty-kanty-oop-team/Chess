@@ -28,8 +28,6 @@ public class DefaultMap extends Map
     {
         LoadModel();
         LoadTexture();    
-        //System.out.println("WE GOT HERE 3");
-
     }
     
     @Override

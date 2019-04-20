@@ -47,7 +47,11 @@ public class Vector3i
     public void setZ(int z) {
         this.z = z;
     }
-     
+    
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ", " + z + ")";
+    }     
     
      
     
