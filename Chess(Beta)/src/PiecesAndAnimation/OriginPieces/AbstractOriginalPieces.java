@@ -32,21 +32,6 @@ public abstract class AbstractOriginalPieces extends AbstractAppState
     protected Node localNode, rootNode, piece[][];
     protected Pair dimension[][];
     
-    private final MotionEvent motionControl;
-    
-    public AbstractOriginalPieces() 
-    {
-        motionControl = new MotionEvent()
-        {
-            @Override
-            public void onStop()
-            {
-             // todo checkPawnToQueen()   
-            }
-        };
-    }
- 
-    
     public Vector3i getPieceDimension(Spatial s)
     {
         for(int i = 0; i < piece.length; i ++)
@@ -89,10 +74,15 @@ public abstract class AbstractOriginalPieces extends AbstractAppState
         }
         path.addWayPoint(toF);
         
-       
         
-        motionControl.setSpatial(piece[x][z]);
-        motionControl.setPath(path);
+        MotionEvent motionControl = new MotionEvent(piece[x][z], path)
+        {
+            @Override
+            public void onStop()
+            {
+             // todo checkPawnToQueen()   
+            }
+        };
        // motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
         motionControl.setRotation(new Quaternion().fromAngleNormalAxis(-FastMath.HALF_PI, Vector3f.UNIT_Y));
         motionControl.setInitialDuration(10f);

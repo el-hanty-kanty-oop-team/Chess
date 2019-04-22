@@ -14,6 +14,7 @@ import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.texture.Texture;
+import com.jme3.util.SkyFactory;
 
 /**
  *
@@ -27,16 +28,15 @@ public class DefaultMap extends Map
     {
         super(app);
         this.app = app;
-    }
 
-    @Override
-    public void initialize(AppStateManager stateManager, Application app) 
-    {
+        Texture west = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_west.jpg"),
+        east = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_east.jpg"),
+        north = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_north.jpg"),
+        south = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_south.jpg"),
+        up = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_up.jpg"),
+        down = app.getAssetManager().loadTexture("Textures/Sky/Lagoon/lagoon_down.jpg");
         
-/*
-        Texture west=null,east=null,north=null,south=null,up=null,down=null ;
-        
-        sky = SkyFactory.createSky(assetManager, west, east, north, south, up, down);
+        sky = SkyFactory.createSky(app.getAssetManager(), west, east, north, south, up, down);
 
         sky.setQueueBucket(Bucket.Sky);
 
@@ -44,9 +44,17 @@ public class DefaultMap extends Map
 
         sky.setCullHint(CullHint.Never);
         this.app.getRootNode().attachChild(sky) ;
-        */
-        //sky.setQueueBucket(Bucket.Sky);
-        //sky.setCullHint(Spatial.CullHint.Never);
+        
+        sky.setQueueBucket(Bucket.Sky);
+        sky.setCullHint(Spatial.CullHint.Never);
+
+    }
+
+    @Override
+    public void initialize(AppStateManager stateManager, Application app) 
+    {
+        
+
 
         
         super.initialize(stateManager, app);
