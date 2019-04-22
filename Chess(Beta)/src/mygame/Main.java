@@ -1,26 +1,26 @@
+
 package mygame;
 
+import GamePackage.Cell;
 import Maps.DefaultMap;
 import Maps.Map;
-import PiecesAndAnimation.OriginPieces.OriginPiece;
-import PiecesAnimation.DesertMode.Bishop;
+import PiecesAndAnimation.OriginPieces.OriginalPieces;
 import PiecesAnimation.DesertMode.Desert;
-import PiecesAnimation.DesertMode.Knight;
-import PiecesAnimation.DesertMode.Pawn;
 import PiecesAnimation.DesertMode.Test;
-import PiecesAndAnimation.PiecesAnimation.PieceAnimation;
 import Tools.Vector3i;
 import com.jme3.app.SimpleApplication;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.light.SpotLight;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import javafx.util.Pair;
 
 /**
@@ -35,7 +35,7 @@ public class Main extends SimpleApplication
     private Test test;
     private Map defaultMap; 
     private Pair currentSelected, lastSelected; 
-    private OriginPiece originPiece;
+    private OriginalPieces originPiece;
     private final Vector3f camLocation = new Vector3f(3.5f, 5.3f, 13.5f), camDirection = new Vector3f(3.5f, 0.0f, 3.5f);
     
     private final ActionListener actionListener = new ActionListener() 
@@ -78,22 +78,26 @@ public class Main extends SimpleApplication
                     Node selectedModel = results.getCollision(0).getGeometry().getParent();
                     
                     if(lastSelected == null || !((String)lastSelected.getValue()).equalsIgnoreCase("Piece"))
-                        dimention = desertPiece.getPieceIndex(selectedModel);
+                        dimention = originPiece.getPieceIndex(selectedModel);
                     if(dimention != null)
                     {
                         currentSelected = new Pair(dimention, "Piece");
+                        defaultMap.removeHighlights();
                     }
                     else
                     {
                         
-                        dimention = desertPiece.getPieceDimension(selectedModel);
+                        dimention = originPiece.getPieceDimension(selectedModel);
                         if(dimention != null)
                             currentSelected = new Pair(dimention, "Map");
                         else
                          dimention = defaultMap.getCellIndex(selectedModel);
                         
                         if(dimention != null)
+                        {
                             currentSelected = new Pair(dimention, "Map");
+                            defaultMap.highLightCell(new Cell(dimention.x, dimention.z, ""), "Move");
+                        }
                     }
                     System.out.println(currentSelected + " " + lastSelected);
                 }
@@ -118,7 +122,7 @@ public class Main extends SimpleApplication
         currentSelected = null;
         lastSelected = null;
         
-        originPiece = new OriginPiece(this);
+        originPiece = new OriginalPieces(this);
         desertPiece = new Desert(this);
         test = new Test(this);
     }
@@ -140,7 +144,8 @@ public class Main extends SimpleApplication
             
             Vector3i from = (Vector3i)lastSelected.getKey();
             Vector3i to = (Vector3i)currentSelected.getKey();
-            desertPiece.Move(from, to);
+           // desertPiece.Move(from, to);
+           originPiece.Move(from, to);
             currentSelected = null;
             lastSelected = null;           
         }
@@ -153,13 +158,26 @@ public class Main extends SimpleApplication
         initModels();
         inputManager.setCursorVisible(false);
       
-        //stateManager.attach(originPiece);
-        stateManager.attach(desertPiece);
+        stateManager.attach(originPiece);
+       // stateManager.attach(desertPiece);
         stateManager.attach(defaultMap);
-        stateManager.attach(test);
+        //stateManager.attach(test);
         
+        flyCam.setMoveSpeed(20);
         cam.setLocation(camLocation);
         cam.lookAt(camDirection, Vector3f.ZERO);
+        
+        Vector3f lightTarget = new Vector3f(12, 3.5f, 30);
+        SpotLight spot=new SpotLight();
+        
+        spot.setSpotRange(1000);
+        spot.setSpotInnerAngle(5*FastMath.DEG_TO_RAD);
+        spot.setSpotOuterAngle(10*FastMath.DEG_TO_RAD);
+        spot.setPosition(new Vector3f(3.5f, 50.0f, 3.5f));
+        spot.setDirection(new Vector3f(3.5f, 0.0f, 3.5f).subtract(spot.getPosition()));     
+        spot.setColor(ColorRGBA.White.mult(1));
+        rootNode.addLight(spot);
+        
     }    
     
     

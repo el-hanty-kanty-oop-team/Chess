@@ -14,10 +14,6 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
-import com.jme3.cinematic.Cinematic;
-import com.jme3.cinematic.MotionPath;
-import com.jme3.cinematic.events.AnimationEvent;
-import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.collision.CollisionResults;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
@@ -28,8 +24,6 @@ import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -57,51 +51,18 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     protected Node attackNode, deathNode, standNode, walkNode;
     protected Vector3f startPosition;
    
-    private final ActionListener actionListener;
     private final AppStateManager stateManager;
     private final Camera cam;
     private final float animSpeed;
-    private boolean attack, death, walk;
+    private boolean attack, attackUpdate, walkAnimationDone, death, walk, attackIterationStarted;
     private float x, z;
     private int numOfIterations;
     
     public PieceAnimation(SimpleApplication app)
     {
         
-        
-        actionListener = new ActionListener()    
-        {
-            @Override
-            public void onAction(String name, boolean keyPressed, float tpf) 
-            {
-                if (name.equals("Walk") && !keyPressed) 
-                {
-                    if (channel.getAnimationName().equals("walk")) 
-                    {
-                        channel.setAnim("walk", 0.50f);
-                        channel.setLoopMode(LoopMode.DontLoop);
-                    }
-                }
-                else if (name.equals("pick target")) 
-                {
-                    CollisionResults results = new CollisionResults();      // Reset results list.
-                    // Convert screen click to 3d position
-                    Vector2f click2d = inputManager.getCursorPosition();    
-                    Vector3f click3d = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 0f).clone();
-                    Vector3f dir = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 1f).subtractLocal(click3d).normalizeLocal();
-                    
-                    Ray ray = new Ray(click3d, dir);                        // Aim the ray from the clicked spot forwards.
-                    rootNode.collideWith(ray, results);                     // Collect intersections between ray and all nodes in results list.
-                    for (int i = 0; i < results.size(); i++)                // (Print the results so we see what is going on:)
-                    {
-                        Spatial selectedModel = results.getClosestCollision().getGeometry().getParent();
-                    }
-
-                }
-            }
-        };
         animSpeed = 2.0f;
-        attack = death = walk = false;
+        attack = attackIterationStarted = walkAnimationDone = death = walk = false;
         modelScale = 0.5f;
         
         
@@ -140,7 +101,6 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         dl.setDirection(new Vector3f(-0.1f, -1f, -1).normalizeLocal());
         
         LoadModel();
-        initKeys();
         
         headText.setSize(font.getCharSet().getRenderedSize());      // font size
         headText.setColor(ColorRGBA.Blue);                             // font color
@@ -152,82 +112,61 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
                 
     }
     
-    
-    public Vector3f getLocalTranslation()
-    {
-        return localNode.getLocalTranslation();
-    }
-    
-    public Node getLocalNode()
-    {
-        return localNode;
-    }
-    
-    public void setLocalTranslation(Vector3f v)
-    {
-        destination.set(v);
-        localNode.setLocalTranslation(v);
-    }
-    
     @Override
     public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) 
     {
-        
+        walkAnimationDone = false;
         if(animName.equalsIgnoreCase("Walk"))
         {
+            System.out.println("numOfIterations = " + numOfIterations);
             if(numOfIterations == 0)
+                walkAnimationDone = true;
+            if(attack && numOfIterations <= attackIteration)
             {
-                System.out.println("Stand");
-                stand();
-            }
-            else
-            {
-                //walkCh.reset(true);
                 dimensionChanging();
                 playerWalkDirection.addLocal(x, 0.0f, z);
                 localNode.setLocalTranslation(playerWalkDirection);
-                System.out.println("Walk has been done");
+                attack();
+            }
+            else if(numOfIterations == 0)
+            {
+                stand();
+                walkAnimationDone = true;
+            }
+            else
+            {
+                dimensionChanging();
+                playerWalkDirection.addLocal(x, 0.0f, z);
+                localNode.setLocalTranslation(playerWalkDirection);
                 walk();
-                x = z = 0.0f;
             }
             x = z = 0.0f;
         }
-        else if(animName.equalsIgnoreCase("Stand"))
+        else if(animName.equalsIgnoreCase("Attack"))
         {
+            attackIterationStarted = false;
+            if(numOfIterations == 0)
+            {
+                stand();
+                walkAnimationDone = true;
+            }
+            else
+                walk();
         }
-  /*    
-        
-        //
-        playerWalkDirection.addLocal(x, 0.f, z);
-        localNode.setLocalTranslation(playerWalkDirection);  
-*/
-        //System.out.println("anim cycle has been done" + playerWalkDirection + " " + numOfIterations);
-     
-        /*else 
+        else if(animName.equals("Death"))
         {
-            numOfIterations--;
-            if(animName.equals("Walk"))
-                walk = true;
+            rootNode.detachChild(localNode);
         }
-        if(death)
-        {
-            playerWalkDirection.set(startPosition);
-        }*/
     }
     
     @Override   
     public void onAnimChange(AnimControl control, AnimChannel channel, String animName) 
     {
       // unused
-        System.out.println("PiecesAndAnimation.PiecesAnimation.PieceAnimation.onAnimChange()");
     }
 
   /** Custom Keybinding: Map named actions to inputs. */
-    protected void initKeys() 
-    {
-        inputManager.addMapping("pick target", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-        inputManager.addListener(actionListener, "pick target");
-    }
+    
     
     public void update(Vector3f newDirection, String str)
     {
@@ -235,9 +174,8 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         numOfIterations = (int) max(abs(playerWalkDirection.x - destination.x), abs(playerWalkDirection.z - destination.z));
         if(numOfIterations > 0)
         {
-           // walk();
             if(str.equalsIgnoreCase("attack"))
-                attack = true;
+                attack = attackUpdate = true;
             else if(str.equalsIgnoreCase("death"))
                 death = true;
             else if(str.equalsIgnoreCase("walk"))
@@ -259,47 +197,91 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
             return -1 * x;
         return x;
     }
-    
-        
+  
     @Override
     public void update(float tpf)
     {
         if(walk)
             walk();
+        if(attack && attackUpdate)
+        {
+            if(numOfIterations > attackIteration)
+                walk();
+            else if(numOfIterations == attackIteration)
+                attack();
+            attackUpdate = false;
+        }
+    }
+  
+    
+    public boolean attackIterationStarted()
+    {
+        return attackIterationStarted;
+    }
+    
+    public boolean walkAnimationDone()
+    {
+        return walkAnimationDone;
+    }
+    
+    public Vector3f getLocalTranslation()
+    {
+        return localNode.getLocalTranslation();
+    }
+    
+    public Node getLocalNode()
+    {
+        return localNode;
+    }
+    
+    public void setLocalTranslation(Vector3f v)
+    {
+        destination.set(v);
+        localNode.setLocalTranslation(v);
+    }
+            
+    public void die()
+    {
+        death();
     }
     
     private void attack()
     {
+        attackIterationStarted = true;
         attack = false;
         if(!localNode.hasChild(attackNode))
         {
-            localNode.detachChildAt(0);
+            localNode.detachAllChildren();
             localNode.attachChild(attackNode);
         }
-        attackCh.setLoopMode(LoopMode.Loop);   
-        attackCh.setSpeed(1.0f * animSpeed);
+        localNode.lookAt(destination, upVector);
+        attackCh.reset(true);
+        attackCh.setAnim("Attack");
+        attackCh.setLoopMode(LoopMode.DontLoop);
+        attackCh.setSpeed(animSpeed);
     }
     
     private void death()
     {
         if(!localNode.hasChild(deathNode))
         {
-            localNode.detachChildAt(0);
+            localNode.detachAllChildren();
             localNode.attachChild(deathNode);
         }
+        deathCh.reset(true);
+        deathCh.setAnim("Death");
         deathCh.setLoopMode(LoopMode.DontLoop);
-        deathCh.setSpeed(1.0f * animSpeed);
-       
+        deathCh.setSpeed(animSpeed);
     }
     
     private void stand()
     {
         dimensionChanging();
+        localNode.lookAt(destination, upVector);
         playerWalkDirection.addLocal(x, 0.0f, z);
         localNode.setLocalTranslation(playerWalkDirection);
         localNode.detachAllChildren();
         localNode.attachChild(standNode);
-        localNode.lookAt(destination, upVector);
         standCh.setLoopMode(LoopMode.Loop);
         standCh.setSpeed(1.0f * animSpeed);
         x = z = 0.0f;
@@ -307,8 +289,8 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     
     private void walk()
     {
+        walk = false;
         numOfIterations--;
-        //float speed = distance(localNode.getLocalTranslation(), destination);
         if(!localNode.hasChild(walkNode))
         {
             localNode.detachAllChildren();
@@ -319,7 +301,6 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         walkCh.setAnim("Walk");
         walkCh.setLoopMode(LoopMode.DontLoop);
         walkCh.setSpeed(animSpeed);
-        walk = false;
     }
     
     private void dimensionChanging()
@@ -342,6 +323,7 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         
     }
     
+    
     private float distance(Vector3f v1, Vector3f v2)
     {
         float x, y, z;
@@ -356,9 +338,8 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
      
         return (float)Math.sqrt(x + y + z);
     }
+   
     public abstract boolean isEquale(Spatial selectedObject);
-   // public abstract void vaildPositions();
-    
     protected abstract void LoadModel();
     protected abstract void loadAnim();
     protected abstract void loadTexture();

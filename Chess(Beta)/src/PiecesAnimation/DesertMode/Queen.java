@@ -30,8 +30,9 @@ public class Queen extends PieceAnimation
             startPosition.x -= 2.0f;
         else
             startPosition.x += 2.0f;
-        modelScale = 0.8f;
+        modelScale = 0.6f;
         destination.set(i, 0, j);
+        attackIteration = 1;
     }
     @Override
     protected void LoadModel()
@@ -116,7 +117,7 @@ public class Queen extends PieceAnimation
     @Override
     public boolean isEquale(Spatial selectedObject)
     {
-        return selectedObject == (Spatial)standNode.getChild("queenStand");
+        return selectedObject == (Spatial)standNode.getChild("queenStand") ||selectedObject == (Spatial)standNode.getChild("queenStand_") ;
     }
     
 }

@@ -31,8 +31,9 @@ public class King extends PieceAnimation
             startPosition.x -= 2.0f;
         else
             startPosition.x += 2.0f;
-        modelScale = 0.8f;
+        modelScale = 0.6f;
         destination.set(i, 0, j);
+        attackIteration = 1;
     }
     @Override
     protected void LoadModel()
@@ -47,8 +48,7 @@ public class King extends PieceAnimation
         deathNode.setLocalScale(modelScale);
         standNode.setLocalScale(modelScale);
         walkNode.setLocalScale(modelScale);  
-        
-        
+           
         headText.setText("king");             // the text
         
     }
@@ -117,6 +117,6 @@ public class King extends PieceAnimation
     @Override
     public boolean isEquale(Spatial selectedObject)
     {
-        return selectedObject == (Spatial)standNode.getChild("kingStand");
+        return selectedObject == (Spatial)standNode.getChild("kingStand") || selectedObject == (Spatial)standNode.getChild("kingStand_") || selectedObject == (Spatial)standNode.getChild("kingStand__");
     }
 }

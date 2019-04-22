@@ -12,12 +12,8 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
-import com.jme3.cinematic.MotionPath;
-import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -30,12 +26,14 @@ import javafx.util.Pair;
 public class Desert extends AbstractAppState
 {
     
+    private final AssetManager assetManager;
+    private final Node localNode, rootNode;
+    private final PieceAnimation piece[][];
+    private final AppStateManager statManager;
     private final SimpleApplication app;
-    private AssetManager assetManager;
     private boolean killed[][];
     private float modelScale;
-    private Node localNode, rootNode;
-    private PieceAnimation piece[][];
+    private int x, z;
     private Pair dimension[][];
     public Desert(SimpleApplication app) 
     {
@@ -44,9 +42,11 @@ public class Desert extends AbstractAppState
         localNode = new Node();
         assetManager = app.getAssetManager();
         rootNode = app.getRootNode();
+        statManager = app.getStateManager();
         piece = new PieceAnimation[4][8];
         dimension = new Pair[4][8];
         killed = new boolean[4][8];
+        x = z = -1;
     }
     
     @Override
@@ -136,18 +136,33 @@ public class Desert extends AbstractAppState
     
     public void Move(Vector3i pieceIndex, Vector3i to)
     {
-        int x = pieceIndex.x, z = pieceIndex.z;
+        x = pieceIndex.x;
+        z = pieceIndex.z;
         Vector3f toF = new Vector3f(to.x, 0, to.z);
         dimension[x][z] = new Pair(to.x, to.z);
         
-        piece[x][z].update(toF, "Walk");
-        
-        check(x, z);
-        
-
+        if(check(x, z, false))
+            piece[x][z].update(toF, "Attack");
+        else
+            piece[x][z].update(toF, "Walk");
+        System.out.println(piece[x][z]);
     }
     
-    private void check(int x, int z)
+    @Override
+    public void update(float tpf)
+    {
+        super.update(tpf);
+        if(x != -1 && z != -1)
+        {   
+            if(piece[x][z].attackIterationStarted())
+                check(x, z, true);
+            if(piece[x][z] instanceof Pawn && piece[x][z].walkAnimationDone())
+                checkPawnToQueen(x, z);
+  
+        }
+    }
+    
+    private boolean check(int x, int z, boolean kill)
     {
         for(int i = 0; i < piece.length; i ++)
         {
@@ -158,17 +173,32 @@ public class Desert extends AbstractAppState
                 
                 if(dimension[x][z].equals(dimension[i][j]) && !killed[i][j])
                 {
-                    kill(piece[i][j].getLocalNode());
-                    killed[i][j] = true;
-                    return;
+                    if(kill)
+                    {
+                        kill(i, j);
+                        killed[i][j] = true;
+                    }
+                    return true;
                 }
             }
         }
+        return false;
     }
     
-    private void kill(Node p)
+    private void checkPawnToQueen(int x, int z)
     {
-       
+        if((int)dimension[x][z].getKey() == 7 || (int)dimension[x][z].getKey() == 0)
+        {
+            rootNode.detachChild(piece[x][z].getLocalNode());
+            statManager.detach(piece[x][z]);
+            piece[x][z] = new Queen(app, (int)dimension[x][z].getKey(), (int)dimension[x][z].getValue(), x == 1);
+            statManager.attach(piece[x][z]);
+        }   
+    }
+    
+    private void kill(int i, int j)
+    {
+        piece[i][j].die();
     }
 
 }

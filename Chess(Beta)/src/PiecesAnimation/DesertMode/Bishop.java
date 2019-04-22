@@ -32,7 +32,7 @@ public class Bishop extends PieceAnimation
             startPosition.x += 2.0f;
         
         destination.set(i, 0, j);
-        modelScale = 0.8f;
+        modelScale = 0.5f;
         attackIteration = 1;
     }
 

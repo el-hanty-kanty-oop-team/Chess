@@ -31,8 +31,9 @@ public class Knight extends PieceAnimation
             startPosition.x -= 2.0f;
         else
             startPosition.x += 2.0f;
-        modelScale = 2.0f;
+        modelScale = 1.5f;
         destination.set(i, 0, j);
+        attackIteration = 1;
     }
     @Override
     protected void LoadModel()

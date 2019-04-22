@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1">
+        <file>
+            <url>src/Maps/WhiteCell.java</url>
+            <bookmark id="1">
+                <name/>
+                <line>31</line>
+                <key/>
+            </bookmark>
+        </file>
+    </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAnimation/DesertMode/Pawn.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/mygame/Main.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAnimation/DesertMode/Desert.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAnimation/DesertMode/Test.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/Maps/WhiteCell.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/Tools/Vector3i.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/Maps/MapCell.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/Maps/DefaultMap.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/Maps/Map.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAnimation/DesertMode/Castle.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/OriginPieces/OriginPiece.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAnimation/DesertMode/Knight.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/Maps/BlackCell.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/OriginPieces/AbstractOriginalPieces.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/OriginPieces/OriginalPieces.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/PieceAnimation.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/GamePackage/Cell.java</file>
         </group>
     </open-files>
 </project-private>

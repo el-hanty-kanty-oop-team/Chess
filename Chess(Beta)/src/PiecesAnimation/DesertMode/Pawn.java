@@ -30,7 +30,7 @@ public class Pawn extends PieceAnimation
             startPosition.x -= 2.0f;
         else
             startPosition.x += 2.0f;
-        
+        attackIteration = 1;
         destination.set(i, 0, j);
     }
     @Override
