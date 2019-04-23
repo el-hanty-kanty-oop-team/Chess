@@ -6,6 +6,7 @@
 package PiecesAndAnimation.OriginPieces;
 
 
+import PiecesAndAnimation.PiecesBehaviors;
 import Tools.Vector3i;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.asset.AssetManager;
@@ -22,7 +23,7 @@ import javafx.util.Pair;
  *
  * @author delll
  */
-public abstract class AbstractOriginalPieces extends AbstractAppState 
+public abstract class AbstractOriginalPieces extends AbstractAppState implements PiecesBehaviors
 {
     
     
@@ -32,6 +33,7 @@ public abstract class AbstractOriginalPieces extends AbstractAppState
     protected Node localNode, rootNode, piece[][];
     protected Pair dimension[][];
     
+    @Override
     public Vector3i getPieceDimension(Spatial s)
     {
         for(int i = 0; i < piece.length; i ++)
@@ -44,7 +46,8 @@ public abstract class AbstractOriginalPieces extends AbstractAppState
         }
         return null;
     }
- 
+    
+    @Override
     public Vector3i getPieceIndex(Spatial s)
     {
         for(int i = 0; i < piece.length; i ++)
@@ -58,6 +61,7 @@ public abstract class AbstractOriginalPieces extends AbstractAppState
         return null;
     }
     
+    @Override
     public void Move(Vector3i pieceIndex, Vector3i to)
     {
         int x = pieceIndex.x, z = pieceIndex.z;

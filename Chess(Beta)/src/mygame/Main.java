@@ -4,11 +4,11 @@ package mygame;
 import GamePackage.Cell;
 import Maps.DefaultMap;
 import Maps.Map;
-import PiecesAndAnimation.OriginPieces.OriginalPieces;
-import PiecesAnimation.DesertMode.Desert;
-import PiecesAnimation.DesertMode.Test;
+import PiecesAndAnimation.PiecesBehaviors;
+import PiecesAndAnimation.PiecesFactory;
 import Tools.Vector3i;
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.state.AppState;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
@@ -31,12 +31,12 @@ import javafx.util.Pair;
 public class Main extends SimpleApplication
 {
     
-    private Desert desertPiece;
-    private Test test;
+   // private Desert desertPiece;
     private Map defaultMap; 
     private Pair currentSelected, lastSelected; 
-    private OriginalPieces originPiece;
-    private final Vector3f camLocation = new Vector3f(3.5f, 5.3f, 13.5f), camDirection = new Vector3f(3.5f, 0.0f, 3.5f);
+ //   private OriginalPieces originPiece;
+    private PiecesBehaviors piecesTypeSelected ;
+    private final Vector3f camLocation = new Vector3f(-5.5f, 6.3f, 3.5f), camDirection = new Vector3f(3.5f, 0.0f, 3.5f);
     
     private final ActionListener actionListener = new ActionListener() 
     {
@@ -45,6 +45,7 @@ public class Main extends SimpleApplication
         {
             if(name.equals("FlyByTheCam"))
             {
+                System.out.println(cam.getLocation());
                 if(!keyPressed)
                 {   
                     flyCam.setEnabled(false);
@@ -78,7 +79,7 @@ public class Main extends SimpleApplication
                     Node selectedModel = results.getCollision(0).getGeometry().getParent();
                     
                     if(lastSelected == null || !((String)lastSelected.getValue()).equalsIgnoreCase("Piece"))
-                        dimention = originPiece.getPieceIndex(selectedModel);
+                        dimention = piecesTypeSelected.getPieceIndex(selectedModel);
                     if(dimention != null)
                     {
                         currentSelected = new Pair(dimention, "Piece");
@@ -87,7 +88,7 @@ public class Main extends SimpleApplication
                     else
                     {
                         
-                        dimention = originPiece.getPieceDimension(selectedModel);
+                        dimention = piecesTypeSelected.getPieceDimension(selectedModel);
                         if(dimention != null)
                             currentSelected = new Pair(dimention, "Map");
                         else
@@ -121,10 +122,9 @@ public class Main extends SimpleApplication
         
         currentSelected = null;
         lastSelected = null;
-        
-        originPiece = new OriginalPieces(this);
-        desertPiece = new Desert(this);
-        test = new Test(this);
+        piecesTypeSelected = PiecesFactory.GetPiecesType(this, "ZombiePieces") ;
+      //  originPiece = new OriginalPieces(this);
+      //  desertPiece = new Desert(this);
     }
 
     public void initKeys()
@@ -145,7 +145,7 @@ public class Main extends SimpleApplication
             Vector3i from = (Vector3i)lastSelected.getKey();
             Vector3i to = (Vector3i)currentSelected.getKey();
            // desertPiece.Move(from, to);
-           originPiece.Move(from, to);
+            piecesTypeSelected.Move(from, to);
             currentSelected = null;
             lastSelected = null;           
         }
@@ -158,7 +158,7 @@ public class Main extends SimpleApplication
         initModels();
         inputManager.setCursorVisible(false);
       
-        stateManager.attach(originPiece);
+        stateManager.attach((AppState) piecesTypeSelected);
        // stateManager.attach(desertPiece);
         stateManager.attach(defaultMap);
         //stateManager.attach(test);

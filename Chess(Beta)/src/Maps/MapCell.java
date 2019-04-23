@@ -76,7 +76,7 @@ public abstract class MapCell extends AbstractAppState
         attackLight.setSpotRange(10);
         attackLight.setSpotInnerAngle(5*FastMath.DEG_TO_RAD);
         attackLight.setSpotOuterAngle(10*FastMath.DEG_TO_RAD);
-        attackLight.setColor(ColorRGBA.Blue.mult(16));
+        attackLight.setColor(ColorRGBA.Red.mult(16));
 
         moveLight.setEnabled(false);
         attackLight.setEnabled(false);
