@@ -1,6 +1,7 @@
 package PiecesAndAnimation;
 
 import PiecesAndAnimation.OriginPieces.OriginalPieces;
+import PiecesAndAnimation.PiecesAnimation.MagicalMode.Magical;
 import PiecesAndAnimation.PiecesAnimation.ZombieMode.Zombie;
 import com.jme3.app.SimpleApplication;
 
@@ -23,7 +24,7 @@ public class PiecesFactory
         else if (selected.equalsIgnoreCase("MagicalPieces"))
         { 
             // we will do it soon inshallah
-            return null  ;
+            return new Magical(app)  ;
         }
 
         return null ;

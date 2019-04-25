@@ -16,7 +16,6 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
-import com.jme3.input.InputManager;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -32,11 +31,11 @@ import com.jme3.scene.Spatial;
 public abstract class PieceAnimation extends AbstractAppState  implements AnimEventListener 
 {
     protected final AssetManager assetManager;
-    protected final InputManager inputManager;
     protected final Node rootNode, localNode;
     protected final Vector3f playerWalkDirection, destination, upVector; 
     protected AnimChannel channel, attackCh, deathCh, standCh, walkCh;
     protected AnimControl control, attackAnimControl, deathAnimControl, standAnimControl, walkAnimControl;
+    protected boolean good;
     protected BitmapText headText;
     protected BitmapFont font;
     protected float modelScale;
@@ -48,7 +47,7 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     private final AppStateManager stateManager;
     private final Camera cam;
     private final float animSpeed;
-    private boolean attack, attackUpdate, walkAnimationDone, death, walk, attackIterationStarted;
+    private boolean attack, attackUpdate, death, walk, attackIterationStarted, isMoveDone;
     private float x, z;
     private int numOfIterations;
     
@@ -56,13 +55,12 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     {
         
         animSpeed = 2.0f;
-        attack = attackIterationStarted = walkAnimationDone = death = walk = false;
+        attack = attackIterationStarted = death = isMoveDone = walk =  false;
         modelScale = 0.5f;
         
         
         assetManager = app.getAssetManager();
         cam = app.getCamera();
-        inputManager = app.getInputManager();
         rootNode = app.getRootNode();    
         stateManager = app.getStateManager();
                 
@@ -99,7 +97,7 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         headText.setSize(font.getCharSet().getRenderedSize());      // font size
         headText.setColor(ColorRGBA.Blue);                             // font color
         headText.setLocalTranslation(playerWalkDirection); // position
-        localNode.attachChild(headText);
+        //localNode.attachChild(headText);
         localNode.setLocalTranslation(playerWalkDirection);
         localNode.addLight(dl);
         rootNode.attachChild(localNode);
@@ -109,12 +107,10 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     @Override
     public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) 
     {
-        walkAnimationDone = false;
         if(animName.equalsIgnoreCase("Walk"))
         {
-            System.out.println("numOfIterations = " + numOfIterations);
             if(numOfIterations == 0)
-                walkAnimationDone = true;
+                isMoveDone = true;
             if(attack && numOfIterations <= attackIteration)
             {
                 dimensionChanging();
@@ -125,7 +121,7 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
             else if(numOfIterations == 0)
             {
                 stand();
-                walkAnimationDone = true;
+                isMoveDone = true;
             }
             else
             {
@@ -142,14 +138,25 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
             if(numOfIterations == 0)
             {
                 stand();
-                walkAnimationDone = true;
+                isMoveDone = true;
             }
             else
                 walk();
         }
         else if(animName.equals("Death"))
         {
-            rootNode.detachChild(localNode);
+            if(good)
+            {
+                startPosition.set(startPosition.z, 1.0f, startPosition.x + 12);
+                localNode.lookAt(startPosition, upVector);
+                localNode.setLocalTranslation(startPosition);
+            }
+            else
+            {
+                startPosition.set(startPosition.z , 1.0f, startPosition.x - 12);
+                localNode.lookAt(startPosition, upVector);
+                localNode.setLocalTranslation(startPosition);
+            }
         }
     }
     
@@ -213,9 +220,12 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         return attackIterationStarted;
     }
     
-    public boolean walkAnimationDone()
+    
+    public boolean isMoveDone()
     {
-        return walkAnimationDone;
+        boolean done = isMoveDone;
+        isMoveDone = false;
+        return done;
     }
     
     public Vector3f getLocalTranslation()
@@ -313,24 +323,7 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         else if(destination.z < playerWalkDirection.z)
             z = -1.0f * scale;
         else
-            z = 0.0f * scale;
-        
-    }
-    
-    
-    private float distance(Vector3f v1, Vector3f v2)
-    {
-        float x, y, z;
-  
-        x = v1.x - v2.x;
-        y = v1.y - v2.y;
-        z = v1.z - v2.z;
-        
-        x *= x;
-        y *= y;
-        z *= z;
-     
-        return (float)Math.sqrt(x + y + z);
+            z = 0.0f * scale;   
     }
    
     public abstract boolean isEquale(Spatial selectedObject);

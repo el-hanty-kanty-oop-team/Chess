@@ -19,7 +19,6 @@ import com.jme3.texture.Texture;
  */
 public class Castle extends PieceAnimation 
 {
-    private boolean good;
     public Castle(SimpleApplication app, int i, int j, boolean good)
     {
         super(app);
@@ -69,9 +68,9 @@ public class Castle extends PieceAnimation
     @Override
     protected void loadTexture()
     {
-        Texture texture = assetManager.loadTexture("Textures/Animations/castle/castle_diffuse.png");
+        Texture texture = assetManager.loadTexture("Textures/Animations/Magical/castle/castle_diffuse.png");
         if(!good)
-            texture = assetManager.loadTexture("Textures/Animations/castle/castle_diffuse(evil).png");
+            texture = assetManager.loadTexture("Textures/Animations/Magical/castle/castle_diffuse(evil).png");
         texture.setWrap(Texture.WrapMode.Repeat);
         mat.setTexture("ColorMap", texture);
         

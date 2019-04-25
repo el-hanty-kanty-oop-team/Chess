@@ -17,6 +17,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import java.util.Map;
 import javafx.util.Pair;
 
 /**
@@ -26,12 +27,15 @@ import javafx.util.Pair;
 public abstract class AbstractOriginalPieces extends AbstractAppState implements PiecesBehaviors
 {
     
+    public Map< Pair<Integer,Integer>,String> map; 
     
     protected AssetManager assetManager;
     protected boolean killed[][];
     protected float modelScale;
     protected Node localNode, rootNode, piece[][];
     protected Pair dimension[][];
+    
+    private boolean isMoveDone = false;
     
     @Override
     public Vector3i getPieceDimension(Spatial s)
@@ -45,6 +49,12 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
             }
         }
         return null;
+    }
+    
+    @Override
+    public Vector3i getPieceDimension(int x, int z)
+    {
+        return new Vector3i((int)dimension[x][z].getKey(), 0, (int)dimension[x][z].getValue());   
     }
     
     @Override
@@ -84,7 +94,9 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
             @Override
             public void onStop()
             {
-             // todo checkPawnToQueen()   
+             // todo checkPawnTransfrom()
+                isMoveDone = true;
+                System.out.println(".onStop()");
             }
         };
        // motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
@@ -99,6 +111,19 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
 
     }
     
+    @Override
+    public boolean isMoveDone()
+    {
+        boolean done = isMoveDone;
+        isMoveDone = false;
+        return done;
+    }
+    
+    private void checkPawnTransform()
+    {
+        
+    }
+    
     private void check(int x, int z)
     {
         for(int i = 0; i < piece.length; i ++)
@@ -110,7 +135,7 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
                 
                 if(dimension[x][z].equals(dimension[i][j]) && !killed[i][j])
                 {
-                    kill(piece[i][j]);
+                    kill(i, j);
                     killed[i][j] = true;
                     return;
                 }
@@ -118,9 +143,26 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
         }
     }
     
-    private void kill(Node p)
+    private void kill(int i, int j)
     {
-        localNode.detachChild(p);
+        
+        Vector3f diePosition;
+        if(map.get(new Pair(i, j)).contains("White"))
+        {
+            if(map.get(new Pair(i, j)).contains("Pawn"))
+                diePosition = new Vector3f(j, 1.0f, 10.0f);
+            else
+                diePosition = new Vector3f(j, 1.0f, 11.0f);
+        }
+        else
+        {
+            if(map.get(new Pair(i, j)).contains("Pawn"))
+                diePosition = new Vector3f(j, 1.0f, -4.0f);
+            else
+                diePosition = new Vector3f(j, 1.0f, -3.0f);
+        }
+        piece[i][j].lookAt(diePosition, Vector3f.ZERO);
+        piece[i][j].setLocalTranslation(diePosition);
     }
    
 }

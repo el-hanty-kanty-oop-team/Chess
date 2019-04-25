@@ -19,7 +19,6 @@ import com.jme3.texture.Texture;
  */
 public class Pawn extends PieceAnimation 
 {
-    private boolean good;
     public Pawn(SimpleApplication app, int i, int j, boolean good)
     {
         super(app);
@@ -68,9 +67,9 @@ public class Pawn extends PieceAnimation
     @Override
     protected void loadTexture()
     {
-        Texture texture = assetManager.loadTexture("Textures/Animations/pawn/pawn_diffuse.png");
+        Texture texture = assetManager.loadTexture("Textures/Animations/Zombie/pawn/pawn_diffuse.png");
         if(!good)
-            texture = assetManager.loadTexture("Textures/Animations/pawn/pawn_diffuse(evil).png");
+            texture = assetManager.loadTexture("Textures/Animations/Zombie/pawn/pawn_diffuse(evil).png");
         texture.setWrap(Texture.WrapMode.Repeat);
         mat.setTexture("ColorMap", texture);
         

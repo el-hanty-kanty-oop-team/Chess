@@ -19,8 +19,6 @@ import com.jme3.texture.Texture;
  */
 public class Knight extends PieceAnimation
 {
-    
-    private boolean good;
     public Knight(SimpleApplication app, int i, int j, boolean good)
     {
         super(app);
@@ -70,9 +68,9 @@ public class Knight extends PieceAnimation
     @Override
     protected void loadTexture()
     {
-        Texture texture = assetManager.loadTexture("Textures/Animations/knight/knight_diffuse.png");
+        Texture texture = assetManager.loadTexture("Textures/Animations/Zombie/knight/knight_diffuse.png");
         if(!good)
-            texture = assetManager.loadTexture("Textures/Animations/knight/knight_diffuse(evil).png");
+            texture = assetManager.loadTexture("Textures/Animations/Zombie/knight/knight_diffuse(evil).png");
         texture.setWrap(Texture.WrapMode.Repeat);
         mat.setTexture("ColorMap", texture);
         

@@ -5,12 +5,8 @@
  */
 package PiecesAndAnimation.PiecesAnimation;
 
-import PiecesAndAnimation.PiecesAnimation.PieceAnimation;
 import PiecesAndAnimation.PiecesBehaviors;
-import PiecesAndAnimation.PiecesAnimation.ZombieMode.Pawn;
-import PiecesAndAnimation.PiecesAnimation.ZombieMode.Queen;
 import Tools.Vector3i;
-import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
@@ -37,7 +33,7 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
     protected Pair dimension[][];
     protected float modelScale;
    
-    private boolean killed[][];
+    private boolean killed[][], isMoveDone;
     private int x, z;
     
     public AbstractAnimationPieces(SimpleApplication app) 
@@ -67,7 +63,13 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
         }
         return null;
     }
- 
+    
+    @Override
+    public Vector3i getPieceDimension(int i, int j)
+    {
+        return new Vector3i((int)dimension[i][j].getKey(), 0, (int)dimension[i][j].getValue());   
+    }
+    
     @Override
     public Vector3i getPieceIndex(Spatial s)
     {
@@ -89,12 +91,10 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
         z = pieceIndex.z;
         Vector3f toF = new Vector3f(to.x, 0, to.z);
         dimension[x][z] = new Pair(to.x, to.z);
-        
         if(check(x, z, false))
             piece[x][z].update(toF, "Attack");
         else
             piece[x][z].update(toF, "Walk");
-        System.out.println(piece[x][z]);
     }
     
     @Override
@@ -105,10 +105,17 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
         {   
             if(piece[x][z].attackIterationStarted())
                 check(x, z, true);
-            if(piece[x][z] instanceof Pawn && piece[x][z].walkAnimationDone())
+            if((piece[x][z] instanceof PiecesAndAnimation.PiecesAnimation.ZombieMode.Pawn || piece[x][z] instanceof PiecesAndAnimation.PiecesAnimation.MagicalMode.Pawn ) && piece[x][z].isMoveDone())
                 checkPawnToQueen(x, z);
-  
         }
+    }
+    
+    @Override
+    public boolean isMoveDone()
+    {
+        if(x != -1 && z != -1)
+            return piece[x][z].isMoveDone();
+        return false;
     }
     
     protected void setPiecesDimensions()
@@ -142,16 +149,16 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
     }
     
     
-    private boolean check(int x, int z, boolean kill)
+    private boolean check(int r, int c, boolean kill)
     {
         for(int i = 0; i < piece.length; i ++)
         {
             for(int j = 0; j < piece[i].length; j ++)
             {
-                if(i == x && j == z)
+                if(i == r && j == c)
                     continue;
                 
-                if(dimension[x][z].equals(dimension[i][j]) && !killed[i][j])
+                if(dimension[r][c].equals(dimension[i][j]) && !killed[i][j])
                 {
                     if(kill)
                     {
@@ -165,14 +172,17 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
         return false;
     }
     
-    private void checkPawnToQueen(int x, int z)
+    private void checkPawnToQueen(int r, int c)
     {
-        if((int)dimension[x][z].getKey() == 7 || (int)dimension[x][z].getKey() == 0)
+        if((int)dimension[r][c].getKey() == 7 || (int)dimension[r][c].getKey() == 0)
         {
-            rootNode.detachChild(piece[x][z].getLocalNode());
-            stateManager.detach(piece[x][z]);
-            piece[x][z] = new Queen(app, (int)dimension[x][z].getKey(), (int)dimension[x][z].getValue(), x == 1);
-            stateManager.attach(piece[x][z]);
+            rootNode.detachChild(piece[r][c].getLocalNode());
+            stateManager.detach(piece[r][c]);
+            if(piece[r][c] instanceof PiecesAndAnimation.PiecesAnimation.ZombieMode.Pawn)
+                piece[r][c] = new PiecesAndAnimation.PiecesAnimation.ZombieMode.Queen(app, (int)dimension[r][c].getKey(), (int)dimension[r][c].getValue(), r == 1);
+            else
+                piece[r][c] = new PiecesAndAnimation.PiecesAnimation.MagicalMode.Queen(app, (int)dimension[r][c].getKey(), (int)dimension[r][c].getValue(), r == 1);
+            stateManager.attach(piece[r][c]);
         }   
     }
     

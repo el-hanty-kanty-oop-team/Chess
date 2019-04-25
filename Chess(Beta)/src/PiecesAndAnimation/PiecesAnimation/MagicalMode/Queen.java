@@ -19,7 +19,6 @@ import com.jme3.texture.Texture;
  */
 public class Queen extends PieceAnimation 
 {
-    private boolean good;
     public Queen(SimpleApplication app, int i, int j, boolean good)
     {
         super(app);
@@ -69,9 +68,9 @@ public class Queen extends PieceAnimation
     @Override
     protected void loadTexture()
     {
-        Texture texture = assetManager.loadTexture("Textures/Animations/queen/queen_diffuse.png");
+        Texture texture = assetManager.loadTexture("Textures/Animations/Magical/queen/queen_diffuse.png");
         if(!good)
-            texture = assetManager.loadTexture("Textures/Animations/queen/queen_diffuse(evil).png");
+            texture = assetManager.loadTexture("Textures/Animations/Magical/queen/queen_diffuse(evil).png");
         texture.setWrap(Texture.WrapMode.Repeat);
         mat.setTexture("ColorMap", texture);
         
@@ -117,7 +116,7 @@ public class Queen extends PieceAnimation
     @Override
     public boolean isEquale(Spatial selectedObject)
     {
-        return selectedObject == (Spatial)standNode.getChild("queenStand") ||selectedObject == (Spatial)standNode.getChild("queenStand_") ;
+        return selectedObject == (Spatial)standNode.getChild("queenStand");
     }
     
 }

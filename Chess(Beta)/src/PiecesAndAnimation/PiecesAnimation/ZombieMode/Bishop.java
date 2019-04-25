@@ -19,7 +19,6 @@ import com.jme3.texture.Texture;
  */
 public class Bishop extends PieceAnimation
 {
-    private boolean good;
     public Bishop(SimpleApplication app, int i, int j, boolean good)
     {
         super(app);
@@ -74,9 +73,9 @@ public class Bishop extends PieceAnimation
     protected void loadTexture()
     {
         System.out.println("Load Texture started");
-        Texture texture = assetManager.loadTexture("Textures/Animations/bishop/bishop_diffuse.png");
+        Texture texture = assetManager.loadTexture("Textures/Animations/Zombie/bishop/bishop_diffuse.png");
         if(!good)
-            texture = assetManager.loadTexture("Textures/Animations/bishop/bishop_diffuse(evil).png");
+            texture = assetManager.loadTexture("Textures/Animations/Zombie/bishop/bishop_diffuse(evil).png");
         texture.setWrap(Texture.WrapMode.Repeat);
         mat.setTexture("ColorMap", texture);
         

@@ -13,24 +13,20 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/MagicalMode/Queen.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/MagicalMode/Magical.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/Tools/Vector3i.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/MagicalMode/King.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/AbstractAnimationPieces.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/OriginPieces/AbstractOriginalPieces.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/ZombieMode/Bishop.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/ZombieMode/Knight.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/OriginPieces/OriginalPieces.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesFactory.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/MagicalMode/Pawn.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/ZombieMode/Castle.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/mygame/Main.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/MagicalMode/Castle.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/MagicalMode/Knight.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/ZombieMode/King.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/MagicalMode/Castle.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/Maps/Map.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/ZombieMode/Queen.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/assets/Models/Animations/Magical/knightWalk01/knightWalk.j3o</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/ZombieMode/Pawn.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/ZombieMode/Zombie.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/PieceAnimation.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesBehaviors.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/MagicalMode/Bishop.java</file>
         </group>

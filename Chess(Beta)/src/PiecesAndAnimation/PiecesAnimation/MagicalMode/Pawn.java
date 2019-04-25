@@ -19,7 +19,6 @@ import com.jme3.texture.Texture;
  */
 public class Pawn extends PieceAnimation 
 {
-    private boolean good;
     public Pawn(SimpleApplication app, int i, int j, boolean good)
     {
         super(app);
@@ -31,6 +30,7 @@ public class Pawn extends PieceAnimation
         else
             startPosition.x += 2.0f;
         attackIteration = 1;
+        modelScale = 0.8f;
         destination.set(i, 0, j);
     }
     @Override
@@ -68,9 +68,9 @@ public class Pawn extends PieceAnimation
     @Override
     protected void loadTexture()
     {
-        Texture texture = assetManager.loadTexture("Textures/Animations/pawn/pawn_diffuse.png");
+        Texture texture = assetManager.loadTexture("Textures/Animations/Magical/pawn/pawn_diffuse.png");
         if(!good)
-            texture = assetManager.loadTexture("Textures/Animations/pawn/pawn_diffuse(evil).png");
+            texture = assetManager.loadTexture("Textures/Animations/Magical/pawn/pawn_diffuse(evil).png");
         texture.setWrap(Texture.WrapMode.Repeat);
         mat.setTexture("ColorMap", texture);
         
@@ -116,7 +116,10 @@ public class Pawn extends PieceAnimation
     @Override
     public boolean isEquale(Spatial selectedObject)
     {
-        return selectedObject == (Spatial)standNode.getChild("pawnStand");
+        boolean ok = selectedObject == (Spatial)standNode.getChild("pawnStand");
+        for(int i= 0; i < 4; i ++)
+            ok |= (selectedObject == (Spatial)standNode.getChild("pawnStand_" + String.valueOf(i)));
+        return ok;
     }
     
 }

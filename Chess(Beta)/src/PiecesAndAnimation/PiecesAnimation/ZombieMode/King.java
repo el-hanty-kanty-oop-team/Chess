@@ -19,8 +19,6 @@ import com.jme3.texture.Texture;
  */
 public class King extends PieceAnimation
 {
-    
-    private boolean good;
     public King(SimpleApplication app, int i, int j, boolean good)
     {
         super(app);
@@ -69,9 +67,9 @@ public class King extends PieceAnimation
     @Override
     protected void loadTexture()
     {
-        Texture texture = assetManager.loadTexture("Textures/Animations/king/king_diffuse.png");
+        Texture texture = assetManager.loadTexture("Textures/Animations/Zombie/king/king_diffuse.png");
         if(!good)
-            texture = assetManager.loadTexture("Textures/Animations/king/king_diffuse(evil).png");
+            texture = assetManager.loadTexture("Textures/Animations/Zombie/king/king_diffuse(evil).png");
         texture.setWrap(Texture.WrapMode.Repeat);
         mat.setTexture("ColorMap", texture);
         

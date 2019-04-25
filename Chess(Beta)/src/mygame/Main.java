@@ -13,6 +13,7 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.light.DirectionalLight;
 import com.jme3.light.SpotLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -31,12 +32,11 @@ import javafx.util.Pair;
 public class Main extends SimpleApplication
 {
     
-   // private Desert desertPiece;
     private Map defaultMap; 
     private Pair currentSelected, lastSelected; 
- //   private OriginalPieces originPiece;
     private PiecesBehaviors piecesTypeSelected ;
-    private final Vector3f camLocation = new Vector3f(-5.5f, 6.3f, 3.5f), camDirection = new Vector3f(3.5f, 0.0f, 3.5f);
+    private boolean firstPlayer = false, moveDone = false;
+    private final Vector3f camLocation1 = new Vector3f(-6.5f, 8.0f, 3.5f), camLocation2 = new Vector3f(13.5f, 8.0f, 3.5f), camDirection = new Vector3f(3.5f, 0.0f, 3.5f);
     
     private final ActionListener actionListener = new ActionListener() 
     {
@@ -45,12 +45,10 @@ public class Main extends SimpleApplication
         {
             if(name.equals("FlyByTheCam"))
             {
-                System.out.println(cam.getLocation());
                 if(!keyPressed)
                 {   
+                    updateCam();
                     flyCam.setEnabled(false);
-                    cam.setLocation(camLocation);
-                    cam.lookAt(camDirection, Vector3f.ZERO);
                     inputManager.setCursorVisible(true);
                 }
                 else
@@ -63,11 +61,10 @@ public class Main extends SimpleApplication
             {
                 
                 lastSelected = currentSelected;
-                // Reset results list.
                 CollisionResults results = new CollisionResults();
                 // Convert screen click to 3d position
-                Vector2f click2d = inputManager.getCursorPosition();
-                Vector3f click3d = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 0f).clone();
+                Vector2f click2d = inputManager.getCursorPosition(); // get mouse position on the screen
+                Vector3f click3d = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 0f).clone(); // converting mouse position to game world position
                 Vector3f dir = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 1f).subtractLocal(click3d).normalizeLocal();
                 // Aim the ray from the clicked spot forwards.
                 Ray ray = new Ray(click3d, dir);
@@ -77,7 +74,6 @@ public class Main extends SimpleApplication
                 if(results.size() > 0)
                 {
                     Node selectedModel = results.getCollision(0).getGeometry().getParent();
-                    
                     if(lastSelected == null || !((String)lastSelected.getValue()).equalsIgnoreCase("Piece"))
                         dimention = piecesTypeSelected.getPieceIndex(selectedModel);
                     if(dimention != null)
@@ -87,7 +83,6 @@ public class Main extends SimpleApplication
                     }
                     else
                     {
-                        
                         dimention = piecesTypeSelected.getPieceDimension(selectedModel);
                         if(dimention != null)
                             currentSelected = new Pair(dimention, "Map");
@@ -119,12 +114,10 @@ public class Main extends SimpleApplication
     public void initModels()
     {
         defaultMap = new DefaultMap(this);
+        piecesTypeSelected = PiecesFactory.GetPiecesType(this, "WhiteAndBlackOriginal");
         
         currentSelected = null;
         lastSelected = null;
-        piecesTypeSelected = PiecesFactory.GetPiecesType(this, "ZombiePieces") ;
-      //  originPiece = new OriginalPieces(this);
-      //  desertPiece = new Desert(this);
     }
 
     public void initKeys()
@@ -137,14 +130,10 @@ public class Main extends SimpleApplication
     
     private void updatePieces()
     {
-        
-        if(currentSelected != null && lastSelected != null && !currentSelected.equals(lastSelected) && ((String)lastSelected.getValue()).equalsIgnoreCase("Piece"))
-        {
-            //System.out.println(((Vector3f)lastSelected.getKey()) + " Last selected");
-            
+        if(isUpdatePiecesVaild())
+        {  
             Vector3i from = (Vector3i)lastSelected.getKey();
             Vector3i to = (Vector3i)currentSelected.getKey();
-           // desertPiece.Move(from, to);
             piecesTypeSelected.Move(from, to);
             currentSelected = null;
             lastSelected = null;           
@@ -156,36 +145,18 @@ public class Main extends SimpleApplication
     {
         initKeys();
         initModels();
-        inputManager.setCursorVisible(false);
-      
-        stateManager.attach((AppState) piecesTypeSelected);
-       // stateManager.attach(desertPiece);
+        addLight();
+        setCam();
         stateManager.attach(defaultMap);
-        //stateManager.attach(test);
-        
-        flyCam.setMoveSpeed(20);
-        cam.setLocation(camLocation);
-        cam.lookAt(camDirection, Vector3f.ZERO);
-        
-        Vector3f lightTarget = new Vector3f(12, 3.5f, 30);
-        SpotLight spot=new SpotLight();
-        
-        spot.setSpotRange(1000);
-        spot.setSpotInnerAngle(5*FastMath.DEG_TO_RAD);
-        spot.setSpotOuterAngle(10*FastMath.DEG_TO_RAD);
-        spot.setPosition(new Vector3f(3.5f, 50.0f, 3.5f));
-        spot.setDirection(new Vector3f(3.5f, 0.0f, 3.5f).subtract(spot.getPosition()));     
-        spot.setColor(ColorRGBA.White.mult(1));
-        rootNode.addLight(spot);
-        
+        stateManager.attach((AppState)piecesTypeSelected); 
     }    
-    
     
     @Override
     public void simpleUpdate(float tpf) 
     {
         //TODO: add update code
         updatePieces(); // user Interaction
+        updateCam();
         /*
             hna 7rk el pieces bta3tk bra7tk
             al3po hna mtl3po4 fe 7ta tnya
@@ -196,10 +167,61 @@ public class Main extends SimpleApplication
            originPiece.Move(1st, 2nd);
         */
     }
-
-    @Override
-    public void simpleRender(RenderManager rm) 
+    
+    // handling user "Weird" clicks
+    private boolean isUpdatePiecesVaild()
     {
-        //TODO: add render code
+        if(lastSelected == null || currentSelected == null)
+            return false;
+        int x = ((Vector3i)lastSelected.getKey()).x, z = ((Vector3i)lastSelected.getKey()).z;
+        return currentSelected != null && lastSelected != null && !currentSelected.equals(lastSelected) && ((String)lastSelected.getValue()).equalsIgnoreCase("Piece") 
+            && !(piecesTypeSelected.getPieceDimension(x, z).x == ((Vector3i)currentSelected.getKey()).x && piecesTypeSelected.getPieceDimension(x, z).z == ((Vector3i)currentSelected.getKey()).z);
+    }
+    
+    // lighting the game
+    private void addLight()
+    {
+        // for "unshaded" material
+        DirectionalLight dl = new DirectionalLight();
+        dl.setDirection(new Vector3f(3.5f, 0.0f, 3.5f));
+        rootNode.addLight(dl);
+        
+        // for "lighting" material "Doesn't affect unshadedMaterial"
+        Vector3f lightTarget = new Vector3f(12, 3.5f, 30);
+        SpotLight spot=new SpotLight();
+        spot.setSpotRange(1000);
+        spot.setSpotInnerAngle(5*FastMath.DEG_TO_RAD);
+        spot.setSpotOuterAngle(10*FastMath.DEG_TO_RAD);
+        spot.setPosition(new Vector3f(3.5f, 50.0f, 3.5f));
+        spot.setDirection(new Vector3f(3.5f, 0.0f, 3.5f).subtract(spot.getPosition()));     
+        spot.setColor(ColorRGBA.White.mult(1));
+        rootNode.addLight(spot);
+    }
+    
+    // setting cam location for first time
+    private void setCam()
+    {
+        flyCam.setMoveSpeed(20);
+        cam.setLocation(camLocation1);
+        inputManager.setCursorVisible(false);
+        cam.lookAt(camDirection, Vector3f.ZERO);
+    }
+    
+    // update the cam with each move
+    private void updateCam()
+    {
+        // using OR gatae as "simpleUpdate" is being called every single Second xD  
+        moveDone |= piecesTypeSelected.isMoveDone();
+        if(moveDone)
+        {   
+            if(firstPlayer)
+                cam.setLocation(camLocation1);
+            else
+                cam.setLocation(camLocation2);
+            moveDone = false;
+            firstPlayer = !firstPlayer;
+            System.out.println("Move is done");
+        }
+        cam.lookAt(camDirection, Vector3f.ZERO);  
     }
 }

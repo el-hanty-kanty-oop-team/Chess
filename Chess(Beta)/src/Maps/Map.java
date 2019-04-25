@@ -36,6 +36,15 @@ public abstract class Map extends AbstractAppState
         floor.setLocalTranslation(3.5f, 0.0f, 3.5f);
         mat.setTexture("DiffuseMap", text);
         floor.setMaterial(mat);
+        floor.setLocalScale(0.62f);
+        Node deathFloor1 = floor.clone(true);
+        deathFloor1.setLocalTranslation(3.5f, 1.0f, 10.5f);
+        deathFloor1.setLocalScale(0.62f, 0.62f, 0.2f);
+        Node deathFloor2 = deathFloor1.clone(true);
+        deathFloor2.setLocalTranslation(3.5f, 1.0f, -3.5f);
+
+        app.getRootNode().attachChild(deathFloor1);
+        app.getRootNode().attachChild(deathFloor2);
         app.getRootNode().attachChild(floor);
     }
     
