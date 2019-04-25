@@ -70,6 +70,12 @@ public abstract class Map extends AbstractAppState
             this.cell[i][j].setAttackLight();           
     }
     
+    public boolean isCellHighlighted(Cell cell)
+    {
+        int i = cell.getRow(), j = cell.getColumn();
+        return this.cell[i][j].isHighLighted();
+    }
+    
     public void removeHighlights()
     {
         for(int i = 0; i < numOfRows; i ++)

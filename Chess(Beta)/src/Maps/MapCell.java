@@ -86,8 +86,14 @@ public abstract class MapCell extends AbstractAppState
 
     }
     
+    public boolean isHighLighted()
+    {
+        return moveLight.isEnabled() || attackLight.isEnabled();
+    }
+    
     public void setAttackLight()
     {
+        attackLight.setEnabled(true);
         attackLight.setPosition(new Vector3f(cell.getRow(), 4.0f, cell.getColumn()));
         attackLight.setDirection(new Vector3f(cell.getRow(), 0.0f, cell.getColumn()).subtract(moveLight.getPosition()));     
         
@@ -127,6 +133,7 @@ public abstract class MapCell extends AbstractAppState
         mat.setTexture("DiffuseMap", texture);
         cellModel.setMaterial(mat);
     }
+    
     protected abstract void loadCell();
    
 }

@@ -1,7 +1,8 @@
 
 package mygame;
 
-import GamePackage.Cell;
+import GamePackage.*;
+import PlayerPackage.*;
 import Maps.DefaultMap;
 import Maps.Map;
 import PiecesAndAnimation.PiecesBehaviors;
@@ -20,8 +21,8 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Node;
+import java.util.ArrayList;
 import javafx.util.Pair;
 
 /**
@@ -37,7 +38,10 @@ public class Main extends SimpleApplication
     private PiecesBehaviors piecesTypeSelected ;
     private boolean firstPlayer = false, moveDone = false;
     private final Vector3f camLocation1 = new Vector3f(-6.5f, 8.0f, 3.5f), camLocation2 = new Vector3f(13.5f, 8.0f, 3.5f), camDirection = new Vector3f(3.5f, 0.0f, 3.5f);
-    
+    Player p1=new Player("hahaha", Color.Black) ;
+    Player p2=new Player("hehehee", Color.White) ;
+    Game game = new Game(GameMode.Multiplayer,p1,p2) ;
+
     private final ActionListener actionListener = new ActionListener() 
     {
         @Override
@@ -79,7 +83,9 @@ public class Main extends SimpleApplication
                     if(dimention != null)
                     {
                         currentSelected = new Pair(dimention, "Piece");
+                        Vector3i pieceHighLgiht = (dimention);
                         defaultMap.removeHighlights();
+                        HighlightAvailableMoves(pieceHighLgiht.getX(), pieceHighLgiht.getZ());
                     }
                     else
                     {
@@ -92,7 +98,6 @@ public class Main extends SimpleApplication
                         if(dimention != null)
                         {
                             currentSelected = new Pair(dimention, "Map");
-                            defaultMap.highLightCell(new Cell(dimention.x, dimention.z, ""), "Move");
                         }
                     }
                     System.out.println(currentSelected + " " + lastSelected);
@@ -134,9 +139,16 @@ public class Main extends SimpleApplication
         {  
             Vector3i from = (Vector3i)lastSelected.getKey();
             Vector3i to = (Vector3i)currentSelected.getKey();
+            Cell fromC = new Cell(piecesTypeSelected.getPieceDimension(from.x, from.z).x, piecesTypeSelected.getPieceDimension(from.x, from.z).z), toC = new Cell(to.x, to.z);
+            game.update(fromC, toC);
             piecesTypeSelected.Move(from, to);
+            defaultMap.removeHighlights();
             currentSelected = null;
-            lastSelected = null;           
+            lastSelected = null;
+            if(game.isCheckmated(Color.Black))
+            {
+                System.out.println(game.isCheckmated(Color.Black));
+            }
         }
     }
     
@@ -150,6 +162,28 @@ public class Main extends SimpleApplication
         stateManager.attach(defaultMap);
         stateManager.attach((AppState)piecesTypeSelected); 
     }    
+    
+    private void HighlightAvailableMoves(int i, int j)
+    {
+        if (currentSelected != null  && ((String)currentSelected.getValue()).equalsIgnoreCase("Piece"))
+        {
+            
+            Vector3i dimension = piecesTypeSelected.getPieceDimension(i, j);
+            ArrayList<Cell> list;
+            list = game.board.pieces[dimension.x][dimension.z].possible_moves(new Cell(dimension.x, dimension.z), game.board);
+            for(Cell c : list)
+            {
+                if (c.special_move == 1 )
+                {
+                               // spetial mpve found
+                }
+                defaultMap.highLightCell(c, "Move");
+            }
+            Vector3i xyz=(Vector3i)currentSelected.getKey() ;
+            Pair<Integer,Integer>pp=new Pair<>((int)xyz.x,(int)xyz.z);
+        }
+        
+    }
     
     @Override
     public void simpleUpdate(float tpf) 
@@ -173,9 +207,13 @@ public class Main extends SimpleApplication
     {
         if(lastSelected == null || currentSelected == null)
             return false;
+        Vector3i toI = (Vector3i)currentSelected.getKey();
+        Cell to = new Cell(toI.x, toI.z);
+        System.out.println(to.getRow() + " " + to.getColumn() + " " +defaultMap.isCellHighlighted(to));
         int x = ((Vector3i)lastSelected.getKey()).x, z = ((Vector3i)lastSelected.getKey()).z;
         return currentSelected != null && lastSelected != null && !currentSelected.equals(lastSelected) && ((String)lastSelected.getValue()).equalsIgnoreCase("Piece") 
-            && !(piecesTypeSelected.getPieceDimension(x, z).x == ((Vector3i)currentSelected.getKey()).x && piecesTypeSelected.getPieceDimension(x, z).z == ((Vector3i)currentSelected.getKey()).z);
+            && !(piecesTypeSelected.getPieceDimension(x, z).x == ((Vector3i)currentSelected.getKey()).x && piecesTypeSelected.getPieceDimension(x, z).z == ((Vector3i)currentSelected.getKey()).z)
+            &&  defaultMap.isCellHighlighted(to);
     }
     
     // lighting the game

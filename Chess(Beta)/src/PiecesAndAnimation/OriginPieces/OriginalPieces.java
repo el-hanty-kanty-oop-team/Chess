@@ -36,6 +36,7 @@ public class OriginalPieces extends AbstractOriginalPieces
         p = new Pair<>(i,j); 
         map.put(p, s) ;           
     }
+    
    
     private void load_Characters_Models()
     {
