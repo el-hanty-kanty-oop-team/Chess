@@ -33,7 +33,7 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
     protected Pair dimension[][];
     protected float modelScale;
    
-    private boolean killed[][], isMoveDone;
+    private boolean killed[][], promoted[], isMoveDone;
     private int x, z;
     
     public AbstractAnimationPieces(SimpleApplication app) 
@@ -45,6 +45,7 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
         rootNode = app.getRootNode();
         stateManager = app.getStateManager();
         piece = new PieceAnimation[4][8];
+        promoted = new boolean[8];
         dimension = new Pair[4][8];
         killed = new boolean[4][8];
         x = z = -1;
@@ -105,8 +106,6 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
         {   
             if(piece[x][z].attackIterationStarted())
                 check(x, z, true);
-            if((piece[x][z] instanceof PiecesAndAnimation.PiecesAnimation.ZombieMode.Pawn || piece[x][z] instanceof PiecesAndAnimation.PiecesAnimation.MagicalMode.Pawn ) && piece[x][z].isMoveDone())
-                checkPawnToQueen(x, z);
         }
     }
     
@@ -149,6 +148,88 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
     }
     
     
+    
+    @Override
+    public boolean checkPromotion(int i, int j)
+    {
+        int r = (int)dimension[i][j].getKey(), c = (int)dimension[i][j].getValue();
+        System.out.println(promoted[j]);
+        if(i == 1)
+        {
+            boolean check = !promoted[j] && r == 7;
+            
+            if(check)
+                promoted[j] = true;
+            
+            return check;
+        }
+        else if(i == 2)
+        {
+            boolean check = !promoted[j] && r == 0;
+            
+            if(check)
+                promoted[j] = true;
+            
+            return check;
+        }
+        
+        return false;
+    }
+    
+    @Override
+    public void promote(int r, int c, int type)
+    {
+        /*
+        
+        rootNode.detachChild(piece[r][c].getLocalNode());
+        stateManager.detach(piece[r][c]);
+        if(piece[r][c] instanceof PiecesAndAnimation.PiecesAnimation.ZombieMode.Pawn)
+            piece[r][c] = new PiecesAndAnimation.PiecesAnimation.ZombieMode.Queen(app, (int)dimension[r][c].getKey(), (int)dimension[r][c].getValue(), r == 1);
+        else
+            piece[r][c] = new PiecesAndAnimation.PiecesAnimation.MagicalMode.Queen(app, (int)dimension[r][c].getKey(), (int)dimension[r][c].getValue(), r == 1);
+        stateManager.attach(piece[r][c]);
+           
+        */
+        rootNode.detachChild(piece[r][c].getLocalNode());
+        stateManager.detach(piece[r][c]);
+        
+        switch(type)
+        {
+            case 0:
+                
+                if(piece[r][c] instanceof PiecesAndAnimation.PiecesAnimation.ZombieMode.Pawn)
+                    piece[r][c] = new PiecesAndAnimation.PiecesAnimation.ZombieMode.Castle(app, (int)dimension[r][c].getKey(), (int)dimension[r][c].getValue(), r == 1);
+                else
+                    piece[r][c] = new PiecesAndAnimation.PiecesAnimation.MagicalMode.Castle(app, (int)dimension[r][c].getKey(), (int)dimension[r][c].getValue(), r == 1);
+            
+                break;
+            
+            case 1:
+                
+                if(piece[r][c] instanceof PiecesAndAnimation.PiecesAnimation.ZombieMode.Pawn)
+                    piece[r][c] = new PiecesAndAnimation.PiecesAnimation.ZombieMode.Bishop(app, (int)dimension[r][c].getKey(), (int)dimension[r][c].getValue(), r == 1);
+                else
+                    piece[r][c] = new PiecesAndAnimation.PiecesAnimation.MagicalMode.Bishop(app, (int)dimension[r][c].getKey(), (int)dimension[r][c].getValue(), r == 1);            break;
+            
+            case 2:
+                
+                if(piece[r][c] instanceof PiecesAndAnimation.PiecesAnimation.ZombieMode.Pawn)
+                    piece[r][c] = new PiecesAndAnimation.PiecesAnimation.ZombieMode.Knight(app, (int)dimension[r][c].getKey(), (int)dimension[r][c].getValue(), r == 1);
+                else
+                    piece[r][c] = new PiecesAndAnimation.PiecesAnimation.MagicalMode.Knight(app, (int)dimension[r][c].getKey(), (int)dimension[r][c].getValue(), r == 1);
+                break;
+            
+            case 3:
+                
+                if(piece[r][c] instanceof PiecesAndAnimation.PiecesAnimation.ZombieMode.Pawn)
+                    piece[r][c] = new PiecesAndAnimation.PiecesAnimation.ZombieMode.Queen(app, (int)dimension[r][c].getKey(), (int)dimension[r][c].getValue(), r == 1);
+                else
+                    piece[r][c] = new PiecesAndAnimation.PiecesAnimation.MagicalMode.Queen(app, (int)dimension[r][c].getKey(), (int)dimension[r][c].getValue(), r == 1);
+                break;
+        }
+        stateManager.attach(piece[r][c]);
+    }
+    
     private boolean check(int r, int c, boolean kill)
     {
         for(int i = 0; i < piece.length; i ++)
@@ -170,20 +251,6 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
             }
         }
         return false;
-    }
-    
-    private void checkPawnToQueen(int r, int c)
-    {
-        if((int)dimension[r][c].getKey() == 7 || (int)dimension[r][c].getKey() == 0)
-        {
-            rootNode.detachChild(piece[r][c].getLocalNode());
-            stateManager.detach(piece[r][c]);
-            if(piece[r][c] instanceof PiecesAndAnimation.PiecesAnimation.ZombieMode.Pawn)
-                piece[r][c] = new PiecesAndAnimation.PiecesAnimation.ZombieMode.Queen(app, (int)dimension[r][c].getKey(), (int)dimension[r][c].getValue(), r == 1);
-            else
-                piece[r][c] = new PiecesAndAnimation.PiecesAnimation.MagicalMode.Queen(app, (int)dimension[r][c].getKey(), (int)dimension[r][c].getValue(), r == 1);
-            stateManager.attach(piece[r][c]);
-        }   
     }
     
     private void kill(int i, int j)

@@ -9,6 +9,7 @@ package PiecesAndAnimation.OriginPieces;
 import PiecesAndAnimation.PiecesBehaviors;
 import Tools.Vector3i;
 import com.jme3.app.state.AbstractAppState;
+import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.cinematic.MotionPath;
 import com.jme3.cinematic.events.MotionEvent;
@@ -30,11 +31,13 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
     public Map< Pair<Integer,Integer>,String> map; 
     
     protected AssetManager assetManager;
-    protected boolean killed[][];
+    protected boolean killed[][], promoted[];
     protected float modelScale;
     protected Node localNode, rootNode, piece[][];
     protected Pair dimension[][];
-    
+    protected AppStateManager stateManager;
+    protected Pair<Integer,Integer> p;
+
     private boolean isMoveDone = false;
     
     @Override
@@ -81,6 +84,7 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
        
         MotionPath path = new MotionPath();
         path.addWayPoint(piece[x][z].getLocalTranslation());
+        
         if((x == 0 || x == 3) && (z == 1 || z == 6))
         {
             Vector3f mid = new Vector3f((piece[x][z].getLocalTranslation().x + toF.x) / 2.0f, 1.0f, (piece[x][z].getLocalTranslation().z + toF.z) / 2.0f);
@@ -94,9 +98,7 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
             @Override
             public void onStop()
             {
-             // todo checkPawnTransfrom()
                 isMoveDone = true;
-                System.out.println(".onStop()");
             }
         };
        // motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
@@ -119,9 +121,71 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
         return done;
     }
     
-    private void checkPawnTransform()
+    @Override
+    public boolean checkPromotion(int i, int j)
     {
+        int r = (int)dimension[i][j].getKey(), c = (int)dimension[i][j].getValue();
+        System.out.println(i + " " + j);
+        if(i == 1)
+        {
+            boolean check = !promoted[j] && r == 7;
+            System.out.println("pawn check " + promoted[j]  + " " + r);
+            if(check)
+                promoted[j] = true;
+            
+            return check;
+        }
+        else if(i == 2)
+        {
+            boolean check = !promoted[j] && r == 0;
+            
+            if(check)
+                promoted[j] = true;
+            
+            return check;
+        }
         
+        return false;
+    }
+    
+    @Override
+    public void promote(int i, int j, int type)
+    {
+        String color = "";
+        
+        if(i == 1)
+            color = "";
+        else if(i == 2)
+            color = "Black ";
+        localNode.detachChild(piece[i][j]);
+        switch(type)
+        {
+            case 0:
+                piece[i][j] = (Node)(((Node)assetManager.loadModel("Models/OriginPieces/OriginPieces.j3o")).getChild(color + "Rock"));
+                setMAp(color + "Rock", i, j);
+            break;
+            
+            case 1:
+               piece[i][j] = (Node)(((Node)assetManager.loadModel("Models/OriginPieces/OriginPieces.j3o")).getChild(color + "Bishop"));
+               setMAp(color + "Bishop", i, j);
+            break;
+            
+            case 2:
+                piece[i][j] = (Node)(((Node)assetManager.loadModel("Models/OriginPieces/OriginPieces.j3o")).getChild(color + "Knight"));
+                setMAp(color + "Knight", i, j);
+            break;
+            
+            case 3:
+                piece[i][j] = (Node)(((Node)assetManager.loadModel("Models/OriginPieces/OriginPieces.j3o")).getChild(color + "Queen"));
+                setMAp(color + "Queen", i, j);
+            break;
+        }
+        piece[i][j].setLocalScale(modelScale);
+        if(type == 3)
+            piece[i][j].setLocalTranslation((int)dimension[i][j].getKey(), 0.1f, (int)dimension[i][j].getValue());
+        else
+            piece[i][j].setLocalTranslation((int)dimension[i][j].getKey(), 0.0f, (int)dimension[i][j].getValue());
+        localNode.attachChild(piece[i][j]);
     }
     
     private void check(int x, int z)
@@ -143,9 +207,14 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
         }
     }
     
+    protected void setMAp (String s ,int i ,int j)
+    {
+        p = new Pair<>(i,j); 
+        map.put(p, s) ;           
+    }
+    
     private void kill(int i, int j)
     {
-        
         Vector3f diePosition;
         if(map.get(new Pair(i, j)).contains("White"))
         {

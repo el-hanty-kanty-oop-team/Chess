@@ -69,6 +69,7 @@ abstract public class Piece {
         for (int i = y - 1; i >= 0; i--) {
             if (board[x][i] != null) {
                 if (board[x][i] instanceof Rook || board[x][i] instanceof Queen) {
+                    System.out.println("X = " + x + ", Y = " + y + ", i = " + i  + ", Color = " + board[x][y].color + ", color = " + board[x][i].color);
                     if (board[x][i].color != board[x][y].color) {
                         ok = false;
                     }

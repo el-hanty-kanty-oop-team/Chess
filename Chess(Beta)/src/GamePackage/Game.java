@@ -115,6 +115,9 @@ public boolean draw(Color c) {
 
     public void update(Cell from, Cell to){
         // updating steps , moveid , 50MovesRule Counter
+        if(board.pieces[from.getRow()][from.getColumn()] instanceof King){
+            System.out.println("King is here");
+        }
         System.out.println(from.getRow() + " " + from.getColumn());
         board.pieces[from.getRow()][from.getColumn()].steps++;
         board.pieces[from.getRow()][from.getColumn()].last_move_id = board.moveid;
@@ -123,6 +126,7 @@ public boolean draw(Color c) {
             this.moves = 0;
         else
             this.moves++;
+        board.pieces[from.getRow()][from.getColumn()].setPos(new Cell(to.getRow(), to.getColumn()));
         board.pieces[to.getRow()][to.getColumn()] = board.pieces[from.getRow()][from.getColumn()];
         board.pieces[from.getRow()][from.getColumn()] = null;
         if(to.special_move == 1){
@@ -150,16 +154,16 @@ public boolean draw(Color c) {
         if(c.getRow() == 0)
             col = Color.White;
         switch (choice) {
-            case 1:
+            case 3:
                 board.pieces[c.getRow()][c.getColumn()] = new Queen(c, col);
                 break;
-            case 2:
+            case 1:
                 board.pieces[c.getRow()][c.getColumn()] = new Bishop(c, col);
                 break;
-            case 3:
+            case 2:
                 board.pieces[c.getRow()][c.getColumn()] = new Knight(c, col);
                 break;
-            case 4:
+            case 0:
                 board.pieces[c.getRow()][c.getColumn()] = new Rook(c, col);
                 break;
             default:

@@ -20,6 +20,8 @@ public interface PiecesBehaviors
     public Vector3i getPieceIndex(Spatial s)  ;
     public void Move(Vector3i pieceIndex, Vector3i to);
     public boolean isMoveDone();
+    public boolean checkPromotion(int i, int j);
+    public void promote(int i, int j, int type);
 }
 
 

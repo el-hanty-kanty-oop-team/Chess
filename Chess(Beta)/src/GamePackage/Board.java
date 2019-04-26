@@ -34,7 +34,7 @@ public class Board {
         pieces[7][0] = new Rook(new Cell(7, 0), Color.White);
         pieces[7][7] = new Rook(new Cell(7, 7), Color.White);
         pieces[7][1] = new Knight(new Cell(7, 1), Color.White);
-        pieces[3][4] = new Knight(new Cell(3, 4), Color.White);
+        pieces[7][6] = new Knight(new Cell(7, 6), Color.White);
         pieces[7][2] = new Bishop(new Cell(7, 2), Color.White);
         pieces[7][5] = new Bishop(new Cell(7, 5), Color.White);
         pieces[7][3] = new Queen(new Cell(7, 3), Color.White);

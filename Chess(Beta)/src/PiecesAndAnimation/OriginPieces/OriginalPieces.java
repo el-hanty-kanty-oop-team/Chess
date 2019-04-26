@@ -9,7 +9,6 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import java.util.HashMap;
-import java.util.Map;
 import javafx.util.Pair;
 
 /**
@@ -18,24 +17,21 @@ import javafx.util.Pair;
  */
 public class OriginalPieces extends AbstractOriginalPieces
 {
-    private Pair<Integer,Integer> p;
     public OriginalPieces(SimpleApplication app) 
     {
         map = new HashMap<>();
         modelScale = 0.15f;
         localNode = new Node();
         assetManager = app.getAssetManager();
+        stateManager = app.getStateManager();
         rootNode = app.getRootNode();
         piece = new Node[4][8];
+        promoted = new boolean[8];
         dimension = new Pair[4][8];
         killed = new boolean[4][8];
     }
    
-    private void setMAp (String s ,int i ,int j)
-    {
-        p = new Pair<>(i,j); 
-        map.put(p, s) ;           
-    }
+    
     
    
     private void load_Characters_Models()
@@ -46,13 +42,14 @@ public class OriginalPieces extends AbstractOriginalPieces
         {
             piece[1][j] = (Node)(((Node)assetManager.loadModel("Models/OriginPieces/OriginPieces.j3o")).getChild("White Pawn"));
             setMAp( "White Pawn", 1, j) ;
-
         }
+        
         for(int j = 0; j < 8; j ++)
         {
             piece[2][j] = (Node)(((Node)assetManager.loadModel("Models/OriginPieces/OriginPieces.j3o")).getChild("Black Pawn"));
             setMAp( "Black Pawn", 2, j) ;
         }
+        
         piece[3][0] = (Node)(((Node)assetManager.loadModel("Models/OriginPieces/OriginPieces.j3o")).getChild("Black Rock"));
         piece[3][7] = (Node)(((Node)assetManager.loadModel("Models/OriginPieces/OriginPieces.j3o")).getChild("Black Rock"));
         setMAp("Black Rock", 3, 0);
@@ -102,6 +99,7 @@ public class OriginalPieces extends AbstractOriginalPieces
             float up = 0.0f;
             if(i % 2 == 1)
                 up = 0.1f;
+            
             for(int j = 0; j < 8 ; j ++)
             {
                 piece[i][j].setLocalScale(modelScale);
@@ -110,6 +108,7 @@ public class OriginalPieces extends AbstractOriginalPieces
                 localNode.attachChild(piece[i][j]);
             }
         }
+        
         // white knights
         piece[0][1].setLocalTranslation(0, 0.1f, 1);
         piece[0][6].setLocalTranslation(0, 0.1f, 6);
@@ -122,6 +121,7 @@ public class OriginalPieces extends AbstractOriginalPieces
             float up = 0.0f;
             if(i % 2 == 0)
                 up = 0.1f;
+            
             for(int j = 0; j < 8 ; j ++)
             {
                 piece[i][j].setLocalScale(modelScale);
@@ -131,6 +131,7 @@ public class OriginalPieces extends AbstractOriginalPieces
                 localNode.attachChild(piece[i][j]);
             }
         }
+        
         // black knights
         piece[3][1].setLocalTranslation(7, 0.1f, 1);
         piece[3][6].setLocalTranslation(7, 0.1f, 6);
