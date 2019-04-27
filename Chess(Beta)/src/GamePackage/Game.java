@@ -18,8 +18,8 @@ public class Game {
         this.mode = mode;
         board = new Board();
         turn = false;
-        board.whiteKing = board.pieces[7][4];
-        board.blackKing = board.pieces[0][4];
+        board.whiteKing = board.pieces[0][4];
+        board.blackKing = board.pieces[7][4];
         moves = 0;
         number_of_pieces = 32;
     }
@@ -28,10 +28,7 @@ public class Game {
         Color c = Color.White;
         while (!isCheckmated(c)) {
             //body
-            ArrayList<Cell> list = board.pieces[3][4].possible_moves(new Cell(3, 4), board);
-            for(int i = 0; i < list.size(); i++){
-                System.out.println(list.get(i).getRow() + " " + list.get(i).getColumn() + " " + list.get(i).special_move);
-            }
+            ArrayList<Cell> list = board.pieces[3][4].possible_moves(new Cell(3, 4), board);     
             //turn = !turn;
             if (c == Color.Black) {
                 c = Color.White;
@@ -115,10 +112,6 @@ public boolean draw(Color c) {
 
     public void update(Cell from, Cell to){
         // updating steps , moveid , 50MovesRule Counter
-        if(board.pieces[from.getRow()][from.getColumn()] instanceof King){
-            System.out.println("King is here");
-        }
-        System.out.println(from.getRow() + " " + from.getColumn());
         board.pieces[from.getRow()][from.getColumn()].steps++;
         board.pieces[from.getRow()][from.getColumn()].last_move_id = board.moveid;
         board.moveid++;
@@ -131,7 +124,7 @@ public boolean draw(Color c) {
         board.pieces[from.getRow()][from.getColumn()] = null;
         if(to.special_move == 1){
             if(board.pieces[from.getRow()][from.getColumn()] instanceof Pawn){
-                if(board.pieces[from.getRow()][from.getColumn()].getColor() == Color.Black)
+                if(board.pieces[from.getRow()][from.getColumn()].getColor() == Color.White)
                    board.pieces[to.getRow() - 1][to.getColumn()] = null;
                 else
                    board.pieces[to.getRow() + 1][to.getColumn()] = null;
@@ -150,9 +143,9 @@ public boolean draw(Color c) {
     }
  
     public void  makePromotion(Cell c, int choice){
-        Color col = Color.Black;
+        Color col = Color.White;
         if(c.getRow() == 0)
-            col = Color.White;
+            col = Color.Black;
         switch (choice) {
             case 3:
                 board.pieces[c.getRow()][c.getColumn()] = new Queen(c, col);

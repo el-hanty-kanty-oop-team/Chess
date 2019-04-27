@@ -25,9 +25,9 @@ public class Pawn extends Piece {
         } else {
             king = b.blackKing;
         }
-        int dx = 1;
+        int dx = -1;
         if (board[current.getRow()][current.getColumn()].color == Color.White) {
-            dx = -1;
+            dx = 1;
         }
         // checking for the first move
         if (this.steps == 0 && board[current.getRow() + dx][current.getColumn()] == null && board[current.getRow() + 2 * dx][current.getColumn()] == null) {

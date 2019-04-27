@@ -1,5 +1,4 @@
 package GamePackage;
-import GamePackage.Cell;
 import PiecePackage.*;
 public class SingleMove {
     Cell to,from;
@@ -10,4 +9,18 @@ public class SingleMove {
         this.from = from;
         this.p = p;
     }
+    public SingleMove(Cell to, Cell from) {
+        this.to = to;
+        this.from = from;
+    } 
+
+    public Cell getTo() {
+        return to;
+    }
+
+    public Cell getFrom() {
+        return from;
+    }
+
+    
 }

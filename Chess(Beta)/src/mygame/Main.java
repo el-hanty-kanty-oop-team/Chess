@@ -37,11 +37,12 @@ public class Main extends SimpleApplication
     private Map defaultMap; 
     private Pair currentSelected, lastSelected, lastSelectedPiece; 
     private PiecesBehaviors piecesTypeSelected;
-    private boolean firstPlayer = false, moveDone = false, promotionDone = false, checkPromotion;
+    private boolean firstPlayer = false, moveDone = false, promotionDone = false, checkPromotion, engineMove = true, ok = true;
     private final Vector3f camLocation1 = new Vector3f(-6.5f, 8.0f, 3.5f), camLocation2 = new Vector3f(13.5f, 8.0f, 3.5f), camDirection = new Vector3f(3.5f, 0.0f, 3.5f);
-    private final Player p1 = new Player("hahaha", Color.Black) ;
-    private final Player p2 = new Player("hehehee", Color.White) ;
-    private final Game game = new Game(GameMode.Multiplayer,p1,p2) ;
+    private final Player p1 = new Player("hahaha", Color.White) ;
+    private final Player p2 = new Player("hehehee", Color.Black) ;
+    private final AI ai = new AI(Color.Black);
+    private final Game game = new Game(GameMode.Multiplayer, p1, p2) ;
 
     private final ActionListener actionListener = new ActionListener() 
     {
@@ -123,7 +124,7 @@ public class Main extends SimpleApplication
     public void initModels()
     {
         defaultMap = new DefaultMap(this);
-        piecesTypeSelected = PiecesFactory.GetPiecesType(this, "ZombiePieces");
+        piecesTypeSelected = PiecesFactory.GetPiecesType(this, "WhiteAndBlackOriginal");
         
         currentSelected = null;
         lastSelected = null;
@@ -141,8 +142,10 @@ public class Main extends SimpleApplication
     {
         if(isUpdatePiecesVaild())
         {  
+            System.out.println("Update Pieces");
             Vector3i from = (Vector3i)lastSelected.getKey();
             Vector3i to = (Vector3i)currentSelected.getKey();
+            String type = (String)lastSelected.getValue();
             lastSelectedPiece = new Pair(from.x, from.z);
             Cell fromC = new Cell(piecesTypeSelected.getPieceDimension(from.x, from.z).x, piecesTypeSelected.getPieceDimension(from.x, from.z).z), toC = new Cell(to.x, to.z);
             game.update(fromC, toC);
@@ -151,8 +154,14 @@ public class Main extends SimpleApplication
             currentSelected = null;
             lastSelected = null;
             
+            System.out.println(fromC.getRow() + " " + fromC.getColumn()  + " To " + to.x + " " + to.z);
+            if(fromC.getRow() < 2)
+                System.out.println("Black Move");
+            else
+                System.out.println("White Move");
+            engineMove = !engineMove;
             //TODO: gui display who wins the game
-            if(game.isCheckmated(Color.Black))
+           /* if(game.isCheckmated(Color.Black))
             {
                 System.out.println(" hhhh 5srt ");
               //  app.stop() ; 
@@ -164,7 +173,7 @@ public class Main extends SimpleApplication
             else if(game.draw(Color.Black) || game.draw(Color.White))
             {
                 System.out.println(" Draaaaaaaaaaaaaaaaaaaw ");
-            }
+            }*/
         }
     }
     
@@ -211,6 +220,7 @@ public class Main extends SimpleApplication
         //TODO: add update code
         updatePieces(); // user Interaction
         updateCam();
+        //Engine();
         stateManager.update(tpf);
         /*
             hna 7rk el pieces bta3tk bra7tk
@@ -234,9 +244,9 @@ public class Main extends SimpleApplication
         //System.out.println(to.getRow() + " " + to.getColumn() + " " +defaultMap.isCellHighlighted(to));
         int x = ((Vector3i)lastSelected.getKey()).x, z = ((Vector3i)lastSelected.getKey()).z;
         
-        return currentSelected != null && lastSelected != null && !currentSelected.equals(lastSelected) && ((String)lastSelected.getValue()).equalsIgnoreCase("Piece") 
+        return (currentSelected != null && lastSelected != null && !currentSelected.equals(lastSelected) && ((String)lastSelected.getValue()).equalsIgnoreCase("Piece") 
             && !(piecesTypeSelected.getPieceDimension(x, z).x == ((Vector3i)currentSelected.getKey()).x && piecesTypeSelected.getPieceDimension(x, z).z == ((Vector3i)currentSelected.getKey()).z)
-            &&  defaultMap.isCellHighlighted(to) && ((!firstPlayer && x < 2) || (firstPlayer && x > 1));
+            &&  defaultMap.isCellHighlighted(to) && ((!firstPlayer && x < 2) || (firstPlayer && x > 1))) || (engineMove && ((String)lastSelected.getValue()).equalsIgnoreCase("Engine"));
     }
     
     // lighting the game
@@ -266,6 +276,20 @@ public class Main extends SimpleApplication
         cam.setLocation(camLocation1);
         inputManager.setCursorVisible(false);
         cam.lookAt(camDirection, Vector3f.ZERO);
+    }
+    
+    private void Engine()
+    {
+       if(engineMove && ok)
+       {
+            System.out.println("Engine Move");
+            SingleMove sm = ai.root(3, true, game.board);
+            Cell from = sm.getFrom(), to = sm.getTo();
+            System.out.println( " NULLLLLLLLLLLLLL " + from.getRow() + " " + from.getColumn()  + " NULLLLLLLLLLLLLL " +  to.getRow() +  " " + to.getColumn());
+            int r = piecesTypeSelected.getPieceIndex(from.getRow(), from.getColumn()).x, c = piecesTypeSelected.getPieceIndex(from.getRow(), from.getColumn()).z;
+            lastSelected = new Pair(new Vector3i(r, 0, c), "Engine");
+            currentSelected = new Pair(new Vector3i(to.getRow(), 0, to.getColumn()), "Map");
+       }
     }
     
     // update the cam with each move
@@ -306,6 +330,7 @@ public class Main extends SimpleApplication
                 cam.setLocation(camLocation2);
         
             moveDone = promotionDone = false;
+            ok = !ok;
             firstPlayer = !firstPlayer;
             System.out.println("Move is done");
         }

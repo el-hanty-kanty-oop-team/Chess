@@ -17,7 +17,8 @@ public interface PiecesBehaviors
 {
     public Vector3i getPieceDimension(Spatial s);
     public Vector3i getPieceDimension(int x, int z);
-    public Vector3i getPieceIndex(Spatial s)  ;
+    public Vector3i getPieceIndex(Spatial s);
+    public Vector3i getPieceIndex(int x, int y);
     public void Move(Vector3i pieceIndex, Vector3i to);
     public boolean isMoveDone();
     public boolean checkPromotion(int i, int j);

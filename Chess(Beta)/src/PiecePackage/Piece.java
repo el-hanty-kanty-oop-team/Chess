@@ -48,6 +48,7 @@ abstract public class Piece {
 
         boolean ok = true;
         int x = king.pos.getRow(), y = king.pos.getColumn();
+        System.out.println("King Positon = " + x + " " + y);
         ///**///
         Piece cur = board[currentPos.getRow()][currentPos.getColumn()];
         Piece nxt = board[nextPos.getRow()][nextPos.getColumn()];
@@ -69,7 +70,7 @@ abstract public class Piece {
         for (int i = y - 1; i >= 0; i--) {
             if (board[x][i] != null) {
                 if (board[x][i] instanceof Rook || board[x][i] instanceof Queen) {
-                    System.out.println("X = " + x + ", Y = " + y + ", i = " + i  + ", Color = " + board[x][y].color + ", color = " + board[x][i].color);
+                    System.out.println("X = "  + x + ", y = b" + y + ", i = " + i + ", color = " + board[x][y].color);
                     if (board[x][i].color != board[x][y].color) {
                         ok = false;
                     }
@@ -154,27 +155,27 @@ abstract public class Piece {
                 break;
             }
         }
-        if (king.color == Color.Black) {
+        if (king.color == Color.White) {
             if (check_valid_borders(x + 1, y + 1) && board[x + 1][y + 1] != null) {
-                if (board[x + 1][y + 1].color == Color.White && board[x + 1][y + 1] instanceof Pawn) {
+                if (board[x + 1][y + 1].color == Color.Black && board[x + 1][y + 1] instanceof Pawn) {
                     ok = false;
                 }
             }
             else if (check_valid_borders(x + 1, y - 1) && board[x + 1][y - 1] != null) {
-                if (board[x + 1][y - 1].color == Color.White && board[x + 1][y - 1] instanceof Pawn) {
+                if (board[x + 1][y - 1].color == Color.Black && board[x + 1][y - 1] instanceof Pawn) {
                     ok = false;
                 }
             }
             
         }
-        else if (king.color == Color.White) {
+        else if (king.color == Color.Black) {
             if (check_valid_borders(x - 1, y + 1) && board[x - 1][y + 1] != null) {
-                if (board[x - 1][y + 1].color == Color.Black && board[x - 1][y + 1] instanceof Pawn) {
+                if (board[x - 1][y + 1].color == Color.White && board[x - 1][y + 1] instanceof Pawn) {
                     ok = false;
                 }
             }
             else if (check_valid_borders(x - 1, y - 1) && board[x - 1][y - 1] != null) {
-                if (board[x - 1][y - 1].color == Color.Black && board[x - 1][y - 1] instanceof Pawn) {
+                if (board[x - 1][y - 1].color == Color.White && board[x - 1][y - 1] instanceof Pawn) {
                     ok = false;
                 }
             }

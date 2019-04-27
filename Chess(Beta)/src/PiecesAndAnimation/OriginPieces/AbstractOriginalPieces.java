@@ -75,6 +75,20 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
     }
     
     @Override
+    public Vector3i getPieceIndex(int r, int c)
+    {
+        for(int i = 0; i < piece.length; i ++)
+        {
+            for(int j = 0; j < piece[i].length; j ++)
+            {
+                if((int)dimension[i][j].getKey() == r && (int)dimension[i][j].getValue() == c)
+                    return new Vector3i(i, 0, j);
+            }
+        }
+        return null;
+    }
+    
+    @Override
     public void Move(Vector3i pieceIndex, Vector3i to)
     {
         int x = pieceIndex.x, z = pieceIndex.z;

@@ -8,9 +8,16 @@ public class Cell {
         this.Column = y;
         this.special_move = 0;
     }
+    
+    public Cell() {
+        this.Row = -1;
+        this.Column = -1;
+    }
+    
     public boolean isEqual(Cell c){
         return c.Row == this.Row && c.Column == this.Column;
     }
+    
     public Cell(int x, int y, int special_move) {
         this.Row = x;
         this.Column = y;

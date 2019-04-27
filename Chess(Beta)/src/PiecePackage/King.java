@@ -29,9 +29,9 @@ public class King extends Piece {
             }
         }
         // checking castling
-        int row = 0;
+        int row = 7;
         if(king.color == Color.White)
-            row = 7;
+            row = 0;
         if(king.steps == 0){
             //checking right castling
             if(board[row][7] instanceof Rook && board[row][7].steps == 0 && board[row][5] == null && board[row][6] == null){
