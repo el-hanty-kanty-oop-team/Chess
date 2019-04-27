@@ -9,33 +9,36 @@ public class Game {
     public Board board;
     boolean turn;
     GameMode mode;
-    int moves, number_of_pieces;
+    int moves,doublemove_indicator;
     Player firstPlayer, secondPlayer;
-    Stack<DoubleMove> move_history = new Stack<>();
+    DoubleMove current_move;
+    Stack<DoubleMove> move_history;
     public Game(GameMode mode, Player firstPlayer, Player secondPlayer) {
-        this.firstPlayer = firstPlayer;
-        this.secondPlayer = secondPlayer;
+        moves = 0;
+        turn = false;
         this.mode = mode;
         board = new Board();
-        turn = false;
+        doublemove_indicator = 0;
+        move_history = new Stack<>();
+        this.firstPlayer = firstPlayer;
+        current_move = new DoubleMove();
+        this.secondPlayer = secondPlayer;
         board.whiteKing = board.pieces[0][4];
         board.blackKing = board.pieces[7][4];
-        moves = 0;
-        number_of_pieces = 32;
     }
 
     public void run() {
         Color c = Color.White;
         while (!isCheckmated(c)) {
-            //body
-            ArrayList<Cell> list = board.pieces[3][4].possible_moves(new Cell(3, 4), board);     
-            //turn = !turn;
-            if (c == Color.Black) {
-                c = Color.White;
-            } else {
-                c = Color.Black;
-            }
-            break;
+//            //body
+//            //ArrayList<Cell> list = board.pieces[3][4].possible_moves(new Cell(3, 4), board);     
+//            //turn = !turn;
+//            if (c == Color.Black) {
+//                c = Color.White;
+//            } else {
+//                c = Color.Black;
+//            }
+//            break;
         }
     }
 
@@ -77,7 +80,7 @@ public class Game {
         move_history.push(d3);
         move_history.push(d2);
         move_history.push(d1);
-        if(d1.equals(d2) && d2.equals(d3))
+        if(d1.equalTo(d2) && d2.equalTo(d3))
             return true;
         return false;
     }
@@ -111,6 +114,7 @@ public boolean draw(Color c) {
     }
 
     public void update(Cell from, Cell to){
+       
         // updating steps , moveid , 50MovesRule Counter
         board.pieces[from.getRow()][from.getColumn()].steps++;
         board.pieces[from.getRow()][from.getColumn()].last_move_id = board.moveid;
@@ -119,7 +123,7 @@ public boolean draw(Color c) {
             this.moves = 0;
         else
             this.moves++;
-        board.pieces[from.getRow()][from.getColumn()].setPos(new Cell(to.getRow(), to.getColumn()));
+        board.pieces[from.getRow()][from.getColumn()].setPos(to);
         board.pieces[to.getRow()][to.getColumn()] = board.pieces[from.getRow()][from.getColumn()];
         board.pieces[from.getRow()][from.getColumn()] = null;
         if(to.special_move == 1){
@@ -140,6 +144,18 @@ public boolean draw(Color c) {
                 }
             }
         }
+        // saving game history
+        if(this.doublemove_indicator == 0){
+            this.current_move.player1_move = new SingleMove(to, from,  board.pieces[to.getRow()][to.getColumn()]);
+            this.doublemove_indicator = 1;
+        }
+        else{
+            this.current_move.player2_move = new SingleMove(to, from,  board.pieces[to.getRow()][to.getColumn()]);
+            move_history.push(current_move);
+            this.doublemove_indicator = 0;
+        }
+        System.out.print(board.pieces[to.getRow()][to.getColumn()].getColor().toString() + " piece moved from ");
+        System.out.println(from.getRow() + " " + from.getColumn() + " to " + to.getRow() + " " + to.getColumn());
     }
  
     public void  makePromotion(Cell c, int choice){
@@ -147,8 +163,8 @@ public boolean draw(Color c) {
         if(c.getRow() == 0)
             col = Color.Black;
         switch (choice) {
-            case 3:
-                board.pieces[c.getRow()][c.getColumn()] = new Queen(c, col);
+            case 0:
+                board.pieces[c.getRow()][c.getColumn()] = new Rook(c, col);
                 break;
             case 1:
                 board.pieces[c.getRow()][c.getColumn()] = new Bishop(c, col);
@@ -156,8 +172,8 @@ public boolean draw(Color c) {
             case 2:
                 board.pieces[c.getRow()][c.getColumn()] = new Knight(c, col);
                 break;
-            case 0:
-                board.pieces[c.getRow()][c.getColumn()] = new Rook(c, col);
+            case 3:
+                board.pieces[c.getRow()][c.getColumn()] = new Queen(c, col);
                 break;
             default:
                 break;

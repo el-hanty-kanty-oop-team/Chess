@@ -124,7 +124,7 @@ public class Main extends SimpleApplication
     public void initModels()
     {
         defaultMap = new DefaultMap(this);
-        piecesTypeSelected = PiecesFactory.GetPiecesType(this, "WhiteAndBlackOriginal");
+        piecesTypeSelected = PiecesFactory.GetPiecesType(this, "ZombiePieces");
         
         currentSelected = null;
         lastSelected = null;

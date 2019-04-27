@@ -32,7 +32,7 @@ public class Cell {
     public Cell(Cell cell) {
         this.Row = cell.getRow();
         this.Column = cell.getColumn();
-        this.type = new String(cell.getType());
+        this.type = cell.getType();
     }
     public int getRow() {
         return Row;

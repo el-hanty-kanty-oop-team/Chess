@@ -15,12 +15,12 @@ public class Board {
 
     private void set_board() {
         for (int i = 0; i < 8; i++) {
-            // setting Black pawns
+            // setting white pawns
             pieces[1][i] = new Pawn(new Cell(1, i), Color.White);
-            // setting White pawns
+            // setting black pawns
             pieces[6][i] = new Pawn(new Cell(6, i), Color.Black);
         }
-        // setting Black pieces
+        // setting white pieces
         pieces[0][0] = new Rook(new Cell(0, 0), Color.White);
         pieces[0][7] = new Rook(new Cell(0, 7), Color.White);
         pieces[0][1] = new Knight(new Cell(0, 1), Color.White);
@@ -30,7 +30,7 @@ public class Board {
         pieces[0][3] = new Queen(new Cell(0, 3), Color.White);
         pieces[0][4] = new King(new Cell(0, 4), Color.White);
 
-        // setting White pieces
+        // setting black pieces
         pieces[7][0] = new Rook(new Cell(7, 0), Color.Black);
         pieces[7][7] = new Rook(new Cell(7, 7), Color.Black);
         pieces[7][1] = new Knight(new Cell(7, 1), Color.Black);
@@ -40,6 +40,7 @@ public class Board {
         pieces[7][3] = new Queen(new Cell(7, 3), Color.Black);
         pieces[7][4] = new King(new Cell(7, 4), Color.Black);
     }
+    
 
     /**
      * // setting White pieces

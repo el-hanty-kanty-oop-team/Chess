@@ -13,6 +13,7 @@ public class Pawn extends Piece {
         super(pos, c);
         en_passent = false;
         last_move_id = 0;
+        steps = 0;
     }
 
     @Override
@@ -57,34 +58,36 @@ public class Pawn extends Piece {
                 list.add(new Cell(current.getRow() + dx, current.getColumn() - 1));
             }
         }
+        
         // checking the northern-east en-passant
         if (this.check_valid_borders(current.getRow(), current.getColumn() + 1) && board[current.getRow()][current.getColumn() + 1] instanceof Pawn && board[current.getRow()][current.getColumn() + 1].color != board[current.getRow()][current.getColumn()].color) {
-            if (board[current.getRow()][current.getColumn() + 1].steps == 1 && ((Pawn) board[current.getRow()][current.getColumn() + 1]).en_passent) {
+            if (board[current.getRow()][current.getColumn() + 1].steps == 1) {
                 if (b.moveid == board[current.getRow()][current.getColumn() + 1].last_move_id + 1) {
-                    Piece p = board[current.getRow()][current.getColumn() + 1];
+                    Piece tmp = board[current.getRow()][current.getColumn() + 1];
                     board[current.getRow()][current.getColumn() + 1] = null;
                     boolean ok = check_my_king(current, new Cell(current.getRow() + dx, current.getColumn() + 1, 1), king, board);
                     if (ok) {
                         list.add(new Cell(current.getRow() + dx, current.getColumn() + 1, 1));
                     }
-                    board[current.getRow()][current.getColumn() + 1] = p;
+                    board[current.getRow()][current.getColumn() + 1] = tmp;
                 }
             }
         }
         // checking the northern-west en-passant
         if (this.check_valid_borders(current.getRow(), current.getColumn() - 1) && board[current.getRow()][current.getColumn() - 1] instanceof Pawn && board[current.getRow()][current.getColumn() - 1].color != board[current.getRow()][current.getColumn()].color) {
-            if (board[current.getRow()][current.getColumn() - 1].steps == 1 && ((Pawn) board[current.getRow()][current.getColumn() - 1]).en_passent) {
+            if (board[current.getRow()][current.getColumn() - 1].steps == 1) {
                 if (b.moveid == board[current.getRow()][current.getColumn() - 1].last_move_id + 1) {
-                    Piece p = board[current.getRow()][current.getColumn() - 1];
+                    Piece tmp = board[current.getRow()][current.getColumn() - 1];
                     board[current.getRow()][current.getColumn() - 1] = null;
                     boolean ok = check_my_king(current, new Cell(current.getRow() + dx, current.getColumn() - 1, 1), king, board);
                     if (ok) {
                         list.add(new Cell(current.getRow() + dx, current.getColumn() - 1, 1));
                     }
-                    board[current.getRow()][current.getColumn() - 1] = p;
+                    board[current.getRow()][current.getColumn() - 1] = tmp;
                 }
             }
         }
+         
         return list;
     }
 }

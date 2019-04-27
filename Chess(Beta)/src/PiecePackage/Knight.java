@@ -6,6 +6,8 @@ import java.util.ArrayList;
 public class Knight extends Piece{
     public Knight(Cell pos, Color c) {
         super(pos, c);
+        last_move_id = 0;
+        steps = 0;
     }
     @Override
     public ArrayList<Cell> possible_moves(Cell current, Board b) {
