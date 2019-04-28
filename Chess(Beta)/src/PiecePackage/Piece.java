@@ -40,6 +40,7 @@ abstract public class Piece {
     }
 
     public boolean check_my_king(Cell currentPos, Cell nextPos, Piece king, Piece[][] board) {
+       
         if (board[nextPos.getRow()][nextPos.getColumn()] != null && board[currentPos.getRow()][currentPos.getColumn()].color == board[nextPos.getRow()][nextPos.getColumn()].color) {
             if (!currentPos.isEqual(nextPos)) {
                 return false;
@@ -48,7 +49,16 @@ abstract public class Piece {
 
         boolean ok = true;
         int x = king.pos.getRow(), y = king.pos.getColumn();
-        System.out.println("King Positon = " + x + " " + y);
+         if(board[x][y] != null)
+        {
+            System.out.println("Not NUll " + board[x][y].getColor());
+            
+        }
+        else
+        {
+            System.out.println("NULL");
+        }
+        //System.out.println("King Positon = " + x + " " + y);
         ///**///
         Piece cur = board[currentPos.getRow()][currentPos.getColumn()];
         Piece nxt = board[nextPos.getRow()][nextPos.getColumn()];
@@ -70,7 +80,7 @@ abstract public class Piece {
         for (int i = y - 1; i >= 0; i--) {
             if (board[x][i] != null) {
                 if (board[x][i] instanceof Rook || board[x][i] instanceof Queen) {
-                    System.out.println("X = " + x + ", y = b" + y + ", i = " + i + ", color = " + board[x][y].color);
+                   // System.out.println("X = " + x + ", y = b" + y + ", i = " + i + ", color = " + board[x][y].color);
                     if (board[x][i].color != board[x][y].color) {
                         ok = false;
                     }

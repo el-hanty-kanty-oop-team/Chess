@@ -154,8 +154,8 @@ public boolean draw(Color c) {
             move_history.push(current_move);
             this.doublemove_indicator = 0;
         }
-        System.out.print(board.pieces[to.getRow()][to.getColumn()].getColor().toString() + " piece moved from ");
-        System.out.println(from.getRow() + " " + from.getColumn() + " to " + to.getRow() + " " + to.getColumn());
+    //    System.out.print(board.pieces[to.getRow()][to.getColumn()].getColor().toString() + " piece moved from ");
+    //    System.out.println(from.getRow() + " " + from.getColumn() + " to " + to.getRow() + " " + to.getColumn());
     }
  
     public void  makePromotion(Cell c, int choice){

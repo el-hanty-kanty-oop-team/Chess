@@ -37,11 +37,24 @@ public class AI extends Player {
  
     public SingleMove root(int depth, boolean is_max_player, Board board) {
         ArrayList< SingleMove> moves = generate_all_moves_on_all_pieces(board, this.color);
- 
+        /*System.out.println("all moves");
+        for(int i=0;i<moves.size();i++)
+        {   System.out.println("this color "+this.color);
+            System.out.println("from "+moves.get(i).getFrom().getRow()+" "+moves.get(i).getFrom().getColumn()+" to  "+moves.get(i).getTo().getRow()+" "+moves.get(i).getTo().getColumn());
+            if(board.pieces[+moves.get(i).getFrom().getRow()][moves.get(i).getFrom().getColumn()] != null)
+                System.out.println(board.pieces[+moves.get(i).getFrom().getRow()][moves.get(i).getFrom().getColumn()].getColor() + " " + board.pieces[+moves.get(i).getFrom().getRow()][moves.get(i).getFrom().getColumn()].getClass().toString());
+            else
+                System.out.println("NUll From ");
+            
+            if(board.pieces[+moves.get(i).getTo().getRow()][moves.get(i).getTo().getColumn()] != null)
+                System.out.println(board.pieces[+moves.get(i).getTo().getRow()][moves.get(i).getTo().getColumn()].getColor() + " " + board.pieces[+moves.get(i).getTo().getRow()][moves.get(i).getTo().getColumn()].getClass().toString());
+            else
+                System.out.println("NUll To ");
+        }*/
         int best_score = Integer.MIN_VALUE;
         Cell best_move_f = new Cell();
         Cell best_move_t=new Cell();
-        if (moves.isEmpty()) {
+        if (moves.isEmpty()) {System.out.println("noooooooooooooooooooooooooooooooo moves ");
             /*computer loss player win  */
         } else {
             for (int i = 0; i < (int) moves.size(); i++) {
@@ -53,9 +66,9 @@ public class AI extends Player {
                 ///make_move
                 Piece tmp_piece = board.pieces[row_f][col_f];
                 Piece tmp_piece2 = board.pieces[row_t][col_t];
+                board.pieces[row_f][col_f] = null;
                 board.pieces[row_t][col_t] = tmp_piece;
  
-                board.pieces[row_f][col_f] = null;
                 ///finish_move
                 int score = mini_max(depth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, !is_max_player, board);
                 ///undo_move

@@ -37,12 +37,12 @@ public class Main extends SimpleApplication
     private Map defaultMap; 
     private Pair currentSelected, lastSelected, lastSelectedPiece; 
     private PiecesBehaviors piecesTypeSelected;
-    private boolean firstPlayer = false, moveDone = false, promotionDone = false, checkPromotion, engineMove = true, ok = true;
+    private boolean firstPlayer = true, moveDone = false, promotionDone = false, checkPromotion, engineMove = false, ok = false, updateCalledEngine = false;
     private final Vector3f camLocation1 = new Vector3f(-6.5f, 8.0f, 3.5f), camLocation2 = new Vector3f(13.5f, 8.0f, 3.5f), camDirection = new Vector3f(3.5f, 0.0f, 3.5f);
     private final Player p1 = new Player("hahaha", Color.White) ;
     private final Player p2 = new Player("hehehee", Color.Black) ;
     private final AI ai = new AI(Color.Black);
-    private final Game game = new Game(GameMode.Multiplayer, p1, p2) ;
+    private final Game game = new Game(GameMode.Multiplayer, p1, ai) ;
 
     private final ActionListener actionListener = new ActionListener() 
     {
@@ -105,7 +105,7 @@ public class Main extends SimpleApplication
                             currentSelected = new Pair(dimention, "Map");
                         }
                     }
-                    System.out.println(currentSelected + " " + lastSelected);
+                    //System.out.println(currentSelected + " " + lastSelected);
                 }
 
             }
@@ -124,7 +124,7 @@ public class Main extends SimpleApplication
     public void initModels()
     {
         defaultMap = new DefaultMap(this);
-        piecesTypeSelected = PiecesFactory.GetPiecesType(this, "ZombiePieces");
+        piecesTypeSelected = PiecesFactory.GetPiecesType(this, "whiteAndBlackOriginal");
         
         currentSelected = null;
         lastSelected = null;
@@ -142,7 +142,7 @@ public class Main extends SimpleApplication
     {
         if(isUpdatePiecesVaild())
         {  
-            System.out.println("Update Pieces");
+           // System.out.println("Update Pieces");
             Vector3i from = (Vector3i)lastSelected.getKey();
             Vector3i to = (Vector3i)currentSelected.getKey();
             String type = (String)lastSelected.getValue();
@@ -151,17 +151,20 @@ public class Main extends SimpleApplication
             game.update(fromC, toC);
             piecesTypeSelected.Move(from, to);
             defaultMap.removeHighlights();
-            currentSelected = null;
-            lastSelected = null;
             
-            System.out.println(fromC.getRow() + " " + fromC.getColumn()  + " To " + to.x + " " + to.z);
+            
+           // System.out.println(fromC.getRow() + " " + fromC.getColumn()  + " To " + to.x + " " + to.z);
             if(fromC.getRow() < 2)
                 System.out.println("Black Move");
             else
                 System.out.println("White Move");
             engineMove = !engineMove;
+            if(((String)lastSelected.getValue()).equalsIgnoreCase("Engine"))
+            {
+                updateCalledEngine = false;
+            }
             //TODO: gui display who wins the game
-           /* if(game.isCheckmated(Color.Black))
+            if(game.isCheckmated(Color.Black))
             {
                 System.out.println(" hhhh 5srt ");
               //  app.stop() ; 
@@ -173,7 +176,9 @@ public class Main extends SimpleApplication
             else if(game.draw(Color.Black) || game.draw(Color.White))
             {
                 System.out.println(" Draaaaaaaaaaaaaaaaaaaw ");
-            }*/
+            }
+            currentSelected = null;
+            lastSelected = null;
         }
     }
     
@@ -194,7 +199,7 @@ public class Main extends SimpleApplication
         {
             
             Vector3i dimension = piecesTypeSelected.getPieceDimension(i, j);
-            System.out.println("Dimention " + dimension);
+           // System.out.println("Dimention " + dimension);
             ArrayList<Cell> list;
             list = game.board.pieces[dimension.x][dimension.z].possible_moves(new Cell(dimension.x, dimension.z), game.board);
    
@@ -220,7 +225,8 @@ public class Main extends SimpleApplication
         //TODO: add update code
         updatePieces(); // user Interaction
         updateCam();
-        //Engine();
+        if(!updateCalledEngine)
+            Engine();
         stateManager.update(tpf);
         /*
             hna 7rk el pieces bta3tk bra7tk
@@ -246,7 +252,7 @@ public class Main extends SimpleApplication
         
         return (currentSelected != null && lastSelected != null && !currentSelected.equals(lastSelected) && ((String)lastSelected.getValue()).equalsIgnoreCase("Piece") 
             && !(piecesTypeSelected.getPieceDimension(x, z).x == ((Vector3i)currentSelected.getKey()).x && piecesTypeSelected.getPieceDimension(x, z).z == ((Vector3i)currentSelected.getKey()).z)
-            &&  defaultMap.isCellHighlighted(to) && ((!firstPlayer && x < 2) || (firstPlayer && x > 1))) || (engineMove && ((String)lastSelected.getValue()).equalsIgnoreCase("Engine"));
+            &&  defaultMap.isCellHighlighted(to) && ((firstPlayer && x < 2) || (!firstPlayer && x > 1))) || (engineMove && ((String)lastSelected.getValue()).equalsIgnoreCase("Engine") && x > 1);
     }
     
     // lighting the game
@@ -282,13 +288,22 @@ public class Main extends SimpleApplication
     {
        if(engineMove && ok)
        {
-            System.out.println("Engine Move");
+            updateCalledEngine = true;
             SingleMove sm = ai.root(3, true, game.board);
             Cell from = sm.getFrom(), to = sm.getTo();
-            System.out.println( " NULLLLLLLLLLLLLL " + from.getRow() + " " + from.getColumn()  + " NULLLLLLLLLLLLLL " +  to.getRow() +  " " + to.getColumn());
-            int r = piecesTypeSelected.getPieceIndex(from.getRow(), from.getColumn()).x, c = piecesTypeSelected.getPieceIndex(from.getRow(), from.getColumn()).z;
-            lastSelected = new Pair(new Vector3i(r, 0, c), "Engine");
-            currentSelected = new Pair(new Vector3i(to.getRow(), 0, to.getColumn()), "Map");
+            System.out.println("Engine Move");
+            System.out.println(from.getRow() + " " + from.getColumn()  + " to " +  to.getRow() +  " " + to.getColumn() + " color " + game.board.pieces[from.getRow()][from.getColumn()].getColor());
+            
+            if(from.getRow() == -1 && from.getColumn() == -1 && to.getRow() == -1 && to.getColumn() == -1)
+            {
+                System.out.print("Out of Moves");
+            }
+            else
+            {
+                int r = piecesTypeSelected.getPieceIndex(from.getRow(), from.getColumn()).x, c = piecesTypeSelected.getPieceIndex(from.getRow(), from.getColumn()).z;
+                lastSelected = new Pair(new Vector3i(r, 0, c), "Engine");
+                currentSelected = new Pair(new Vector3i(to.getRow(), 0, to.getColumn()), "Map");
+            }
        }
     }
     
@@ -309,7 +324,7 @@ public class Main extends SimpleApplication
             }
             else
             {
-                System.out.println("Promotion is Vaild");
+               // System.out.println("Promotion is Vaild");
                 int type = 3;
                 Vector3i to = piecesTypeSelected.getPieceDimension(i, j);
                 Cell toC = new Cell(to.x, to.z);
@@ -324,15 +339,15 @@ public class Main extends SimpleApplication
         
         if(moveDone && promotionDone)
         {   
+            ok = !ok;
+            firstPlayer = !firstPlayer;
             if(firstPlayer)
                 cam.setLocation(camLocation1);
             else
                 cam.setLocation(camLocation2);
         
             moveDone = promotionDone = false;
-            ok = !ok;
-            firstPlayer = !firstPlayer;
-            System.out.println("Move is done");
+          //  System.out.println("Move is done");
         }
         cam.lookAt(camDirection, Vector3f.ZERO);  
     }

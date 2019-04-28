@@ -28,7 +28,7 @@ public class King extends Piece {
                 king.pos.setRow(x);
                 king.pos.setColumn(y);
                 if (ok) {
-                    System.out.println("valid cell " + (x + dx[i] ) + " " +  (y + dy[i]) );
+                   // System.out.println("valid cell " + (x + dx[i] ) + " " +  (y + dy[i]) );
                     list.add(new Cell(x + dx[i], y + dy[i]));
                 }
             }
