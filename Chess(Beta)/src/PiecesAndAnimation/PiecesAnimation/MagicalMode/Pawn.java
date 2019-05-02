@@ -25,10 +25,6 @@ public class Pawn extends PieceAnimation
         this.good = good;
         playerWalkDirection.set(i, 0, j);
         startPosition.set(playerWalkDirection);
-        if(good)
-            startPosition.x -= 2.0f;
-        else
-            startPosition.x += 2.0f;
         attackIteration = 1;
         modelScale = 0.8f;
         destination.set(i, 0, j);

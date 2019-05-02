@@ -26,10 +26,6 @@ public class King extends PieceAnimation
         this.good = good;
         playerWalkDirection.set(i, 0, j);
         startPosition.set(playerWalkDirection);
-        if(good)
-            startPosition.x -= 2.0f;
-        else
-            startPosition.x += 2.0f;
         modelScale = 0.6f;
         destination.set(i, 0, j);
         attackIteration = 1;

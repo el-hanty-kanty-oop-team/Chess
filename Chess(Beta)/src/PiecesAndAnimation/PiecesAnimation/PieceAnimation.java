@@ -142,13 +142,13 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         {
             if(good)
             {
-                startPosition.set(startPosition.z, 1.0f, startPosition.x + 12);
+                startPosition.set(startPosition.z, 1.0f, startPosition.x + 10);
                 localNode.lookAt(startPosition, upVector);
                 localNode.setLocalTranslation(startPosition);
             }
             else
             {
-                startPosition.set(startPosition.z , 1.0f, startPosition.x - 12);
+                startPosition.set(startPosition.z , 1.0f, startPosition.x - 10);
                 localNode.lookAt(startPosition, upVector);
                 localNode.setLocalTranslation(startPosition);
             }
@@ -319,7 +319,10 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     
     private void skill()
     {
-        Skill.fire(new Vector3f(localNode.getLocalTranslation()), new Vector3f(destination), rootNode, assetManager);
+        if(startPosition.z == 5 || startPosition.z == 2)
+            Skill.fire(new Vector3f(localNode.getLocalTranslation()), new Vector3f(destination), rootNode, assetManager);
+        else if(startPosition.z == 3)
+            Skill.water(new Vector3f(localNode.getLocalTranslation()), new Vector3f(destination), rootNode, assetManager);
     }
     
     private void dimensionChanging()

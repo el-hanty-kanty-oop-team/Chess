@@ -80,6 +80,7 @@ public class Skill
         float shift = 0.1f;
         from.y = to.y = 0.7f;
         check(from, to, shift);
+        
         final ParticleEmitter fire = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 300);
         Material mat_red = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");
         mat_red.setTexture("Texture", assetManager.loadTexture("Effects/Explosion/flame.png"));
@@ -96,6 +97,7 @@ public class Skill
         fire.setHighLife(3f);
         fire.getParticleInfluencer().setVelocityVariation(0.3f);
         rootNode.attachChild(fire);
+        
         MotionPath path = new MotionPath();
         path.addWayPoint(from);
         path.addWayPoint(to);
@@ -114,27 +116,38 @@ public class Skill
     public static void water(Vector3f from, Vector3f to, final Node rootNode, AssetManager assetManager)
     {
         float shift = 0.1f;
+        float x = to.x, z = to.z;
         from.y = to.y = 0.7f;
         check(from, to, shift);
+        
         final ParticleEmitter fire = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 300);
         Material mat_red = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");
-        mat_red.setTexture("Texture", assetManager.loadTexture("Effects/Explosion/flame.png"));
+        mat_red.setTexture("Texture", assetManager.loadTexture("Effects/Smoke/Smoke.png"));
         fire.setMaterial(mat_red);
         fire.setImagesX(15);
         fire.setImagesY(1); // 2x2 texture animation
-        fire.setEndColor(  new ColorRGBA(100, 149, 237, 1));   // Cornflower Blue	
-        fire.setStartColor(new ColorRGBA(135, 206,  250, 1)); // Lightsky Blue	
-        fire.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 2, 0));
-        fire.setStartSize(1.5f);
-        fire.setEndSize(0.1f);
+        fire.setEndColor(  new ColorRGBA(1f, 0f, 0f, 1f));   // red
+        fire.setStartColor(new ColorRGBA(1f, 1f, 0f, 0.5f)); // yellow
+        fire.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 0.5f, 0));
         fire.setGravity(0, 0, 0);
         fire.setLowLife(1f);
-        fire.setHighLife(3f);
-        fire.getParticleInfluencer().setVelocityVariation(0.3f);
+        fire.setHighLife(1f);
+        fire.getParticleInfluencer().setVelocityVariation(1f);
         rootNode.attachChild(fire);
+        
+        
         MotionPath path = new MotionPath();
         path.addWayPoint(from);
         path.addWayPoint(to);
+        
+        float rad = 1.0f;
+        float angle = (float) (2 * Math.PI / 20);
+        for(int i = 0; i < 20; i ++)
+        {
+            float pX = (float)(x + rad * Math.cos(angle * i));
+            float pZ = (float)(z + rad * Math.sin(angle * i));
+            path.addWayPoint(new Vector3f(pX, 0.7f, pZ));
+        }
         MotionEvent motionControl = new MotionEvent(fire, path)
         {
             @Override
