@@ -33,6 +33,7 @@ public class Bishop extends PieceAnimation
         destination.set(i, 0, j);
         modelScale = 0.75f;
         attackIteration = 1;
+        rangeAttack = true;
     }
 
     @Override

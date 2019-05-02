@@ -9,6 +9,13 @@ public class Knight extends Piece{
         last_move_id = 0;
         steps = 0;
     }
+    
+    @Override
+    public Piece clone()
+    {
+        return new Knight(new Cell(this.pos), this.color);
+    }
+    
     @Override
     public ArrayList<Cell> possible_moves(Cell current, Board b) {
         ArrayList<Cell> list = new ArrayList<>();

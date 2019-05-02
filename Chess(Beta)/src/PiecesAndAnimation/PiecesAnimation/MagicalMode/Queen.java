@@ -32,6 +32,7 @@ public class Queen extends PieceAnimation
         modelScale = 0.6f;
         destination.set(i, 0, j);
         attackIteration = 1;
+        rangeAttack = true;
     }
     @Override
     protected void LoadModel()

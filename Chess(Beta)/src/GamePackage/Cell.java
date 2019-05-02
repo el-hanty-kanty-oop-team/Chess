@@ -33,6 +33,7 @@ public class Cell {
         this.Row = cell.getRow();
         this.Column = cell.getColumn();
         this.type = cell.getType();
+        this.special_move = cell.special_move;
     }
     public int getRow() {
         return Row;

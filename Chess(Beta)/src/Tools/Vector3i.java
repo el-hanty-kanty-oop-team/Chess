@@ -23,6 +23,11 @@ public class Vector3i
         this.z = z;
     }
    
+    public Vector3i(Vector3i v) {
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
+    }
 
     public int getX() {
         return x;

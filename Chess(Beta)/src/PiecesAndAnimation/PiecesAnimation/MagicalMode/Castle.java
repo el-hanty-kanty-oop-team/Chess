@@ -32,6 +32,7 @@ public class Castle extends PieceAnimation
         
         destination.set(i, 0, j);
         attackIteration = 1;
+        rangeAttack = true;
     }
     @Override
     protected void LoadModel()

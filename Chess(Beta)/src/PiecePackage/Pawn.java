@@ -7,7 +7,7 @@ import java.util.*;
 
 public class Pawn extends Piece {
 
-    boolean en_passent;
+    public boolean en_passent;
 
     public Pawn(Cell pos, Color c) {
         super(pos, c);
@@ -16,6 +16,12 @@ public class Pawn extends Piece {
         steps = 0;
     }
 
+    @Override
+    public Piece clone()
+    {
+        return new Pawn(new Cell(this.pos), this.color);
+    }
+    
     @Override
     public ArrayList<Cell> possible_moves(Cell current, Board b) {
         ArrayList<Cell> list = new ArrayList<>();
@@ -61,7 +67,7 @@ public class Pawn extends Piece {
         
         // checking the northern-east en-passant
         if (this.check_valid_borders(current.getRow(), current.getColumn() + 1) && board[current.getRow()][current.getColumn() + 1] instanceof Pawn && board[current.getRow()][current.getColumn() + 1].color != board[current.getRow()][current.getColumn()].color) {
-            if (board[current.getRow()][current.getColumn() + 1].steps == 1) {
+            if (board[current.getRow()][current.getColumn() + 1].steps == 1 && ((Pawn)board[current.getRow()][current.getColumn() + 1]).en_passent) {
                 if (b.moveid == board[current.getRow()][current.getColumn() + 1].last_move_id + 1) {
                     Piece tmp = board[current.getRow()][current.getColumn() + 1];
                     board[current.getRow()][current.getColumn() + 1] = null;
@@ -75,7 +81,7 @@ public class Pawn extends Piece {
         }
         // checking the northern-west en-passant
         if (this.check_valid_borders(current.getRow(), current.getColumn() - 1) && board[current.getRow()][current.getColumn() - 1] instanceof Pawn && board[current.getRow()][current.getColumn() - 1].color != board[current.getRow()][current.getColumn()].color) {
-            if (board[current.getRow()][current.getColumn() - 1].steps == 1) {
+            if (board[current.getRow()][current.getColumn() - 1].steps == 1 && ((Pawn)board[current.getRow()][current.getColumn() - 1]).en_passent) {
                 if (b.moveid == board[current.getRow()][current.getColumn() - 1].last_move_id + 1) {
                     Piece tmp = board[current.getRow()][current.getColumn() - 1];
                     board[current.getRow()][current.getColumn() - 1] = null;

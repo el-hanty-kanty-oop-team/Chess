@@ -17,6 +17,8 @@ public class AI extends Player {
         for (int i = 0; i < 8; i++) {
             for (int y = 0; y < 8; y++) {
                 if (board.pieces[i][y] != null && board.pieces[i][y].getColor() == mycolor) {
+//                    if(board.pieces[i][y] instanceof King)
+//                        continue;
                     Cell cur = new Cell(i, y);
                     /*if(board.pieces[i][y] == null)
                         System.out.println("A7eeeeeeeeeh");
@@ -64,18 +66,22 @@ public class AI extends Player {
                 int row_t = one_move.getTo().getRow();
                 int col_t = one_move.getTo().getColumn();
                 ///make_move
-                Piece tmp_piece = board.pieces[row_f][col_f];
-                Piece tmp_piece2 = board.pieces[row_t][col_t];
+                Piece cur = board.pieces[row_f][col_f];
+                Piece nxt = board.pieces[row_t][col_t];
                 board.pieces[row_f][col_f] = null;
-                board.pieces[row_t][col_t] = tmp_piece;
- 
+                board.pieces[row_t][col_t] = cur;
+                board.pieces[row_t][col_t].steps++;
+                board.pieces[row_t][col_t].setPos(new Cell(row_t, col_t));
                 ///finish_move
                 int score = mini_max(depth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, !is_max_player, board);
                 ///undo_move
-                board.pieces[row_f][col_f] = tmp_piece;
-                board.pieces[row_t][col_t] = tmp_piece2;
+                board.pieces[row_f][col_f] = cur;
+                board.pieces[row_t][col_t] = nxt;
+                board.pieces[row_f][col_f].steps--;
+                board.pieces[row_f][col_f].setPos(new Cell(row_f, col_f));
+                
                 ///finish_undo
-                if (score > best_score) {
+                if (score >= best_score) {
                     best_score = score;
                     best_move_f=one_move.getFrom();
                     best_move_t = one_move.getTo();
@@ -121,12 +127,16 @@ public class AI extends Player {
                 Piece tmp_piece2 = board.pieces[row_t][col_t];
                 board.pieces[row_t][col_t] = tmp_piece;
                 board.pieces[row_f][col_f] = null;
+                board.pieces[row_t][col_t].steps++;
+                board.pieces[row_t][col_t].setPos(new Cell(row_t, col_t));
                 ///finish_move
                 best_val = Math.max(best_val, mini_max(depth - 1, alpha, bita, !is_max_player, board));
                 alpha = Math.max(alpha, best_val);
                 ///undo_move
                 board.pieces[row_f][col_f] = tmp_piece;
                 board.pieces[row_t][col_t] = tmp_piece2;
+                board.pieces[row_f][col_f].steps--;
+                board.pieces[row_f][col_f].setPos(new Cell(row_f, col_f));
                 if (alpha >= bita) {
                     return best_val;
                 }
@@ -145,12 +155,17 @@ public class AI extends Player {
                 Piece tmp_piece2 = board.pieces[row_t][col_t];
                 board.pieces[row_t][col_t] = tmp_piece;
                 board.pieces[row_f][col_f] = null;
+                board.pieces[row_t][col_t].steps++;
+                board.pieces[row_t][col_t].setPos(new Cell(row_t, col_t));
                 ///finish_move
                 best_val = Math.min(best_val, mini_max(depth - 1, alpha, bita, !is_max_player, board));
                 bita = Math.min(bita, best_val);
                 ///undo_move
                 board.pieces[row_f][col_f] = tmp_piece;
                 board.pieces[row_t][col_t] = tmp_piece2;
+                board.pieces[row_f][col_f].steps--;
+                board.pieces[row_f][col_f].setPos(new Cell(row_f, col_f));
+                
                 if (alpha >= bita) {
                     return best_val;
                 }

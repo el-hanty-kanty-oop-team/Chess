@@ -23,6 +23,9 @@ public interface PiecesBehaviors
     public boolean isMoveDone();
     public boolean checkPromotion(int i, int j);
     public void promote(int i, int j, int type);
+    public void enPassant(Vector3i from, Vector3i to);
+    public void castling(Vector3i from, Vector3i to);
+    public String getSelectedPieceType(int i, int j);
 }
 
 

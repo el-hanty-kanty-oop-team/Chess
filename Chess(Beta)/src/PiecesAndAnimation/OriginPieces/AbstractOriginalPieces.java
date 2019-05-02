@@ -55,6 +55,17 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
     }
     
     @Override
+    public String getSelectedPieceType(int i, int j)
+    {
+        if(i == 1 || i == 2)
+            return "Pawn";
+        else if(j == 4)
+            return "King";
+        else
+            return "Else";
+    }
+    
+    @Override
     public Vector3i getPieceDimension(int x, int z)
     {
         return new Vector3i((int)dimension[x][z].getKey(), 0, (int)dimension[x][z].getValue());   
@@ -99,6 +110,7 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
         MotionPath path = new MotionPath();
         path.addWayPoint(piece[x][z].getLocalTranslation());
         
+        // if knght Jump
         if((x == 0 || x == 3) && (z == 1 || z == 6))
         {
             Vector3f mid = new Vector3f((piece[x][z].getLocalTranslation().x + toF.x) / 2.0f, 1.0f, (piece[x][z].getLocalTranslation().z + toF.z) / 2.0f);
@@ -124,7 +136,44 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
         check(x, z);
         
         piece[x][z].setLocalTranslation(toF);
-
+    }
+    
+    @Override
+    public void enPassant(Vector3i from, Vector3i to)
+    {
+        Move(from, to);
+        int i = from.getX(), j = from.getZ();
+        int r, c;
+        if(map.get(new Pair(i, j)).contains("White"))
+        {
+            r = getPieceIndex(to.x - 1, to.z).x;
+            c = getPieceIndex(to.x - 1, to.z).z;
+        }
+        else
+        {
+            r = getPieceIndex(to.x + 1, to.z).x;
+            c = getPieceIndex(to.x + 1, to.z).z;
+        }
+        kill(r, c);
+        killed[r][c] = true;
+    }
+    
+    @Override
+    public void castling(Vector3i from, Vector3i to)
+    {
+        Move(from, to);
+        int i = from.getX(), j = from.getZ();
+        int r = to.x, c = to.z;
+        if(c == 6)
+        {
+            piece[i][c + 1].setLocalTranslation(r, 0, c - 1);
+            dimension[i][c + 1] = new Pair(r, c - 1);
+        }
+        else // if c == 2
+        {
+            piece[i][c - 2].setLocalTranslation(r, 0, c + 1);
+            dimension[i][c - 2] = new Pair(r, c + 1);
+        }
     }
     
     @Override
@@ -139,11 +188,10 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
     public boolean checkPromotion(int i, int j)
     {
         int r = (int)dimension[i][j].getKey(), c = (int)dimension[i][j].getValue();
-        System.out.println(i + " " + j);
         if(i == 1)
         {
             boolean check = !promoted[j] && r == 7;
-            System.out.println("pawn check " + promoted[j]  + " " + r);
+        
             if(check)
                 promoted[j] = true;
             
@@ -171,34 +219,38 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
             color = "";
         else if(i == 2)
             color = "Black ";
+        
         localNode.detachChild(piece[i][j]);
+        
         switch(type)
         {
             case 0:
                 piece[i][j] = (Node)(((Node)assetManager.loadModel("Models/OriginPieces/OriginPieces.j3o")).getChild(color + "Rock"));
                 setMAp(color + "Rock", i, j);
-            break;
+                break;
             
             case 1:
-               piece[i][j] = (Node)(((Node)assetManager.loadModel("Models/OriginPieces/OriginPieces.j3o")).getChild(color + "Bishop"));
-               setMAp(color + "Bishop", i, j);
-            break;
+                   piece[i][j] = (Node)(((Node)assetManager.loadModel("Models/OriginPieces/OriginPieces.j3o")).getChild(color + "Bishop"));
+                setMAp(color + "Bishop", i, j);
+                break;
             
             case 2:
                 piece[i][j] = (Node)(((Node)assetManager.loadModel("Models/OriginPieces/OriginPieces.j3o")).getChild(color + "Knight"));
                 setMAp(color + "Knight", i, j);
-            break;
+                break;
             
             case 3:
                 piece[i][j] = (Node)(((Node)assetManager.loadModel("Models/OriginPieces/OriginPieces.j3o")).getChild(color + "Queen"));
                 setMAp(color + "Queen", i, j);
-            break;
+                break;
         }
         piece[i][j].setLocalScale(modelScale);
+     
         if(type == 3)
             piece[i][j].setLocalTranslation((int)dimension[i][j].getKey(), 0.1f, (int)dimension[i][j].getValue());
         else
             piece[i][j].setLocalTranslation((int)dimension[i][j].getKey(), 0.0f, (int)dimension[i][j].getValue());
+        
         localNode.attachChild(piece[i][j]);
     }
     
@@ -244,6 +296,7 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
             else
                 diePosition = new Vector3f(j, 1.0f, -3.0f);
         }
+        
         piece[i][j].lookAt(diePosition, Vector3f.ZERO);
         piece[i][j].setLocalTranslation(diePosition);
     }

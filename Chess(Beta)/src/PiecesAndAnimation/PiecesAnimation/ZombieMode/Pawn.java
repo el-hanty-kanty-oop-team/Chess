@@ -32,6 +32,7 @@ public class Pawn extends PieceAnimation
         attackIteration = 1;
         destination.set(i, 0, j);
     }
+    
     @Override
     protected void LoadModel()
     {   

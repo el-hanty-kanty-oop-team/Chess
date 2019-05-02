@@ -7,7 +7,15 @@ public class DoubleMove {
         this.player2_move = player2;
     }
 
-    public DoubleMove() {
+    public DoubleMove()
+    {
+        player1_move = new SingleMove();
+        player2_move = new SingleMove();
+    }
+    public DoubleMove(DoubleMove dm) 
+    {
+        this.player1_move = new SingleMove(dm.player1_move);
+        this.player2_move = new SingleMove(dm.player2_move);
     }
     public boolean equalTo(DoubleMove d){
         return (this.player1_move.equals(d.player1_move)

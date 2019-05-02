@@ -66,6 +66,17 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
     }
     
     @Override
+    public String getSelectedPieceType(int i, int j)
+    {
+        if(i == 1 || i == 2)
+            return "Pawn";
+        else if(j == 4)
+            return "King";
+        else
+            return "Else";
+    }
+    
+    @Override
     public Vector3i getPieceDimension(int i, int j)
     {
         return new Vector3i((int)dimension[i][j].getKey(), 0, (int)dimension[i][j].getValue());   
@@ -78,7 +89,7 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
         {
             for(int j = 0; j < piece[i].length; j ++)
             {
-                if(piece[i][j].isEquale(s))
+                if(piece[i][j].isEquale(s) && !killed[i][j])
                     return new Vector3i(i, 0, j);
             }
         }
@@ -92,7 +103,7 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
         {
             for(int j = 0; j < piece[i].length; j ++)
             {
-                if((int)dimension[i][j].getKey() == r && (int)dimension[i][j].getValue() == c)
+                if((int)dimension[i][j].getKey() == r && (int)dimension[i][j].getValue() == c && !killed[i][j])
                     return new Vector3i(i, 0, j);
             }
         }
@@ -113,9 +124,41 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
     }
     
     @Override
+    public void enPassant(Vector3i from, Vector3i to)
+    {
+        Move(from, to);
+        int i = getPieceIndex(to.x - 1, to.z).x, j = getPieceIndex(to.x - 1, to.z).z;
+        kill(i, j);
+        killed[i][j] = true;
+    }
+    
+    @Override
+    public void castling(Vector3i from, Vector3i to)
+    {
+        Move(from, to);
+        int i = from.getX(), j = from.getZ();
+        int r = to.x, c = to.z;
+        
+        if(c == 6)
+        {
+            piece[i][c + 1].getLocalNode().setLocalTranslation(r, 0, c - 1);
+            piece[i][c + 1].getPlayerWalkDirection().set(r, 0, c - 1);
+            dimension[i][c + 1] = new Pair(r, c - 1);
+        }
+        else // if c == 2
+        {
+            piece[i][c - 2].getLocalNode().setLocalTranslation(r, 0, c + 1);
+            piece[i][c - 2].getPlayerWalkDirection().set(r, 0, c + 1);
+            dimension[i][c - 2] = new Pair(r, c + 1);
+        }
+    }
+    
+    
+    @Override
     public void update(float tpf)
     {
         super.update(tpf);
+        
         if(x != -1 && z != -1)
         {   
             if(piece[x][z].attackIterationStarted())
@@ -128,6 +171,7 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
     {
         if(x != -1 && z != -1)
             return piece[x][z].isMoveDone();
+     
         return false;
     }
     
@@ -161,13 +205,10 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
         rootNode.attachChild(localNode);
     }
     
-    
-    
     @Override
     public boolean checkPromotion(int i, int j)
     {
         int r = (int)dimension[i][j].getKey(), c = (int)dimension[i][j].getValue();
-        System.out.println(promoted[j]);
         if(i == 1)
         {
             boolean check = !promoted[j] && r == 7;
@@ -193,17 +234,6 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
     @Override
     public void promote(int r, int c, int type)
     {
-        /*
-        
-        rootNode.detachChild(piece[r][c].getLocalNode());
-        stateManager.detach(piece[r][c]);
-        if(piece[r][c] instanceof PiecesAndAnimation.PiecesAnimation.ZombieMode.Pawn)
-            piece[r][c] = new PiecesAndAnimation.PiecesAnimation.ZombieMode.Queen(app, (int)dimension[r][c].getKey(), (int)dimension[r][c].getValue(), r == 1);
-        else
-            piece[r][c] = new PiecesAndAnimation.PiecesAnimation.MagicalMode.Queen(app, (int)dimension[r][c].getKey(), (int)dimension[r][c].getValue(), r == 1);
-        stateManager.attach(piece[r][c]);
-           
-        */
         rootNode.detachChild(piece[r][c].getLocalNode());
         stateManager.detach(piece[r][c]);
         
@@ -241,6 +271,7 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
                     piece[r][c] = new PiecesAndAnimation.PiecesAnimation.MagicalMode.Queen(app, (int)dimension[r][c].getKey(), (int)dimension[r][c].getValue(), r == 1);
                 break;
         }
+        
         stateManager.attach(piece[r][c]);
     }
     
@@ -255,8 +286,11 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
                 
                 if(dimension[r][c].equals(dimension[i][j]) && !killed[i][j])
                 {
+                    System.out.println("PiecesAndAnimation.PiecesAnimation.AbstractAnimationPieces.check()");
+                    System.out.println("Piece " + i + " " + j);
                     if(kill)
                     {
+                        System.out.println("Kill piece " + i + " " + j);
                         kill(i, j);
                         killed[i][j] = true;
                     }

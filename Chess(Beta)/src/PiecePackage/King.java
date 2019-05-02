@@ -10,6 +10,12 @@ public class King extends Piece {
         last_move_id = 0;
         steps = 0;
     }
+    
+    @Override
+    public Piece clone()
+    {
+        return new King(new Cell(this.pos), this.color);
+    }
 
     @Override
     public ArrayList<Cell> possible_moves(Cell current, Board b) {
@@ -34,42 +40,42 @@ public class King extends Piece {
             }
         }
         // checking castling
-//        int row = 7;
-//        if (king.color == Color.White) {
-//            row = 0;
-//        }
-//        if (king.steps == 0) {
-//            //checking right castling
-//            if (board[row][7] instanceof Rook && board[row][7].steps == 0 && board[row][5] == null && board[row][6] == null) {
-//                // checking cells (row,4) , (row,5), (row,6) is not in danger
-//                boolean ok = true;
-//                king.pos.setRow(row);
-//                for (int i = 4; i < 7; i++) {
-//                    king.pos.setColumn(i);
-//                    ok &= check_my_king(current, new Cell(row, i), king, board);
-//                }
-//                if (ok) {
-//                    list.add(new Cell(row, y + 2, 1));
-//                }
-//                king.pos.setRow(x);
-//                king.pos.setColumn(y);
-//            }
-//            // checking left castling
-//            if (board[row][0] instanceof Rook && board[row][0].steps == 0 && board[row][1] == null && board[row][2] == null && board[row][3] == null) {
-//                // checking cells (row,2) , (row,3),(row, 4) is not in danger
-//                boolean ok = true;
-//                king.pos.setRow(row);
-//                for (int i = 2; i < 5; i++) {
-//                    king.pos.setColumn(i);
-//                    ok &= check_my_king(current, new Cell(row, i), king, board);
-//                }
-//                if (ok) {
-//                    list.add(new Cell(row, y - 2, 1));
-//                }
-//                king.pos.setRow(x);
-//                king.pos.setColumn(y);
-//            }
-//        }
+        int row = 7;
+        if (king.color == Color.White) {
+            row = 0;
+        }
+        if (king.steps == 0) {
+            //checking right castling
+            if (board[row][7] instanceof Rook && board[row][7].steps == 0 && board[row][5] == null && board[row][6] == null) {
+                // checking cells (row,4) , (row,5), (row,6) is not in danger
+                boolean ok = true;
+                king.pos.setRow(row);
+                for (int i = 4; i < 7; i++) {
+                    king.pos.setColumn(i);
+                    ok &= check_my_king(current, new Cell(row, i), king, board);
+                }
+                if (ok) {
+                    list.add(new Cell(row, y + 2, 1));
+                }
+                king.pos.setRow(x);
+                king.pos.setColumn(y);
+            }
+            // checking left castling
+            if (board[row][0] instanceof Rook && board[row][0].steps == 0 && board[row][1] == null && board[row][2] == null && board[row][3] == null) {
+                // checking cells (row,2) , (row,3),(row, 4) is not in danger
+                boolean ok = true;
+                king.pos.setRow(row);
+                for (int i = 2; i < 5; i++) {
+                    king.pos.setColumn(i);
+                    ok &= check_my_king(current, new Cell(row, i), king, board);
+                }
+                if (ok) {
+                    list.add(new Cell(row, y - 2, 1));
+                }
+                king.pos.setRow(x);
+                king.pos.setColumn(y);
+            }
+        }
         return list;
     }
 }
