@@ -215,7 +215,11 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     
     public boolean attackIterationStarted()
     {
-        boolean ok = attackIterationStarted;
+        boolean ok;
+        if(rangeAttack)
+            ok = Skill.SkillDone();
+        else
+            ok = attackIterationStarted;
         attackIterationStarted = false;
         return ok;
     }
@@ -319,10 +323,33 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     
     private void skill()
     {
-        if(startPosition.z == 5 || startPosition.z == 2)
-            Skill.fire(new Vector3f(localNode.getLocalTranslation()), new Vector3f(destination), rootNode, assetManager);
-        else if(startPosition.z == 3)
-            Skill.water(new Vector3f(localNode.getLocalTranslation()), new Vector3f(destination), rootNode, assetManager);
+        if(good)
+        {
+            
+        }
+        else
+        {
+            switch((int)startPosition.z) 
+            {
+                
+                case 1:
+                case 6:
+                    Skill.fireCircle(new Vector3f(localNode.getLocalTranslation()), new Vector3f(destination), rootNode, assetManager);
+                    break;
+             
+                case 2:
+                case 5:
+                    Skill.fire(new Vector3f(localNode.getLocalTranslation()), new Vector3f(destination), rootNode, assetManager);
+                    break;
+                
+                case 3:
+                    Skill.fireWave(new Vector3f(localNode.getLocalTranslation()), new Vector3f(destination), rootNode, assetManager);
+                    break;
+                
+                default:
+                    break;
+            }
+        }
     }
     
     private void dimensionChanging()

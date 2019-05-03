@@ -87,4 +87,27 @@ public abstract class Map extends AbstractAppState
         }
     }
     
+    public void removeRedHighlights()
+    {
+        for(int i = 0; i < numOfRows; i ++)
+        {
+            for(int j = 0; j < numOfColumns; j ++)
+            {
+                if(cell[i][j].isRedHighLighted())
+                    cell[i][j].removRedLight();
+            }
+        }
+    }
+    
+    public void removeBlueHighlights()
+    {
+        for(int i = 0; i < numOfRows; i ++)
+        {
+            for(int j = 0; j < numOfColumns; j ++)
+            {
+                if(cell[i][j].isBlueHighLighted())
+                    cell[i][j].removBlueLight();
+            }
+        }
+    }
 }

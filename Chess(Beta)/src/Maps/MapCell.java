@@ -91,12 +91,21 @@ public abstract class MapCell extends AbstractAppState
         return moveLight.isEnabled() || attackLight.isEnabled();
     }
     
+    public boolean isRedHighLighted()
+    {
+        return attackLight.isEnabled();
+    }
+    
+    public boolean isBlueHighLighted()
+    {
+        return moveLight.isEnabled();
+    }
+    
     public void setAttackLight()
     {
         attackLight.setEnabled(true);
         attackLight.setPosition(new Vector3f(cell.getRow(), 4.0f, cell.getColumn()));
-        attackLight.setDirection(new Vector3f(cell.getRow(), 0.0f, cell.getColumn()).subtract(moveLight.getPosition()));     
-        
+        attackLight.setDirection(new Vector3f(cell.getRow(), 0.0f, cell.getColumn()).subtract(attackLight.getPosition()));
     }
     
     public void setMoveLight()
@@ -110,6 +119,16 @@ public abstract class MapCell extends AbstractAppState
     {
         moveLight.setEnabled(false);
         attackLight.setEnabled(false);
+    }
+    
+    public void removRedLight()
+    {
+        attackLight.setEnabled(false);
+    }
+    
+    public void removBlueLight()
+    {
+        moveLight.setEnabled(false);
     }
     
     public Cell getCell()

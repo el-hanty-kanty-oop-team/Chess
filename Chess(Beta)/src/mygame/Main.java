@@ -64,7 +64,7 @@ public class Main extends SimpleApplication
                     inputManager.setCursorVisible(false);
                 }
             }
-            else if (name.equals("pick target") && !keyPressed) 
+            else if (name.equals("pick target") && !keyPressed && ((AI && !engineMove) || (!AI)) ) 
             {
                 if(currentSelected != null && currentSelected.getValue().toString().equalsIgnoreCase("Piece") && ((firstPlayer && ((Vector3i)currentSelected.getKey()).x < 2) || (!firstPlayer && ((Vector3i)currentSelected.getKey()).x > 1)))
                     lastSelected = currentSelected;
@@ -88,7 +88,7 @@ public class Main extends SimpleApplication
                     if(dimention != null && ((firstPlayer && dimention.x < 2 ) || (!firstPlayer && dimention.x > 1 )))
                     {
                         currentSelected = new Pair(new Vector3i(dimention), "Piece");
-                        defaultMap.removeHighlights();
+                        defaultMap.removeBlueHighlights();
                         HighlightAvailableMoves(dimention.getX(), dimention.getZ());
                     }
                     else if(dimention != null)
@@ -134,7 +134,7 @@ public class Main extends SimpleApplication
     public void initModels()
     {
         defaultMap = new DefaultMap(this);
-        piecesTypeSelected = PiecesFactory.GetPiecesType(this, "magicalPieces");
+        piecesTypeSelected = PiecesFactory.GetPiecesType(this, "whiteAndBlackOriginal");
         
         currentSelected = null;
         lastSelected = null;
@@ -199,7 +199,7 @@ public class Main extends SimpleApplication
             String type = (String)lastSelected.getValue();
             lastSelectedPiece = new Pair(from.x, from.z);
             Cell fromC = new Cell(piecesTypeSelected.getPieceDimension(from.x, from.z).x, piecesTypeSelected.getPieceDimension(from.x, from.z).z), toC = new Cell(to.x, to.z);
-            defaultMap.removeHighlights();
+            defaultMap.removeBlueHighlights();
             
             if(specialMove != null && specialMove.getRow() == toC.getRow() && specialMove.getColumn() == toC.getColumn())
             {
@@ -242,6 +242,28 @@ public class Main extends SimpleApplication
             {
                 System.out.println(" Draaaaaaaaaaaaaaaaaaaw ");
             }
+            
+            boolean ok = false;
+            to = piecesTypeSelected.getPieceDimension(0, 4);
+            toC = new Cell(to.x, to.z);
+            
+            if(!game.board.whiteKing.check_my_king(toC, toC, game.board.whiteKing, game.board.pieces))
+            {
+                defaultMap.highLightCell(toC, "Attack");
+                ok = true;
+            }
+            
+            to = piecesTypeSelected.getPieceDimension(3, 4);
+            toC = new Cell(to.x, to.z);
+            
+            if(!game.board.blackKing.check_my_king(toC, toC, game.board.blackKing, game.board.pieces))
+            {
+                defaultMap.highLightCell(toC, "Attack");
+                ok = true;
+            }
+            
+            if(!ok)
+                defaultMap.removeRedHighlights();
             
             currentSelected = null;
             lastSelected = null;

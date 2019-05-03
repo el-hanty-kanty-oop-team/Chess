@@ -19,18 +19,25 @@
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecePackage/Bishop.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/AbstractAnimationPieces.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/OriginPieces/AbstractOriginalPieces.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/GamePackage/Game.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/GamePackage/Board.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecePackage/Rook.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/Maps/Map.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/ZombieMode/Pawn.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/PieceAnimation.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/GamePackage/Color.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/GamePackage/Cell.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/Maps/WhiteCell.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/Maps/MapCell.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/Maps/DefaultMap.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/GamePackage/Game.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PlayerPackage/AI.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesFactory.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecePackage/Queen.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/GamePackage/DoubleMove.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/mygame/Main.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/Skills/Skill.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/GamePackage/SingleMove.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/ZombieMode/Pawn.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/PieceAnimation.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesBehaviors.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/GamePackage/Cell.java</file>
         </group>
     </open-files>
 </project-private>

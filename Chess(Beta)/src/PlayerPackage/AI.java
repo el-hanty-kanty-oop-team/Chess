@@ -6,9 +6,98 @@ import java.util.*;
 import java.lang.Math;
  
 public class AI extends Player {
+        double[][] pawnrate;
+    double[][] rookrate;
+    double[][] bishobrate;
+    double[][] knightrate;
+    double[][] queenrate;
+    double[][] kingrate;
+ 
+    final void fillpawn() {
+        this.pawnrate = new double[][]{
+            {0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, 0.0},
+            {5.0,  5.0,  5.0,  5.0,  5.0,  5.0,  5.0, 5.0},
+            {1.0,  1.0,  2.0,  3.0,  3.0,  2.0,  1.0, 1.0},
+            {0.5,  0.5,  1.0,  2.5,  2.5,  1.0,  0.5, 0.5},
+            {0.0,  0.0,  0.0,  2.0,  2.0,  0.0,  0.0, 0.0},
+            {0.5, -0.5, -1.0,  0.0,  0.0, -1.0, -0.5, 0.5},
+            {0.5,  1.0,  1.0, -2.0, -2.0,  1.0,  1.0, 0.5},
+            {0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, 0.0}
+        };
+    }
+ 
+    final void fillrook() {
+        this.rookrate = new double[][]{
+            { 0.0, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0},
+            { 0.5, 1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  0.5},
+            {-0.5, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -0.5},
+            {-0.5, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -0.5},
+            {-0.5, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -0.5},
+            {-0.5, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -0.5},
+            {-0.5, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -0.5},
+            { 0.0, 0.0,  0.0,  0.5,  0.5,  0.0,  0.0,  0.0}         
+     };
+    }
+    final void fillbishob() {
+        this.bishobrate=new double[][]{
+            { -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0},
+            { -1.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -1.0},
+            { -1.0,  0.0,  0.5,  1.0,  1.0,  0.5,  0.0, -1.0},
+            { -1.0,  0.5,  0.5,  1.0,  1.0,  0.5,  0.5, -1.0},
+            { -1.0,  0.0,  1.0,  1.0,  1.0,  1.0,  0.0, -1.0},
+            { -1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0, -1.0},
+            { -1.0,  0.5,  0.0,  0.0,  0.0,  0.0,  0.5, -1.0},
+            { -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0}  
+        };
+    }
+ 
+    final void fillknight() {
+        this.knightrate=new double[][]{
+            {-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0},
+            {-4.0, -2.0,  0.0,  0.0,  0.0,  0.0, -2.0, -4.0},
+            {-3.0,  0.0,  1.0,  1.5,  1.5,  1.0,  0.0, -3.0},
+            {-3.0,  0.5,  1.5,  2.0,  2.0,  1.5,  0.5, -3.0},
+            {-3.0,  0.0,  1.5,  2.0,  2.0,  1.5,  0.0, -3.0},
+            {-3.0,  0.5,  1.0,  1.5,  1.5,  1.0,  0.5, -3.0},
+            {-4.0, -2.0,  0.0,  0.5,  0.5,  0.0, -2.0, -4.0},
+            {-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0}
+        };
+    }
+ 
+    final void fillqueen() {
+        this.queenrate=new double[][]{
+            { -2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0},
+            { -1.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -1.0},
+            { -1.0,  0.0,  0.5,  0.5,  0.5,  0.5,  0.0, -1.0},
+            { -0.5,  0.0,  0.5,  0.5,  0.5,  0.5,  0.0, -0.5},
+            {  0.0,  0.0,  0.5,  0.5,  0.5,  0.5,  0.0, -0.5},
+            { -1.0,  0.5,  0.5,  0.5,  0.5,  0.5,  0.0, -1.0},
+            { -1.0,  0.0,  0.5,  0.0,  0.0,  0.0,  0.0, -1.0},
+            { -2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0}
+        };
+    }
+ 
+    final void fillking() {
+        this.kingrate=new double[][]{
+            { -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0},
+            { -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0},
+            { -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0},
+            { -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0},
+            { -2.0, -3.0, -3.0, -4.0, -4.0, -3.0, -3.0, -2.0},
+            { -1.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -1.0},
+            {  2.0,  2.0,  0.0,  0.0,  0.0,  0.0,  2.0,  2.0},
+            {  2.0,  3.0,  1.0,  0.0,  0.0,  1.0,  3.0,  2.0}
+       };
+    }
  
     public AI(Color c) {
         super("AI", c);
+        fillbishob();
+        fillking();
+        fillknight();
+        fillpawn();
+        fillqueen();
+        fillrook();
     }
  
     private ArrayList< SingleMove> generate_all_moves_on_all_pieces(Board board, Color mycolor) {
@@ -17,18 +106,12 @@ public class AI extends Player {
         for (int i = 0; i < 8; i++) {
             for (int y = 0; y < 8; y++) {
                 if (board.pieces[i][y] != null && board.pieces[i][y].getColor() == mycolor) {
-//                    if(board.pieces[i][y] instanceof King)
-//                        continue;
                     Cell cur = new Cell(i, y);
-                    /*if(board.pieces[i][y] == null)
-                        System.out.println("A7eeeeeeeeeh");
-                    System.out.println(i + " ===== " + y);*/
                     ArrayList<Cell> tmp = board.pieces[i][y].possible_moves(cur, board);
  
                     for (int z = 0; z < tmp.size(); z++) {
                         SingleMove single = new SingleMove( tmp.get(z),cur);
                         all_moves.add(single);
- 
                     }
                 }
             }
@@ -39,24 +122,10 @@ public class AI extends Player {
  
     public SingleMove root(int depth, boolean is_max_player, Board board) {
         ArrayList< SingleMove> moves = generate_all_moves_on_all_pieces(board, this.color);
-        /*System.out.println("all moves");
-        for(int i=0;i<moves.size();i++)
-        {   System.out.println("this color "+this.color);
-            System.out.println("from "+moves.get(i).getFrom().getRow()+" "+moves.get(i).getFrom().getColumn()+" to  "+moves.get(i).getTo().getRow()+" "+moves.get(i).getTo().getColumn());
-            if(board.pieces[+moves.get(i).getFrom().getRow()][moves.get(i).getFrom().getColumn()] != null)
-                System.out.println(board.pieces[+moves.get(i).getFrom().getRow()][moves.get(i).getFrom().getColumn()].getColor() + " " + board.pieces[+moves.get(i).getFrom().getRow()][moves.get(i).getFrom().getColumn()].getClass().toString());
-            else
-                System.out.println("NUll From ");
-            
-            if(board.pieces[+moves.get(i).getTo().getRow()][moves.get(i).getTo().getColumn()] != null)
-                System.out.println(board.pieces[+moves.get(i).getTo().getRow()][moves.get(i).getTo().getColumn()].getColor() + " " + board.pieces[+moves.get(i).getTo().getRow()][moves.get(i).getTo().getColumn()].getClass().toString());
-            else
-                System.out.println("NUll To ");
-        }*/
-        int best_score = Integer.MIN_VALUE;
+        double best_score = Double.MIN_VALUE;
         Cell best_move_f = new Cell();
         Cell best_move_t=new Cell();
-        if (moves.isEmpty()) {System.out.println("noooooooooooooooooooooooooooooooo moves ");
+        if (moves.isEmpty()){
             /*computer loss player win  */
         } else {
             for (int i = 0; i < (int) moves.size(); i++) {
@@ -73,13 +142,12 @@ public class AI extends Player {
                 board.pieces[row_t][col_t].steps++;
                 board.pieces[row_t][col_t].setPos(new Cell(row_t, col_t));
                 ///finish_move
-                int score = mini_max(depth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, !is_max_player, board);
-                ///undo_move
+                Double score = mini_max(depth - 1, Double.MIN_VALUE, Double.MAX_VALUE, !is_max_player, board);                ///undo_move
                 board.pieces[row_f][col_f] = cur;
                 board.pieces[row_t][col_t] = nxt;
                 board.pieces[row_f][col_f].steps--;
                 board.pieces[row_f][col_f].setPos(new Cell(row_f, col_f));
-                
+ 
                 ///finish_undo
                 if (score >= best_score) {
                     best_score = score;
@@ -105,16 +173,16 @@ public class AI extends Player {
     }
  
     /////////
-    private int mini_max(int depth, int alpha, int bita, boolean is_max_player, Board board) {
+    private double mini_max(int depth, double alpha, double bita, boolean is_max_player, Board board) {
  
         if (depth == 0) {
             return get_rating_of_board(board);
         }
-        int best_val;
+        double best_val;
         ArrayList< SingleMove> moves = generate_all_moves_on_all_pieces(board, get_color_now(is_max_player));
  
         if (is_max_player == true) {
-            best_val = Integer.MIN_VALUE;
+            best_val = Double.MIN_VALUE;
             for (int i = 0; i < (int) moves.size(); i++) {
                 ///do
                 SingleMove one_move = moves.get(i);
@@ -142,7 +210,7 @@ public class AI extends Player {
                 }
             }
         } else {
-            best_val = Integer.MAX_VALUE;
+            best_val = Double.MAX_VALUE;
             for (int i = 0; i < (int) moves.size(); i++) {
                 ///do
                 SingleMove one_move = moves.get(i);
@@ -165,32 +233,31 @@ public class AI extends Player {
                 board.pieces[row_t][col_t] = tmp_piece2;
                 board.pieces[row_f][col_f].steps--;
                 board.pieces[row_f][col_f].setPos(new Cell(row_f, col_f));
-                
+ 
                 if (alpha >= bita) {
                     return best_val;
                 }
             }
         }
  
-        /*never reach to this case*/
         return best_val;
     }
  
     /////////
-    private int get_rating_of_board(Board board) {
-        int total_score = 0;
+    private double get_rating_of_board(Board board) {
+        double total_score = 0;
  
         for (int i = 0; i < 8; i++) {
             for (int y = 0; y < 8; y++) {
                 if(board.pieces[i][y]!=null)
-                 total_score += get_piece_score(board.pieces[i][y]);
+                 total_score += get_piece_score(board.pieces[i][y],i,y);
             }
         }
  
         return total_score;
     }
  
-    private int get_piece_score(Piece piece) {
+    private double get_piece_score(Piece piece,int r,int c) {
         int posORneg=0;
  
         if (piece!=null &&piece.getColor() == this.color) {
@@ -200,17 +267,17 @@ public class AI extends Player {
         }
  
         if (piece instanceof Pawn) {
-            return 10 * posORneg;
+            return (10 * posORneg)+pawnrate[r][c];
         } else if (piece instanceof Knight) {
-            return 30 * posORneg;
+            return (30 * posORneg)+knightrate[r][c];
         } else if (piece instanceof Bishop) {
-            return 40 * posORneg;
+            return (40 * posORneg)+bishobrate[r][c];
         } else if (piece instanceof Rook) {
-            return 50 * posORneg;
+            return (50 * posORneg)+rookrate[r][c];
         } else if (piece instanceof Queen) {
-            return 100 * posORneg;
+            return (100 *posORneg)+queenrate[r][c];
         } else if (piece instanceof King) {
-            return 1000 * posORneg;
+            return (1000 * posORneg)+kingrate[r][c];
         } else {
             return 0;
         }
