@@ -236,8 +236,8 @@ public class Skill
         fire.setMaterial(mat_red);
         fire.setImagesX(3);
         fire.setImagesY(3); // 2x2 texture animation
-        fire.setEndColor(  new ColorRGBA(221, 221, 221, 0.2f));   // red
-        fire.setStartColor(new ColorRGBA(204, 255, 255, 0.2f)); // yellow
+        fire.setEndColor(ColorRGBA.Brown);   // light black
+        fire.setStartColor(ColorRGBA.Brown); // black
         fire.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 0.5f, 0));
         fire.setGravity(0, 0, 0);
         fire.setLowLife(1f);
@@ -427,8 +427,8 @@ public class Skill
         fire.setMaterial(mat_red);
         fire.setImagesX(3);
         fire.setImagesY(3); // 2x2 texture animation
-        fire.setEndColor(  new ColorRGBA(213, 100, 1, 0.5f));
-        fire.setStartColor(new ColorRGBA(213, 100, 1, 0.5f));
+        fire.setEndColor( new ColorRGBA(221, 221, 221, 0.2f));
+        fire.setStartColor(new ColorRGBA(204, 255, 255, 0.2f));
         fire.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 0.5f, 0));
         fire.setGravity(0, 0, 0);
         fire.setLowLife(1f);

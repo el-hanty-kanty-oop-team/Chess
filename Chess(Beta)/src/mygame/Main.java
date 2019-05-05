@@ -120,7 +120,7 @@ public class Main extends SimpleApplication
     @Override
     public void simpleInitApp() 
     {
-        AI = true;
+        AI = false;
         initModels();
         initKeys();
         setCam();
@@ -132,7 +132,7 @@ public class Main extends SimpleApplication
     public void initModels()
     {
         defaultMap = new DefaultMap(this);
-        piecesTypeSelected = PiecesFactory.GetPiecesType(this, "MagicalVsZombie");
+        piecesTypeSelected = PiecesFactory.GetPiecesType(this, "ZombieVsMagical");
         
         currentSelected = null;
         lastSelected = null;

@@ -15,7 +15,6 @@
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecePackage/Pawn.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/GamePackage/GameMode.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecePackage/Knight.java</file>
-            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/assets/Models/Animations/Zombie/knightWalk01/knightWalk.j3o</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/ZombieVsMagical/ZombieVsMagical.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecePackage/Piece.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecePackage/Bishop.java</file>
@@ -27,6 +26,7 @@
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/ZombieMode/Castle.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/MagicalMode/Castle.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/MagicalVsZombie/MagicalVsZombie.java</file>
+            <file>file:/C:/Users/shaks/Documents/Chess(Beta)/assets/Models/Animations/Zombie/castleWalk01/castleWalk.j3o</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/ZombieMode/King.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/Maps/Map.java</file>
             <file>file:/C:/Users/shaks/Documents/Chess(Beta)/src/PiecesAndAnimation/PiecesAnimation/ZombieMode/Pawn.java</file>

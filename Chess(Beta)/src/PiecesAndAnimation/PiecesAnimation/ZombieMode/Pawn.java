@@ -27,6 +27,7 @@ public class Pawn extends PieceAnimation
         startPosition.set(playerWalkDirection);
         attackIteration = 1;
         destination.set(i, 0, j);
+        stopMovingAfterAttack = true;
     }
     
     @Override

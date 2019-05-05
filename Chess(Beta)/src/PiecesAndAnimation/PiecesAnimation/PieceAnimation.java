@@ -37,7 +37,7 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     protected final Vector3f playerWalkDirection, destination, upVector; 
     protected AnimChannel channel, attackCh, deathCh, standCh, walkCh;
     protected AnimControl control, attackAnimControl, deathAnimControl, standAnimControl, walkAnimControl;
-    protected boolean good, rangeAttack;
+    protected boolean good, rangeAttack, stopMovingAfterAttack;
     protected BitmapText headText;
     protected BitmapFont font;
     protected float modelScale;
@@ -141,7 +141,7 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         }
         else if(animName.equalsIgnoreCase("Attack"))
         {
-            if(numOfIterations == 0)
+            if(numOfIterations == 0 || stopMovingAfterAttack)
             {
                 stand();
             }
@@ -305,9 +305,8 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     
     private void stand()
     {
-        dimensionChanging();
         localNode.lookAt(destination, upVector);
-        playerWalkDirection.addLocal(x, 0.0f, z);
+        playerWalkDirection.set(destination);
         localNode.setLocalTranslation(playerWalkDirection);
         localNode.detachAllChildren();
         localNode.attachChild(standNode);
@@ -322,23 +321,22 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     {
         walk = false;
         numOfIterations--;
-        
-        if(!localNode.hasChild(walkNode))
-        {
-            localNode.detachAllChildren();
-            localNode.attachChild(walkNode);
-        }
-        
         localNode.lookAt(destination, upVector);
         dimensionChanging();
+        localNode.detachAllChildren();
         walkCh.reset(true);
+        
         if(x == 0 || z == 0)
-            walkCh.setAnim("Walk");
+            walkCh.setAnim("Walk", 0.0f);
         else
-            walkCh.setAnim("WalkDig");
+            walkCh.setAnim("WalkDig", 0.0f);
         x = z = 0;
-        walkCh.setLoopMode(LoopMode.Loop);
+        
+        walkCh.setLoopMode(LoopMode.DontLoop);
         walkCh.setSpeed(animSpeed);
+
+        localNode.attachChild(walkNode);
+        
     }
     
     private void skill()
