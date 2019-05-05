@@ -17,6 +17,7 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
+import com.jme3.font.Rectangle;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -80,7 +81,7 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         playerWalkDirection = new Vector3f(Vector3f.ZERO);
         startPosition = new Vector3f(Vector3f.ZERO);
         upVector = new Vector3f(Vector3f.ZERO);
-        
+                
         headText = new BitmapText(font, false);
     }
     
@@ -94,10 +95,19 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         
         LoadModel();
         
-        headText.setSize(font.getCharSet().getRenderedSize());      // font size
-        headText.setColor(ColorRGBA.Blue);                             // font color
-        headText.setLocalTranslation(playerWalkDirection); // position
-        //localNode.attachChild(headText);
+        // font color
+        if(good)
+            headText.setColor(ColorRGBA.Blue);
+        else
+            headText.setColor(ColorRGBA.Red);
+
+        headText.setSize(0.2f);      // font size
+        headText.setLocalTranslation(0f, headText.getHeight() + 1.2f ,-0.01f); // position
+        //Rectangle rect = new Rectangle(0, 0, 1, 1);
+       // headText.setBox(rect);
+       // headText.setAlignment(BitmapFont.Align.Center);
+        
+        localNode.attachChild(headText);
         localNode.setLocalTranslation(playerWalkDirection);
         localNode.addLight(dl);
         rootNode.attachChild(localNode);
@@ -107,7 +117,7 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     @Override
     public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) 
     {
-        if(animName.equalsIgnoreCase("Walk"))
+        if(animName.equalsIgnoreCase("Walk") || animName.equalsIgnoreCase("WalkDig"))
         {
             if(attack && numOfIterations <= attackIteration)
             {
@@ -160,7 +170,10 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     {
       // unused
         if(animName.equalsIgnoreCase("Stand"))
+        {
             isMoveDone = true;
+            localNode.attachChild(headText);
+        }
     }
 
   /** Custom Keybinding: Map named actions to inputs. */
@@ -199,6 +212,8 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     @Override
     public void update(float tpf)
     {
+        
+        headText.lookAt(new Vector3f(cam.getLocation().x, 0, cam.getLocation().z), upVector);
         if(walk)
             walk();
         if(attack && attackUpdate)
@@ -315,8 +330,13 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         }
         
         localNode.lookAt(destination, upVector);
+        dimensionChanging();
         walkCh.reset(true);
-        walkCh.setAnim("Walk");
+        if(x == 0 || z == 0)
+            walkCh.setAnim("Walk");
+        else
+            walkCh.setAnim("WalkDig");
+        x = z = 0;
         walkCh.setLoopMode(LoopMode.Loop);
         walkCh.setSpeed(animSpeed);
     }
@@ -325,13 +345,40 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     {
         if(good)
         {
-            
+            switch((int)startPosition.z)
+            {
+                case 0:
+                case 7:
+                    Skill.waterWind(new Vector3f(localNode.getLocalTranslation()), new Vector3f(destination), rootNode, assetManager);
+                    break;
+             
+                case 1:
+                case 6:
+                    Skill.waterCircle(new Vector3f(localNode.getLocalTranslation()), new Vector3f(destination), rootNode, assetManager);
+                    break;
+             
+                case 2:
+                case 5:
+                    Skill.water(new Vector3f(localNode.getLocalTranslation()), new Vector3f(destination), rootNode, assetManager);
+                    break;
+                
+                case 3:
+                    Skill.waterWave(new Vector3f(localNode.getLocalTranslation()), new Vector3f(destination), rootNode, assetManager);
+                    break;
+                
+                default:
+                    break;
+            }
         }
         else
         {
             switch((int)startPosition.z) 
             {
-                
+                case 0:
+                case 7:
+                    Skill.fireWind(new Vector3f(localNode.getLocalTranslation()), new Vector3f(destination), rootNode, assetManager);
+                    break;
+             
                 case 1:
                 case 6:
                     Skill.fireCircle(new Vector3f(localNode.getLocalTranslation()), new Vector3f(destination), rootNode, assetManager);

@@ -15,7 +15,7 @@ public class AI extends Player {
  
     final void fillpawn() {
         this.pawnrate = new double[][]{
-            {0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, 0.0},
+            {5.0,  5.0,  5.0,  5.0,  5.0,  5.0,  5.0, 5.0},
             {5.0,  5.0,  5.0,  5.0,  5.0,  5.0,  5.0, 5.0},
             {1.0,  1.0,  2.0,  3.0,  3.0,  2.0,  1.0, 1.0},
             {0.5,  0.5,  1.0,  2.5,  2.5,  1.0,  0.5, 0.5},
@@ -35,7 +35,7 @@ public class AI extends Player {
             {-0.5, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -0.5},
             {-0.5, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -0.5},
             {-0.5, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -0.5},
-            { 0.0, 0.0,  0.0,  0.5,  0.5,  0.0,  0.0,  0.0}         
+            { 0.0,-0.1,  -0.1,  0.5,  0.5,  -0.1,  -0.1,  0.0}         
      };
     }
     final void fillbishob() {
@@ -135,6 +135,11 @@ public class AI extends Player {
                 int row_t = one_move.getTo().getRow();
                 int col_t = one_move.getTo().getColumn();
                 ///make_move
+                if(i==0){
+                    best_move_f=one_move.getFrom();
+                    best_move_t=one_move.getTo();
+                }
+
                 Piece cur = board.pieces[row_f][col_f];
                 Piece nxt = board.pieces[row_t][col_t];
                 board.pieces[row_f][col_f] = null;
@@ -267,6 +272,11 @@ public class AI extends Player {
         }
  
         if (piece instanceof Pawn) {
+            
+            if(piece.getColor() == Color.White && r == 7)
+            {
+                return (100 * posORneg)+pawnrate[r][c];
+            }
             return (10 * posORneg)+pawnrate[r][c];
         } else if (piece instanceof Knight) {
             return (30 * posORneg)+knightrate[r][c];

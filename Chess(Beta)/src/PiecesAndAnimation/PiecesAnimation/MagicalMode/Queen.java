@@ -45,7 +45,7 @@ public class Queen extends PieceAnimation
         walkNode.setLocalScale(modelScale);  
         
         
-        headText.setText("queen");             // the text
+        headText.setText("Queen");             // the text
         
     }
     

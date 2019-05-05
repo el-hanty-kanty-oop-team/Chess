@@ -44,7 +44,7 @@ public class Castle extends PieceAnimation
         walkNode.setLocalScale(modelScale);  
         
         
-        headText.setText("castle");             // the text
+        headText.setText("Castle");             // the text
         
     }
     

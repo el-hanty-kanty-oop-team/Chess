@@ -26,7 +26,7 @@ public class Bishop extends PieceAnimation
         playerWalkDirection.set(i, 0, j);
         startPosition.set(playerWalkDirection);
         destination.set(i, 0, j);
-        modelScale = 0.75f;
+        modelScale = 0.72f;
         attackIteration = 1;
         rangeAttack = true;
     }
@@ -111,7 +111,7 @@ public class Bishop extends PieceAnimation
         
         walkAnimControl = walkNode.getChild("bishopWalk").getControl(AnimControl.class);
         walkCh = walkAnimControl.createChannel();
-        walkCh.setAnim("Walk");
+        walkCh.setAnim("WalkDig");
         walkCh.setLoopMode(LoopMode.DontLoop);
         walkAnimControl.addListener(this);
         System.out.println("Load Chanels Done");

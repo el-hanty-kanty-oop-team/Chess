@@ -110,7 +110,7 @@ public class Bishop extends PieceAnimation
         
         walkAnimControl = walkNode.getChild("bishopWalk").getControl(AnimControl.class);
         walkCh = walkAnimControl.createChannel();
-        walkCh.setAnim("Walk");
+        walkCh.setAnim("WalkDig");
         walkCh.setLoopMode(LoopMode.DontLoop);
         walkAnimControl.addListener(this);
         System.out.println("Load Chanels Done");

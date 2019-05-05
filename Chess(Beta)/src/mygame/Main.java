@@ -22,7 +22,6 @@ import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import java.time.Clock;
 import java.util.ArrayList;
 import javafx.util.Pair;
 
@@ -54,7 +53,6 @@ public class Main extends SimpleApplication
             {
                 if(!keyPressed)
                 {   
-                    updateCam();
                     flyCam.setEnabled(false);
                     inputManager.setCursorVisible(true);
                 }
@@ -122,7 +120,7 @@ public class Main extends SimpleApplication
     @Override
     public void simpleInitApp() 
     {
-        AI = false;
+        AI = true;
         initModels();
         initKeys();
         setCam();
@@ -134,7 +132,7 @@ public class Main extends SimpleApplication
     public void initModels()
     {
         defaultMap = new DefaultMap(this);
-        piecesTypeSelected = PiecesFactory.GetPiecesType(this, "whiteAndBlackOriginal");
+        piecesTypeSelected = PiecesFactory.GetPiecesType(this, "MagicalVsZombie");
         
         currentSelected = null;
         lastSelected = null;
@@ -153,8 +151,9 @@ public class Main extends SimpleApplication
     private void setCam()
     {
         flyCam.setMoveSpeed(20);
+        flyCam.setEnabled(false);
         cam.setLocation(camLocation1);
-        inputManager.setCursorVisible(false);
+        inputManager.setCursorVisible(true);
         cam.lookAt(camDirection, Vector3f.ZERO);
     }
     
@@ -185,7 +184,9 @@ public class Main extends SimpleApplication
         updatePieces(); // user Interaction
         updateCam();
         if(AI && !updateCalledEngine)
+        {
             Engine();
+        }
         stateManager.update(tpf);
     }
     
@@ -200,6 +201,7 @@ public class Main extends SimpleApplication
             lastSelectedPiece = new Pair(from.x, from.z);
             Cell fromC = new Cell(piecesTypeSelected.getPieceDimension(from.x, from.z).x, piecesTypeSelected.getPieceDimension(from.x, from.z).z), toC = new Cell(to.x, to.z);
             defaultMap.removeBlueHighlights();
+            defaultMap.removeRedHighlights();
             
             if(specialMove != null && specialMove.getRow() == toC.getRow() && specialMove.getColumn() == toC.getColumn())
             {
@@ -243,14 +245,12 @@ public class Main extends SimpleApplication
                 System.out.println(" Draaaaaaaaaaaaaaaaaaaw ");
             }
             
-            boolean ok = false;
             to = piecesTypeSelected.getPieceDimension(0, 4);
             toC = new Cell(to.x, to.z);
             
             if(!game.board.whiteKing.check_my_king(toC, toC, game.board.whiteKing, game.board.pieces))
             {
                 defaultMap.highLightCell(toC, "Attack");
-                ok = true;
             }
             
             to = piecesTypeSelected.getPieceDimension(3, 4);
@@ -259,11 +259,7 @@ public class Main extends SimpleApplication
             if(!game.board.blackKing.check_my_king(toC, toC, game.board.blackKing, game.board.pieces))
             {
                 defaultMap.highLightCell(toC, "Attack");
-                ok = true;
             }
-            
-            if(!ok)
-                defaultMap.removeRedHighlights();
             
             currentSelected = null;
             lastSelected = null;
@@ -273,7 +269,7 @@ public class Main extends SimpleApplication
     
     private void HighlightAvailableMoves(int i, int j)
     {
-        if (currentSelected != null  && ((String)currentSelected.getValue()).equalsIgnoreCase("Piece"))
+        if ((currentSelected != null  && ((String)currentSelected.getValue()).equalsIgnoreCase("Piece")) || (lastSelected != null && ((String)lastSelected.getValue()).equalsIgnoreCase("engine")))
         {
             
             Vector3i dimension = piecesTypeSelected.getPieceDimension(i, j);
@@ -314,7 +310,7 @@ public class Main extends SimpleApplication
        if(engineMove && ok)
        {
             updateCalledEngine = true;
-            SingleMove sm = ai2.root(5, true, game.board);
+            SingleMove sm = ai2.root(2, true, game.board);
             Cell from = sm.getFrom(), to = sm.getTo();
             System.out.println("Engine Move");
             
@@ -329,7 +325,7 @@ public class Main extends SimpleApplication
                 int r = piecesTypeSelected.getPieceIndex(from.getRow(), from.getColumn()).x, c = piecesTypeSelected.getPieceIndex(from.getRow(), from.getColumn()).z;
                 lastSelected = new Pair(new Vector3i(r, 0, c), "Engine");
                 currentSelected = new Pair(new Vector3i(to.getRow(), 0, to.getColumn()), "Map");
-                HighlightAvailableMoves(to.getRow(), to.getColumn());
+                HighlightAvailableMoves(r, c);
             }
        }
     }
@@ -355,8 +351,11 @@ public class Main extends SimpleApplication
                 int type = 3;
                 Vector3i to = piecesTypeSelected.getPieceDimension(i, j);
                 Cell toC = new Cell(to.x, to.z);
-                //type = uerChoice() ;  .// xml 
-                //Todo: get user selcted type "GUI" 0 -> rock, 1 -> bishop, 2 -> knight, 3 -> queen
+                if(!AI || (AI && i < 2))
+                {
+                    //type = uerChoice() ;  .// xml 
+                    //Todo: get user selcted type "GUI" 0 -> rock, 1 -> bishop, 2 -> knight, 3 -> queen
+                }
                 game.makePromotion(toC, type);
                 piecesTypeSelected.promote(i, j, type);
                 checkPromotion = false;

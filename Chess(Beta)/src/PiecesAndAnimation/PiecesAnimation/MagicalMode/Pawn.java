@@ -117,5 +117,5 @@ public class Pawn extends PieceAnimation
             ok |= (selectedObject == (Spatial)standNode.getChild("pawnStand_" + String.valueOf(i)));
         return ok;
     }
-    
+
 }

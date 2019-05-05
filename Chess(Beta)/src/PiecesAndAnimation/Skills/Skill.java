@@ -218,8 +218,253 @@ public class Skill
             }
         };
         
-        motionControl1.setSpeed(skillSpeed * 0.5f);
-        motionControl2.setSpeed(skillSpeed);
+        motionControl1.setSpeed(skillSpeed);
+        motionControl2.setSpeed(skillSpeed * 1.5f);
+        motionControl1.play();        
+    }
+    
+    public static void fireWind(Vector3f from, Vector3f to, final Node rootNode, AssetManager assetManager)
+    {
+        float shift = 0.1f;
+        float x = to.x, z = to.z;
+        from.y = to.y = 0.7f;
+        check(from, to, shift);
+        final ParticleEmitter fire = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 300);
+        Material mat_red = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");
+        mat_red.setTexture("Texture", assetManager.loadTexture("Effects/Explosion/Debris.png"));
+        fire.setLocalTranslation(from);
+        fire.setMaterial(mat_red);
+        fire.setImagesX(3);
+        fire.setImagesY(3); // 2x2 texture animation
+        fire.setEndColor(  new ColorRGBA(221, 221, 221, 0.2f));   // red
+        fire.setStartColor(new ColorRGBA(204, 255, 255, 0.2f)); // yellow
+        fire.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 0.5f, 0));
+        fire.setGravity(0, 0, 0);
+        fire.setLowLife(1f);
+        fire.setHighLife(1f);
+        fire.getParticleInfluencer().setVelocityVariation(1f);
+        rootNode.attachChild(fire);
+        final ParticleEmitter fire2 = fire.clone();
+        
+        MotionPath path1 = new MotionPath(), path2 = new MotionPath();
+        path1.addWayPoint(from);
+        path1.addWayPoint(to);
+ 
+        circlePath(path2, 50, 0.5f, x, z);
+        
+        final MotionEvent motionControl2 = new MotionEvent(fire2, path2)
+        {
+            @Override
+            public void onStop()
+            {
+                rootNode.detachChild(fire2);
+            }
+        };
+        MotionEvent motionControl1 = new MotionEvent(fire, path1)
+        {
+            @Override
+            public void onStop()
+            {
+                rootNode.detachChild(fire);
+                rootNode.attachChild(fire2);
+                motionControl2.play();
+                skillDone = true;
+            }
+        };
+        
+        motionControl1.setSpeed(skillSpeed);
+        motionControl2.setSpeed(skillSpeed * 1.5f);
+        motionControl1.play();        
+    }
+    
+    public static void water(Vector3f from, Vector3f to, final Node rootNode, AssetManager assetManager)
+    {
+        float shift = 0.1f;
+        from.y = to.y = 0.7f;
+        check(from, to, shift);
+        
+        final ParticleEmitter fire = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 300);
+        Material mat_red = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");
+        mat_red.setTexture("Texture", assetManager.loadTexture("Effects/Explosion/flame.png"));
+        fire.setLocalTranslation(from);
+        fire.setMaterial(mat_red);
+        fire.setImagesX(2);
+        fire.setImagesY(2); // 2x2 texture animation
+        fire.setEndColor(  new ColorRGBA(213, 100, 1, 0.5f));   // red
+        fire.setStartColor(new ColorRGBA(213, 100, 1, 0.5f));
+        fire.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 2, 0));
+        fire.setStartSize(1.5f);
+        fire.setEndSize(0.1f);
+        fire.setGravity(0, 0, 0);
+        fire.setLowLife(1f);
+        fire.setHighLife(3f);
+        fire.getParticleInfluencer().setVelocityVariation(0.3f);
+        rootNode.attachChild(fire);
+        
+        MotionPath path = new MotionPath();
+        path.addWayPoint(from);
+        path.addWayPoint(to);
+        MotionEvent motionControl = new MotionEvent(fire, path)
+        {
+            @Override
+            public void onStop()
+            {
+                rootNode.detachChild(fire);
+                skillDone = true;
+            }
+        };
+        motionControl.setSpeed(skillSpeed * 2.0f);
+        motionControl.play();
+    }
+
+    public static void waterCircle(Vector3f from, Vector3f to, final Node rootNode, AssetManager assetManager)
+    {
+        float shift = 0.1f;
+        float x = to.x, z = to.z;
+        from.y = to.y = 0.7f;
+        check(from, to, shift);
+        
+        final ParticleEmitter fire = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 300);
+        Material mat_red = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");
+        mat_red.setTexture("Texture", assetManager.loadTexture("Effects/Smoke/Smoke.png"));
+        fire.setLocalTranslation(from);
+        fire.setMaterial(mat_red);
+        fire.setImagesX(15);
+        fire.setImagesY(1); // 2x2 texture animation
+        fire.setEndColor(  new ColorRGBA(213, 100, 1, 0.5f)); 
+        fire.setStartColor(new ColorRGBA(213, 100, 1, 0.5f));
+        fire.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 0.5f, 0));
+        fire.setGravity(0, 0, 0);
+        fire.setLowLife(1f);
+        fire.setHighLife(1f);
+        fire.getParticleInfluencer().setVelocityVariation(1f);
+        rootNode.attachChild(fire);
+        
+        
+        MotionPath path = new MotionPath();
+        path.addWayPoint(from);
+        path.addWayPoint(to);
+        
+        circlePath(path, 50, 1.0f, x, z);
+        
+        MotionEvent motionControl = new MotionEvent(fire, path)
+        {
+            @Override
+            public void onStop()
+            {
+                rootNode.detachChild(fire);
+                skillDone = true;
+            }
+        };
+        motionControl.setSpeed(skillSpeed);
+        motionControl.play();
+    } 
+    
+    public static void waterWave(Vector3f from, Vector3f to, final Node rootNode, AssetManager assetManager)
+    {
+        float shift = 0.1f;
+        float x = to.x, z = to.z;
+        from.y = to.y = 0.7f;
+        check(from, to, shift);
+        final ParticleEmitter fire = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 300);
+        Material mat_red = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");
+        mat_red.setTexture("Texture", assetManager.loadTexture("Effects/Explosion/shockwave.png"));
+        fire.setLocalTranslation(from);
+        fire.setMaterial(mat_red);
+        fire.setImagesX(1);
+        fire.setImagesY(1); // 2x2 texture animation
+        fire.setEndColor(  new ColorRGBA(213, 100, 1, 0.5f));
+        fire.setStartColor(new ColorRGBA(213, 100, 1, 0.5f));
+        fire.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 0.5f, 0));
+        fire.setGravity(0, 0, 0);
+        fire.setLowLife(1f);
+        fire.setHighLife(1f);
+        fire.getParticleInfluencer().setVelocityVariation(1f);
+        rootNode.attachChild(fire);
+        final ParticleEmitter fire2 = fire.clone();
+        
+        MotionPath path1 = new MotionPath(), path2 = new MotionPath();
+        path1.addWayPoint(from);
+        path1.addWayPoint(to);
+ 
+        circlePath(path2, 50, 0.5f, x, z);
+        
+        final MotionEvent motionControl2 = new MotionEvent(fire2, path2)
+        {
+            @Override
+            public void onStop()
+            {
+                rootNode.detachChild(fire2);
+            }
+        };
+        MotionEvent motionControl1 = new MotionEvent(fire, path1)
+        {
+            @Override
+            public void onStop()
+            {
+                rootNode.detachChild(fire);
+                rootNode.attachChild(fire2);
+                motionControl2.play();
+                skillDone = true;
+            }
+        };
+        
+        motionControl1.setSpeed(skillSpeed);
+        motionControl2.setSpeed(skillSpeed * 1.5f);
+        motionControl1.play();        
+    }
+    
+    public static void waterWind(Vector3f from, Vector3f to, final Node rootNode, AssetManager assetManager)
+    {
+        float shift = 0.1f;
+        float x = to.x, z = to.z;
+        from.y = to.y = 0.7f;
+        check(from, to, shift);
+        final ParticleEmitter fire = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 300);
+        Material mat_red = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");
+        mat_red.setTexture("Texture", assetManager.loadTexture("Effects/Explosion/Debris.png"));
+        fire.setLocalTranslation(from);
+        fire.setMaterial(mat_red);
+        fire.setImagesX(3);
+        fire.setImagesY(3); // 2x2 texture animation
+        fire.setEndColor(  new ColorRGBA(213, 100, 1, 0.5f));
+        fire.setStartColor(new ColorRGBA(213, 100, 1, 0.5f));
+        fire.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 0.5f, 0));
+        fire.setGravity(0, 0, 0);
+        fire.setLowLife(1f);
+        fire.setHighLife(1f);
+        fire.getParticleInfluencer().setVelocityVariation(1f);
+        rootNode.attachChild(fire);
+        final ParticleEmitter fire2 = fire.clone();
+        
+        MotionPath path1 = new MotionPath(), path2 = new MotionPath();
+        path1.addWayPoint(from);
+        path1.addWayPoint(to);
+ 
+        circlePath(path2, 50, 0.5f, x, z);
+        
+        final MotionEvent motionControl2 = new MotionEvent(fire2, path2)
+        {
+            @Override
+            public void onStop()
+            {
+                rootNode.detachChild(fire2);
+            }
+        };
+        MotionEvent motionControl1 = new MotionEvent(fire, path1)
+        {
+            @Override
+            public void onStop()
+            {
+                rootNode.detachChild(fire);
+                rootNode.attachChild(fire2);
+                motionControl2.play();
+                skillDone = true;
+            }
+        };
+        
+        motionControl1.setSpeed(skillSpeed);
+        motionControl2.setSpeed(skillSpeed * 1.5f);
         motionControl1.play();        
     }
     

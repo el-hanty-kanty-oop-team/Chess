@@ -31,13 +31,17 @@ public abstract class Map extends AbstractAppState
         cell = new MapCell[numOfRows][numOfColumns];
         Node floor = (Node)app.getAssetManager().loadModel("Models/Maps/map.j3o");
         Material mat = new Material(app.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
-        Texture text = app.getAssetManager().loadTexture("Textures/Maps/desertMap/Mossy_rock_01_2K_Base_Color.png");
+        Texture text = app.getAssetManager().loadTexture("Textures/Maps/defaultMap/2.png");
         text.setWrap(Texture.WrapMode.Repeat);
         floor.setLocalTranslation(3.5f, 0.0f, 3.5f);
         mat.setTexture("DiffuseMap", text);
         floor.setMaterial(mat);
         floor.setLocalScale(0.62f);
         Node deathFloor1 = floor.clone(true);
+        Material mat2 = new Material(app.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+        Texture text2 = app.getAssetManager().loadTexture("Textures/Maps/defaultMap/4.png");
+        mat2.setTexture("DiffuseMap", text2);
+        deathFloor1.setMaterial(mat2);
         deathFloor1.setLocalTranslation(3.5f, 1.0f, 10.5f);
         deathFloor1.setLocalScale(0.62f, 0.62f, 0.2f);
         Node deathFloor2 = deathFloor1.clone(true);
@@ -73,7 +77,7 @@ public abstract class Map extends AbstractAppState
     public boolean isCellHighlighted(Cell cell)
     {
         int i = cell.getRow(), j = cell.getColumn();
-        return this.cell[i][j].isHighLighted();
+        return this.cell[i][j].isBlueHighLighted();
     }
     
     public void removeHighlights()

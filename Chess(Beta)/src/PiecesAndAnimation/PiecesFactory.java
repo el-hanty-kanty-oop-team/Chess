@@ -2,7 +2,9 @@ package PiecesAndAnimation;
 
 import PiecesAndAnimation.OriginPieces.OriginalPieces;
 import PiecesAndAnimation.PiecesAnimation.MagicalMode.Magical;
+import PiecesAndAnimation.PiecesAnimation.MagicalVsZombie.MagicalVsZombie;
 import PiecesAndAnimation.PiecesAnimation.ZombieMode.Zombie;
+import PiecesAndAnimation.PiecesAnimation.ZombieVsMagical.ZombieVsMagical;
 import com.jme3.app.SimpleApplication;
 
 /**
@@ -23,10 +25,16 @@ public class PiecesFactory
         }
         else if (selected.equalsIgnoreCase("MagicalPieces"))
         { 
-            // we will do it soon inshallah
             return new Magical(app)  ;
         }
-
+        else if(selected.equalsIgnoreCase("ZombieVsMagical"))
+        {
+            return new ZombieVsMagical(app);
+        }
+        else if(selected.equalsIgnoreCase("MagicalVsZombie"))
+        {
+            return new MagicalVsZombie(app);
+        }
         return null ;
     }
 }

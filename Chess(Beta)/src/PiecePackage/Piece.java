@@ -16,7 +16,7 @@ abstract public class Piece {
         steps = 0;
         last_move_id = 0;
     }
-
+    
     public Piece(Piece p) {
         this.pos = new Cell(p.pos);
         this.color = p.color;
@@ -51,9 +51,37 @@ abstract public class Piece {
                 return false;
             }
         }
+        /*
+        for(int i = 0; i < 8; i ++)
+        {
+            for(int j = 0; j < 8; j ++)
+            {
+                if(board[i][j] != null && board[i][j] instanceof King)
+                {
+                    if(board[i][j].color == Color.White)
+                    {
+                        System.out.println("White King At " + i + " " + j);
+                    }
+                    
+                    if(board[i][j].color == Color.Black)
+                    {
+                        System.out.println("Black King At " + i + " " + j);
+                    }
+                }
+            }
+        }
 
+        System.out.println("King Color And Position " + king.color.toString() + " " + king.pos.getRow() + " " + king.pos.getColumn());*/
+        
         boolean ok = true;
         int x = king.pos.getRow(), y = king.pos.getColumn();
+        
+       /* if(board[x][y] == null)
+            System.out.println("Null at " + x + " " + y);
+        else
+            System.out.println("Not Null at " + x + " " + y);*/
+       
+        
 //         if(board[x][y] != null)
 //        {
 //            System.out.println("Not NUll " + board[x][y].getColor());
