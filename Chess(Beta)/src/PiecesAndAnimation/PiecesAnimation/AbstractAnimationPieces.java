@@ -206,6 +206,18 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
     }
     
     @Override
+    public void detach()
+    {
+        for(int i = 0; i < piece.length; i ++)
+        {
+            for(int j = 0; j < piece[i].length; j ++)
+            {
+                stateManager.detach(piece[i][j]);
+            }
+        }
+    }
+    
+    @Override
     public boolean checkPromotion(int i, int j)
     {
         int r = (int)dimension[i][j].getKey(), c = (int)dimension[i][j].getValue();

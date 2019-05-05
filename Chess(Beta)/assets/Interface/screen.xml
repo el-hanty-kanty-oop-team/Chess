@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty>
+<useStyles filename="nifty-default-styles.xml"/>
+    <useControls filename="nifty-default-controls.xml"/>
+       <controlDefinition name = "loadingbar" controller = "jme3test.TestLoadingScreen">
+        <image filename="Interface/border.png" childLayout="absolute"
+               imageMode="resize:15,2,15,15,15,2,15,2,15,2,15,15">
+            <image id="progressbar" x="0" y="0" filename="Interface/inner.png" width="32px"
+              height="100%" imageMode="resize:15,2,15,15,15,2,15,2,15,2,15,15" />
+        </image>
+    </controlDefinition>
+    <screen id="start" controller="mygame.Main" >
+
+                        <layer id="background" childLayout="center">
+                       <image filename="Interface/pewpew.png" /> 
+                        </layer>
+                    <layer  childLayout="absolute"  >
+                           <panel height="100%" width="100%" visibleMouse="true" childLayout="center"  >
+                                <panel id="rightMlhashlazma" height="100%" width="30%" align="right"/> 
+                                <panel id="leftMlhashLazma"   height="100%" width="30%" align="left" />
+                                <panel  childLayout="center"  >
+                                         <panel  childLayout="center" height="50%" paddingBottom="252px">
+                                        <control name="button" label="START" id="StartGame" align="center"
+                                               valign="center" height="50px">
+                                                  <interact onClick="nextScreen(Whoplayers)"/>
+                                         </control>
+                                        </panel>
+                                       <panel  childLayout="center" height="50%" valign="top" paddingTop="249px" >
+                                        <control name="button"  label="EXIt"  id="Exit" align="center"
+                                               valign="top" height="50px">
+                                                  <interact onClick="quitGame()"/>
+                                         </control>                             
+                                        </panel>
+                                         <panel  childLayout="center" height="50%" valign="top" paddingTop="150px" >
+                                            <control name="button" label="ABOUT US" id="AboutUs" align="center"
+                                                 valign="center" height="50px">
+                                                    <interact  onClick="nextScreen(AboutUS)"/>
+                                               </control>
+                                        </panel>    
+                                </panel> 
+                           </panel>
+                    </layer>
+    </screen>
+    
+    
+   <screen  id="AboutUS" controller="mygame.Main">
+            <layer id="backgroundFor3nd_Screen" childLayout="center">
+                  <image filename="Interface/output-onlinepngtools(2).png" /> 
+            </layer>
+             <layer  childLayout="absolute">
+                    <panel  childLayout="center"  paddingTop="500px" paddingLeft="550px" >
+                            <control name="button" label="Back" id="BacktoMainScreen" align="center"
+                                 valign="center" height="60px" >
+                                    <interact onClick="nextScreen(start)"/>
+                            </control>
+                    </panel>  
+             </layer>        
+   </screen>
+    
+  <screen id="Whoplayers" controller="mygame.Main">
+         
+                    <layer id="backgroundFor2nd_Screen" childLayout="center">
+                        <image filename="Interface/pewpew.png" /> 
+                    </layer>
+                    <layer  childLayout="absolute"  >
+                                <panel height="100%" width="100%" visibleMouse="true" childLayout="center"  >
+                                     <panel id="rightMlhashlazma" height="100%" width="30%" align="right"/> 
+                                     <panel id="leftMlhashLazma"   height="100%" width="30%" align="left" />
+                                     <panel  childLayout="center"  >
+                                         <panel  childLayout="center" height="50%"  >
+                                            <control name="button" label="two players" id="T2woplayers" align="center"
+                                                   valign="top" height="50px">
+                                                      <interact onClick="nextScreen(piecesType2)"/>
+                                             </control>
+                                         </panel>
+                                         <panel  childLayout="center" height="50%" valign="top" paddingTop="190px" >
+                                            <control name="button" label="VS computer" id="VScomputer" align="center"
+                                                 valign="center" height="50px">
+                                                    <interact onClick="nextScreen(piecesType1)"/>
+                                               </control>
+                                         </panel>    
+                                     </panel> 
+                                </panel>
+                    </layer>
+    </screen>
+  <screen id="piecesType" controller="mygame.Main">
+
+           <layer id="backgroundFor2nd_Screen" childLayout="center">
+               <image filename="Interface/pewpew.png" /> 
+           </layer>
+           <layer  childLayout="absolute"  >
+                        <panel height="100%" width="100%" visibleMouse="true" childLayout="center"  >
+                               <panel id="rightMlhashlazma" height="100%" width="30%" align="right"/> 
+                               <panel id="leftMlhashLazma"   height="100%" width="30%" align="left" />
+                               <panel  childLayout="center"  >
+                                        <panel  childLayout="center" height="50%"  >
+                                             <control name="button" label="Original" id="Original" align="center"
+                                                    valign="top" height="50px">
+                                                       <interact onClick="piecesType(WhiteAndBlackOriginal)"/>
+                                              </control>
+                                        </panel>
+                                    <panel  childLayout="center" height="50%" valign="top" paddingTop="251px" >
+                                             <control name="button" label="zombie`s" id="Zombiespieces" align="center"
+                                               valign="top" height="50px" backgroundColor="#f00f"    >
+                                                  <interact onClick="piecesType(ZombiePieces)"/>
+                                             </control>
+                                    </panel> 
+                                    <panel  childLayout="center" height="50%" valign="top" paddingTop="150px" >
+                                          <control name="button" label="MagicPieces" id="magicPieces" align="center"
+                                               valign="center" height="50px" >
+                                                  <interact onClick="piecesType(MagicalPieces)"/>
+                                          </control>
+                                    </panel> 
+                                </panel>
+                        </panel>
+                </layer>
+    </screen>
+  <screen  id="gameOver" controller="mygame.Main">
+           
+             <layer  childLayout="absolute">
+                    <panel  childLayout="center"  paddingTop="500px" paddingLeft="550px" >
+                          Game Over :V
+                        <panel childLayout="center">
+                            <control name="button" label="main menu" id="BacktoMainScreen" align="center"
+                                 valign="center" height="60px" >
+                                    <interact onClick="nextScreen(start)"/>
+                            </control>
+                        </panel>
+                        <panel childLayout="center">
+                             <control name="button" label="Exit" id="Exit" align="center"
+                                 valign="center" height="60px" >
+                                    <interact onClick="quitGame()"/>
+                            </control>
+                        </panel>
+                    </panel>  
+             </layer>        
+   </screen>
+  
+       
+</nifty>

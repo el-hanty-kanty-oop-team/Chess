@@ -26,6 +26,7 @@ public interface PiecesBehaviors
     public void enPassant(Vector3i from, Vector3i to);
     public void castling(Vector3i from, Vector3i to);
     public String getSelectedPieceType(int i, int j);
+    public void detach();
 }
 
 

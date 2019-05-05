@@ -254,6 +254,12 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
         localNode.attachChild(piece[i][j]);
     }
     
+    @Override
+    public void detach()
+    {
+        
+    }
+    
     private void check(int x, int z)
     {
         for(int i = 0; i < piece.length; i ++)
