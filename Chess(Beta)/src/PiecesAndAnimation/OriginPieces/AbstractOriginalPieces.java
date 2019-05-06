@@ -11,6 +11,7 @@ import Tools.Vector3i;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
+import com.jme3.audio.AudioNode;
 import com.jme3.cinematic.MotionPath;
 import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.math.FastMath;
@@ -37,8 +38,10 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
     protected Pair dimension[][];
     protected AppStateManager stateManager;
     protected Pair<Integer,Integer> p;
-
+    protected AudioNode audioWalk, audioDie;
+    
     private boolean isMoveDone = false;
+    
     
     @Override
     public Vector3i getPieceDimension(Spatial s)
@@ -124,6 +127,7 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
             @Override
             public void onStop()
             {
+                audioWalk.playInstance();
                 isMoveDone = true;
             }
         };
@@ -287,6 +291,7 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
     
     private void kill(int i, int j)
     {
+        audioDie.playInstance();
         Vector3f diePosition;
         if(map.get(new Pair(i, j)).contains("White"))
         {

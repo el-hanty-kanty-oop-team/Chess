@@ -17,6 +17,7 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.audio.AudioNode;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.FlyByCamera;
 import com.jme3.input.InputManager;
@@ -34,10 +35,9 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
 import javafx.util.Pair;
-import mygame.Main;
 
 /**
- *
+ * Class Controls the game
  * @author shaks
  */
 public class Chess extends AbstractAppState
@@ -58,13 +58,22 @@ public class Chess extends AbstractAppState
     private final Player p2 = new Player("hehehee", Color.Black) ;
     private final AI ai1 = new AI(Color.White), ai2 = new AI(Color.Black);
     private final Game game = new Game(GameMode.Multiplayer, ai1, ai2);
+    private AudioNode audioCheck;
     private SimpleApplication app;
+    private SpotLight spot;
+    private DirectionalLight dl;
     private String pieceString;
-    private int win = 0, depth = 0;
+    private int win = 0, depth = 0, userChoice;
    
     private final ActionListener actionListener = new ActionListener() 
     {
        
+        /**
+         * A func called auto when mapped action peformerd to handel user input
+         * @param name mapping Name
+         * @param keypressed false means pressed, true released
+         * @param tpf time per frame, we dont use it but needed to override
+         */
         @Override
         public void onAction(String name, boolean keyPressed, float tpf) 
         {
@@ -128,6 +137,14 @@ public class Chess extends AbstractAppState
            
         }
     };
+    
+    /**
+     * 
+     * @param app SimppleApplication that runs the game
+     * @param piecesString type of pieces (WhiteAndBlackoriginal, zombiePieces, magicalPieces)
+     * @param AI true vs Comp, false MultiPlayer
+     * @param depth depth of AI diffculty
+     */
     public Chess(SimpleApplication app, String piecesString, boolean AI, int depth)
     {
         this.app = app;
@@ -141,27 +158,57 @@ public class Chess extends AbstractAppState
         rootNode = app.getRootNode();
         stateManager = app.getStateManager();
     }
-    
 
+    /**
+     * initialize the gamme
+     * @param stateManager
+     * @param app 
+     */
     @Override
     public void initialize(AppStateManager stateManager, Application app) 
     {
         super.initialize(stateManager, app);
         initModels();
         initKeys();
+        initAudio();
         setCam();
         addLight();
         stateManager.attach(defaultMap);
         stateManager.attach((AppState)piecesTypeSelected); 
     }  
     
+    /**
+     * releaseing the memory when the game over
+     */
     public void detach()
     {
         piecesTypeSelected.detach();
+        rootNode.removeLight(spot);
+        rootNode.removeLight(dl);
+        app.getViewPort().clearProcessors();
+        app.getViewPort().setClearFlags(true, true, true);
+        stateManager.cleanup();
         stateManager.detach(defaultMap);
         stateManager.detach((AppState)piecesTypeSelected);
+        app.restart();
     }
     
+    /**
+     * initializing audio
+     */
+    private void initAudio()
+    {
+        audioCheck = new AudioNode(app.getAssetManager(), "Sounds/kingCheck.ogg");
+        rootNode.removeLight(dl);
+        rootNode.removeLight(spot);
+        audioCheck.setLooping(true);
+        audioCheck.setPositional(false);
+        audioCheck.setVolume(100);
+    }
+    
+    /**
+     * initializing selected pieces and the seleceted board
+     */
     private void initModels()
     {
         defaultMap = new DefaultMap(app);
@@ -170,6 +217,9 @@ public class Chess extends AbstractAppState
         lastSelected = null;
     }
 
+    /**
+     * initilizing map keys and buttons triggers
+     */
     private void initKeys()
     {
         inputManager.addMapping("FlyByTheCam", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
@@ -178,7 +228,9 @@ public class Chess extends AbstractAppState
         inputManager.addListener(actionListener, "pick target");
     }
     
-    // setting cam location for first time
+    /** 
+     * setting cam location for first time
+     */
     private void setCam()
     {
         flyCam.setMoveSpeed(20);
@@ -188,17 +240,19 @@ public class Chess extends AbstractAppState
         cam.lookAt(camDirection, Vector3f.ZERO);
     }
     
-    // lighting the game
+    /**
+     * lighting the game
+     */
     private void addLight()
     {
         // for "unshaded" material
-        DirectionalLight dl = new DirectionalLight();
+        dl = new DirectionalLight();
         dl.setDirection(new Vector3f(3.5f, 0.0f, 3.5f));
         rootNode.addLight(dl);
         
         // for "lighting" material "Doesn't affect unshadedMaterial"
         Vector3f lightTarget = new Vector3f(12, 3.5f, 30);
-        SpotLight spot=new SpotLight();
+        spot=new SpotLight();
         spot.setSpotRange(1000);
         spot.setSpotInnerAngle(5*FastMath.DEG_TO_RAD);
         spot.setSpotOuterAngle(10*FastMath.DEG_TO_RAD);
@@ -208,11 +262,21 @@ public class Chess extends AbstractAppState
         rootNode.addLight(spot);
     }
     
+    /**
+     * func called every single second auto from the engine
+     * update pieces and checking game state if needed
+     * update the camera
+     * calls AI if seleceted
+     * @param tpf time per frame (don't need it but mandatory for overriding)
+     */
     @Override
     public void update(float tpf) 
     {
-        //TODO: add update code
-        updatePieces(); // user Interaction
+        if(isUpdatePiecesVaild())
+        {
+            updatePieces(); // user Interaction
+        } 
+        
         updateCam();
         if(AI && !updateCalledEngine)
         {
@@ -220,90 +284,109 @@ public class Chess extends AbstractAppState
         }
     }
     
+    /**
+     * @return 1 if white wins, -1 if black wins, 2 if draw, 0 otherwise  
+     */
     public int isGameDone()
     {
         return win;
     }
     
+    /**
+     * update pieces position, attack and kill pieces
+     * and check for gamae state (white wins, black wins, draw)
+     * and run chec audio if king checked
+     */
     private void updatePieces()
     {
-        if(isUpdatePiecesVaild())
-        {  
-           // System.out.println("Update Pieces");
-            Vector3i from = (Vector3i)lastSelected.getKey();
-            Vector3i to = (Vector3i)currentSelected.getKey();
-            String type = (String)lastSelected.getValue();
-            lastSelectedPiece = new Pair(from.x, from.z);
-            Cell fromC = new Cell(piecesTypeSelected.getPieceDimension(from.x, from.z).x, piecesTypeSelected.getPieceDimension(from.x, from.z).z), toC = new Cell(to.x, to.z);
-            defaultMap.removeBlueHighlights();
-            defaultMap.removeRedHighlights();
-            
-            if(specialMove != null && specialMove.getRow() == toC.getRow() && specialMove.getColumn() == toC.getColumn())
+        
+        Vector3i from = (Vector3i)lastSelected.getKey();
+        Vector3i to = (Vector3i)currentSelected.getKey();
+        String type = (String)lastSelected.getValue();
+        lastSelectedPiece = new Pair(from.x, from.z);
+        Cell fromC = new Cell(piecesTypeSelected.getPieceDimension(from.x, from.z).x, piecesTypeSelected.getPieceDimension(from.x, from.z).z), toC = new Cell(to.x, to.z);
+        defaultMap.removeBlueHighlights();
+        defaultMap.removeRedHighlights();
+
+        if(specialMove != null && specialMove.getRow() == toC.getRow() && specialMove.getColumn() == toC.getColumn())
+        {
+            game.update(fromC, specialMove);
+            if(piecesTypeSelected.getSelectedPieceType(from.x, from.z).equalsIgnoreCase("pawn"))
+                piecesTypeSelected.enPassant(from, to);
+            else if(piecesTypeSelected.getSelectedPieceType(from.x, from.z).equalsIgnoreCase("king"))
             {
-                game.update(fromC, specialMove);
-                if(piecesTypeSelected.getSelectedPieceType(from.x, from.z).equalsIgnoreCase("pawn"))
-                    piecesTypeSelected.enPassant(from, to);
-                else if(piecesTypeSelected.getSelectedPieceType(from.x, from.z).equalsIgnoreCase("king"))
-                    piecesTypeSelected.castling(from, to);
+                piecesTypeSelected.castling(from, to);
+                for(int i = 0; i < 8; i ++)
+                {
+                    for(int j = 0; j < 8; j ++)
+                    {
+                        if(game.board.pieces[i][j] == null)
+                        {
+                            System.out.print("NUll ");
+                        }
+                        else
+                        {
+                            System.out.print(game.board.pieces[i][j].getClass().toString() + " ");
+                        }
+                    }
+                    System.out.println("");
+                }
             }
-            else
-            {
-                game.update(fromC, toC);
-                piecesTypeSelected.Move(from, to);
-            }
-            
-            
-           // System.out.println(fromC.getRow() + " " + fromC.getColumn()  + " To " + to.x + " " + to.z);
-            if(fromC.getRow() > 1)
-                System.out.println("Black Moved");
-            else
-                System.out.println("White Moved");
-            
-            engineMove = !engineMove;
-            if(((String)lastSelected.getValue()).equalsIgnoreCase("Engine"))
-            {
-                updateCalledEngine = false;
-            }
-            
-            //TODO: gui display who wins the game
-            if(game.isCheckmated(Color.Black))
-            {
-                System.out.println(" hhhh 5srt ");
-                win = -1;
-              //  app.stop() ; 
-            }
-            else if(game.isCheckmated(Color.White))
-            {
-                System.out.println(" hhhh 5rst tany :P ");
-                win = 1;
-            }
-            else if(game.draw(Color.Black) || game.draw(Color.White))
-            {
-                System.out.println(" Draaaaaaaaaaaaaaaaaaaw ");
-            }
-            
-            to = piecesTypeSelected.getPieceDimension(0, 4);
-            toC = new Cell(to.x, to.z);
-            
-            if(!game.board.whiteKing.check_my_king(toC, toC, game.board.whiteKing, game.board.pieces))
-            {
-                defaultMap.highLightCell(toC, "Attack");
-            }
-            
-            to = piecesTypeSelected.getPieceDimension(3, 4);
-            toC = new Cell(to.x, to.z);
-            
-            if(!game.board.blackKing.check_my_king(toC, toC, game.board.blackKing, game.board.pieces))
-            {
-                defaultMap.highLightCell(toC, "Attack");
-            }
-            
-            currentSelected = null;
-            lastSelected = null;
-            specialMove = null;
         }
+        else
+        {
+            game.update(fromC, toC);
+            piecesTypeSelected.Move(from, to);
+        }
+
+        engineMove = !engineMove;
+        if(((String)lastSelected.getValue()).equalsIgnoreCase("Engine"))
+        {
+            updateCalledEngine = false;
+        }
+
+        if(game.isCheckmated(Color.Black))
+        {
+            win = -1;
+        }
+        else if(game.isCheckmated(Color.White))
+        {
+            win = 1;
+        }
+        else if(game.draw(Color.Black) || game.draw(Color.White))
+        {
+            win = 2;
+        }
+
+        to = piecesTypeSelected.getPieceDimension(0, 4);
+        toC = new Cell(to.x, to.z);
+
+        if(!game.board.whiteKing.check_my_king(toC, toC, game.board.whiteKing, game.board.pieces))
+        {
+            audioCheck.playInstance();
+            defaultMap.highLightCell(toC, "Attack");
+        }
+
+        to = piecesTypeSelected.getPieceDimension(3, 4);
+        toC = new Cell(to.x, to.z);
+
+        if(!game.board.blackKing.check_my_king(toC, toC, game.board.blackKing, game.board.pieces))
+        {
+            audioCheck.playInstance();
+            defaultMap.highLightCell(toC, "Attack");
+        }
+
+        currentSelected = null;
+        lastSelected = null;
+        specialMove = null;
+
     }  
     
+    /**
+     * Highlight All possible Moves for current selected piece
+     * @param i index of current selected piece
+     * @param j index of current selected piece
+     */
     private void HighlightAvailableMoves(int i, int j)
     {
         if ((currentSelected != null  && ((String)currentSelected.getValue()).equalsIgnoreCase("Piece")) || (lastSelected != null && ((String)lastSelected.getValue()).equalsIgnoreCase("engine")))
@@ -316,7 +399,6 @@ public class Chess extends AbstractAppState
             {
                 if (c.special_move != 0)
                 {
-                    System.out.println("Special Move at " + c.getRow() + " " + c.getColumn());
                     specialMove = c;
                 }
                 
@@ -325,8 +407,10 @@ public class Chess extends AbstractAppState
         }
     }
     
-    
-    // handling user "Weird" clicks
+    /**
+     * handling user "Weird" clicks
+     * @return true if user clicks are valid 
+     */
     private boolean isUpdatePiecesVaild()
     {
         if(lastSelected == null || currentSelected == null)
@@ -342,6 +426,9 @@ public class Chess extends AbstractAppState
             &&  defaultMap.isCellHighlighted(to) && ((firstPlayer && x < 2) || (!firstPlayer && x > 1))) || (engineMove && ((String)lastSelected.getValue()).equalsIgnoreCase("Engine"));
     }
     
+    /**
+     * engine plays if its engine move annd current player's move was done
+     */
     private void Engine()
     {
        if(engineMove && ok)
@@ -367,7 +454,9 @@ public class Chess extends AbstractAppState
        }
     }
     
-    // update the cam with each move
+    /**
+     * update the cam with each move
+     */
     private void updateCam()
     {
         // using OR gatae as "simpleUpdate" is being called every single Second xD  
@@ -384,13 +473,12 @@ public class Chess extends AbstractAppState
             }
             else
             {
-               // System.out.println("Promotion is Vaild");
                 int type = 3;
                 Vector3i to = piecesTypeSelected.getPieceDimension(i, j);
                 Cell toC = new Cell(to.x, to.z);
                 if(!AI || (AI && i < 2))
                 {
-                    //type = uerChoice() ;  .// xml 
+                    type = userChoice(); 
                     //Todo: get user selcted type "GUI" 0 -> rock, 1 -> bishop, 2 -> knight, 3 -> queen
                 }
                 game.makePromotion(toC, type);
@@ -413,5 +501,23 @@ public class Chess extends AbstractAppState
           //  System.out.println("Move is done");
         }
         cam.lookAt(camDirection, Vector3f.ZERO);  
+    }
+    
+    /**
+     * get user pormotion choice
+     * @param userChoice 0 -> rock, 1 -> bishop, 2 -> knight, 3 -> queen
+     */
+    public void userChoice(int userChoice)
+    {
+        this.userChoice = userChoice;
+    }
+    
+    /**
+     * 
+     * @return user poromotion choice 
+     */
+    public int userChoice()
+    {
+        return userChoice;
     }
 }

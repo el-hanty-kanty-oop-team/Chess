@@ -15,6 +15,7 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
+import com.jme3.audio.AudioNode;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
 import com.jme3.light.DirectionalLight;
@@ -46,11 +47,13 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     protected Vector3f startPosition;
    
     private final AppStateManager stateManager;
+    private AudioNode audioWalk, audioDie;
     private final Camera cam;
     private final float animSpeed;
     private boolean attack, attackUpdate, death, walk, attackIterationStarted, isMoveDone;
     private float x, z;
     private int numOfIterations;
+    
     
     public PieceAnimation(SimpleApplication app)
     {
@@ -68,6 +71,17 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         font = assetManager.loadFont("Interface/Fonts/Console.fnt");
 
         mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        
+        audioWalk = new AudioNode(app.getAssetManager(), "Sounds/walk.ogg");
+        audioDie = new AudioNode(app.getAssetManager(), "Sounds/die.ogg");
+        
+        audioDie.setPositional(false);
+        audioDie.setLooping(true);
+        audioDie.setVolume(100);
+        
+        audioWalk.setPositional(false);
+        audioWalk.setLooping(true);
+        audioWalk.setVolume(100);
         
         attackAnimControl = new AnimControl();
         deathAnimControl = new AnimControl();
@@ -145,7 +159,9 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
                 stand();
             }
             else
+            {
                 walk();
+            }
         }
         else if(animName.equals("Death"))
         {
@@ -172,6 +188,14 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         {
             isMoveDone = true;
             localNode.attachChild(headText);
+        }
+        else if(animName.equalsIgnoreCase("Walk") || animName.equalsIgnoreCase("WalkDig"))
+        {
+            audioWalk.playInstance();
+        }
+        else if(animName.equalsIgnoreCase("Death"))
+        {
+            audioDie.playInstance();
         }
     }
 

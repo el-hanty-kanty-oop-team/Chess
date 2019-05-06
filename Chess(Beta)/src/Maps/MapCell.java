@@ -11,7 +11,6 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
-import com.jme3.light.Light;
 import com.jme3.light.SpotLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -22,7 +21,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
 
 /**
- *
+ * Contains all cell properties
  * @author shaks
  */
 public abstract class MapCell extends AbstractAppState

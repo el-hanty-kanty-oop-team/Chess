@@ -3,6 +3,8 @@ package PiecesAndAnimation.OriginPieces;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.audio.AudioData;
+import com.jme3.audio.AudioNode;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
@@ -29,6 +31,16 @@ public class OriginalPieces extends AbstractOriginalPieces
         promoted = new boolean[8];
         dimension = new Pair[4][8];
         killed = new boolean[4][8];
+        audioWalk = new AudioNode(assetManager, "Sounds/walk.ogg");
+        audioDie = new AudioNode(assetManager, "Sounds/die.ogg");
+        
+        audioWalk.setLooping(true);
+        audioWalk.setPositional(false);
+        audioWalk.setVolume(100);
+        
+        audioDie.setLooping(true);
+        audioDie.setPositional(false);
+        audioDie.setVolume(100);
     }
    
     

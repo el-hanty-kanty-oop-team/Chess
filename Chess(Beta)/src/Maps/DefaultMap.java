@@ -52,11 +52,7 @@ public class DefaultMap extends Map
 
     @Override
     public void initialize(AppStateManager stateManager, Application app) 
-    {
-        
-
-
-        
+    {        
         super.initialize(stateManager, app);
         int x = 0;
         for(int i = 0; i < numOfRows; i ++)
