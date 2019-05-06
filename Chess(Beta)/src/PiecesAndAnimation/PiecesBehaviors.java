@@ -28,10 +28,3 @@ public interface PiecesBehaviors
     public String getSelectedPieceType(int i, int j);
     public void detach();
 }
-
-
-
-
-
-
-

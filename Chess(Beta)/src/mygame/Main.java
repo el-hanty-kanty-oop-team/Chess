@@ -6,6 +6,7 @@ import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -25,12 +26,18 @@ public class Main extends SimpleApplication implements ScreenController
         app.start();
     }
 
-    private void startGame()
+    private void startGame() 
     {
-     guiViewPort.setEnabled(false);
-     chess = new Chess(this,piecesTypeSelected , AIstate, AILevel);
-      stateManager.attach(chess);
-     
+        chess = new Chess(this,piecesTypeSelected , AIstate, AILevel);
+        try
+        {
+            Thread.sleep(5000);
+        }
+        catch(Exception e)
+        {
+            System.out.println("Booooooom");
+        }
+        stateManager.attach(chess);     
     }
     public void nextScreen(String s)
     {
@@ -49,16 +56,27 @@ public class Main extends SimpleApplication implements ScreenController
            nifty.gotoScreen(s);
     }
     
+    
+    private boolean  start = false ;
+    
     public void piecesType(String s)
     {
       if(guiViewPort.isEnabled()){
         piecesTypeSelected = s  ;
-            System.out.println("hahahahhahaaaaaaaaaaaaaaaaaaaaaa");
-        startGame() ;
+         nifty.addXml("Interface/screen.xml");
+         nifty.gotoScreen("emptyScreen");   
+
+         start = true ;
+//        startGame() ;
       }
     }
-  
-     public  Nifty nifty;
+    
+    public void quitGame()
+    {
+       this.stop();
+    }
+    
+   public  Nifty nifty;
 
     /**
      *
@@ -124,6 +142,12 @@ public class Main extends SimpleApplication implements ScreenController
             stateManager.detach(chess);
             chess = null;
             System.gc();
+        }
+        if (start)
+        {
+            guiViewPort.setEnabled(false);  
+            startGame();
+            start= false ;
         }
     }
 

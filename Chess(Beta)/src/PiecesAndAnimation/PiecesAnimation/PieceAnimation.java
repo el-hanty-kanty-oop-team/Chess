@@ -27,7 +27,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
 /**
- *
+ * controls and integrates animation 
  * @author shaks
  */
 public abstract class PieceAnimation extends AbstractAppState  implements AnimEventListener 
@@ -54,7 +54,10 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     private float x, z;
     private int numOfIterations;
     
-    
+    /**
+     * Initilaizing fileds
+     * @param app SimppleApplication that runs the game
+     */
     public PieceAnimation(SimpleApplication app)
     {
         
@@ -98,6 +101,11 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         headText = new BitmapText(font, false);
     }
     
+    /**
+     * loading animation and setting head to text inner text and color 
+     * @param stateManager
+     * @param app 
+     */
     @Override
     public void initialize(AppStateManager stateManager, Application app)
     {
@@ -115,18 +123,21 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
             headText.setColor(ColorRGBA.Red);
 
         headText.setSize(0.2f);      // font size
-        headText.setLocalTranslation(0f, headText.getHeight() + 1.2f ,-0.01f); // position
-        //Rectangle rect = new Rectangle(0, 0, 1, 1);
-       // headText.setBox(rect);
-       // headText.setAlignment(BitmapFont.Align.Center);
+        headText.setLocalTranslation(0f, headText.getHeight() + 1.2f ,0); // position
         
         localNode.attachChild(headText);
         localNode.setLocalTranslation(playerWalkDirection);
         localNode.addLight(dl);
         rootNode.attachChild(localNode);
-                
     }
     
+    /**
+     * A func called auto whene animaiton is done 
+     * settnig animation insteractions when a specifi anim is done
+     * @param control 
+     * @param channel channel that controls the animation (run/stop)
+     * @param animName animation name
+     */
     @Override
     public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) 
     {
@@ -180,6 +191,13 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         }
     }
     
+    /**
+     * A func called auto whene animaiton is setted 
+     * settnig animation insteractions when a specific anim is setted
+     * @param control 
+     * @param channel channel that controls the animation (run/stop)
+     * @param animName animation name
+     */
     @Override   
     public void onAnimChange(AnimControl control, AnimChannel channel, String animName) 
     {
@@ -199,9 +217,11 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         }
     }
 
-  /** Custom Keybinding: Map named actions to inputs. */
-    
-    
+    /**
+     * getting number of moves need to reach the destination
+     * @param newDirection destination of current node
+     * @param str type of move
+     */
     public void update(Vector3f newDirection, String str)
     {
         destination.set(newDirection);
@@ -217,7 +237,9 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         }
     }
     
-    
+    /**
+     * @return maximum value 
+     */
     public float max(float x, float y)
     {
         if(x > y)
@@ -225,6 +247,10 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         return y;
     }
     
+    /**
+     * 
+     * @return absoluate value 
+     */
     public float abs(float x)
     {
         if(x < 0)
@@ -232,10 +258,14 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         return x;
     }
   
+    /**
+     * changing head to text position if user changed the camera and checking for current anim statue
+     * called auto from SimpleAppApplication
+     * @param tpf time per frame
+     */
     @Override
     public void update(float tpf)
     {
-        
         headText.lookAt(new Vector3f(cam.getLocation().x, 0, cam.getLocation().z), upVector);
         if(walk)
             walk();
@@ -246,11 +276,14 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
                 attack();
             else if(numOfIterations > attackIteration)
                 walk();
-            
         }
     }
   
     
+    /**
+     * 
+     * @return true if attack animaton started, false otherwise 
+     */
     public boolean attackIterationStarted()
     {
         boolean ok;
@@ -262,7 +295,10 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         return ok;
     }
     
-    
+    /**
+     * 
+     * @return true if current model reached the destination 
+     */
     public boolean isMoveDone()
     {
         boolean done = isMoveDone;
@@ -429,14 +465,14 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         else if(destination.x < playerWalkDirection.x)
             x = -1.0f* scale;
         else
-            x = 0.0f * scale;
+            x = 0.0f;
 
         if(destination.z > playerWalkDirection.z)
             z = 1.0f * scale;
         else if(destination.z < playerWalkDirection.z)
             z = -1.0f * scale;
         else
-            z = 0.0f * scale;   
+            z = 0.0f;   
     }
    
     public abstract boolean isEquale(Spatial selectedObject);

@@ -23,7 +23,9 @@ public abstract class Map extends AbstractAppState
     protected final float mapScale;
     protected MapCell cell[][];
     
-    
+    /**
+     * initilizing fileds and floors 
+     */
     public Map(SimpleApplication app)
     {
         numOfRows = numOfColumns = 8;

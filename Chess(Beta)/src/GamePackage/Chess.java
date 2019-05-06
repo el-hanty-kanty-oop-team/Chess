@@ -52,7 +52,7 @@ public class Chess extends AbstractAppState
     private Map defaultMap; 
     private Pair currentSelected, lastSelected, lastSelectedPiece; 
     private PiecesBehaviors piecesTypeSelected;
-    private boolean firstPlayer = true, moveDone = false, promotionDone = false, checkPromotion, engineMove = false, ok = false, updateCalledEngine = false, AI = true;
+    private boolean firstPlayer = true, moveDone = false, promotionDone = false, checkPromotion, engineMove = false, ok = false, updateCalledEngine = false, AI = true, isPromotion, userChoiceDone;
     private final Vector3f camLocation1 = new Vector3f(-6.5f, 8.0f, 3.5f), camLocation2 = new Vector3f(13.5f, 8.0f, 3.5f), camDirection = new Vector3f(3.5f, 0.0f, 3.5f);
     private final Player p1 = new Player("hahaha", Color.White) ;
     private final Player p2 = new Player("hehehee", Color.Black) ;
@@ -185,6 +185,7 @@ public class Chess extends AbstractAppState
         piecesTypeSelected.detach();
         rootNode.removeLight(spot);
         rootNode.removeLight(dl);
+        app.getViewPort().setBackgroundColor(ColorRGBA.Black);
         app.getViewPort().clearProcessors();
         app.getViewPort().setClearFlags(true, true, true);
         stateManager.cleanup();
@@ -478,7 +479,20 @@ public class Chess extends AbstractAppState
                 Cell toC = new Cell(to.x, to.z);
                 if(!AI || (AI && i < 2))
                 {
-                    type = userChoice(); 
+                    isPromotion = true;
+                    while(!userChoiceDone)
+                    {
+                        try
+                        {
+                            Thread.sleep(1000);// wait for user choice
+                        }
+                        catch(Exception e)
+                        {
+                            System.out.println("Waiting for user input");
+                        }
+                    } 
+                    userChoiceDone = false;
+                    type = userChoice();
                     //Todo: get user selcted type "GUI" 0 -> rock, 1 -> bishop, 2 -> knight, 3 -> queen
                 }
                 game.makePromotion(toC, type);
@@ -503,6 +517,13 @@ public class Chess extends AbstractAppState
         cam.lookAt(camDirection, Vector3f.ZERO);  
     }
     
+    public boolean isPromotion()
+    {
+        boolean check = isPromotion;
+        isPromotion = false;
+        return check;
+    }
+    
     /**
      * get user pormotion choice
      * @param userChoice 0 -> rock, 1 -> bishop, 2 -> knight, 3 -> queen
@@ -510,6 +531,7 @@ public class Chess extends AbstractAppState
     public void userChoice(int userChoice)
     {
         this.userChoice = userChoice;
+        userChoiceDone = true;
     }
     
     /**
