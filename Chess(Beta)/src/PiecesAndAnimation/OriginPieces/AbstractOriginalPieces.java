@@ -50,7 +50,7 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
         {
             for(int j = 0; j < piece[i].length; j ++)
             {
-                if(s == piece[i][j])
+                if(piece[i][j] != null && s == piece[i][j])
                     return new Vector3i((int)dimension[i][j].getKey(), 0, (int)dimension[i][j].getValue());
             }
         }
@@ -81,7 +81,7 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
         {
             for(int j = 0; j < piece[i].length; j ++)
             {
-                if(s == piece[i][j] && !killed[i][j])
+                if(piece[i][j] != null && s == piece[i][j] && !killed[i][j])
                     return new Vector3i(i, 0, j);
             }
         }
@@ -95,7 +95,7 @@ public abstract class AbstractOriginalPieces extends AbstractAppState implements
         {
             for(int j = 0; j < piece[i].length; j ++)
             {
-                if((int)dimension[i][j].getKey() == r && (int)dimension[i][j].getValue() == c && !killed[i][j])
+                if(dimension != null && (int)dimension[i][j].getKey() == r && (int)dimension[i][j].getValue() == c && !killed[i][j])
                     return new Vector3i(i, 0, j);
             }
         }

@@ -6,7 +6,6 @@ import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -26,18 +25,11 @@ public class Main extends SimpleApplication implements ScreenController
         app.start();
     }
 
-    private void startGame() 
+    private void startGame()
     {
+        guiViewPort.setEnabled(false);
         chess = new Chess(this,piecesTypeSelected , AIstate, AILevel);
-        try
-        {
-            Thread.sleep(5000);
-        }
-        catch(Exception e)
-        {
-            System.out.println("Booooooom");
-        }
-        stateManager.attach(chess);     
+        stateManager.attach(chess); 
     }
     public void nextScreen(String s)
     {
@@ -62,18 +54,27 @@ public class Main extends SimpleApplication implements ScreenController
     public void piecesType(String s)
     {
       if(guiViewPort.isEnabled()){
-        piecesTypeSelected = s  ;
+         piecesTypeSelected = s  ;
          nifty.addXml("Interface/screen.xml");
          nifty.gotoScreen("emptyScreen");   
 
          start = true ;
-//        startGame() ;
       }
     }
     
     public void quitGame()
     {
        this.stop();
+    }
+    
+    public void Choose(String st)
+    {
+        System.out.print(st);
+         nifty.addXml("Interface/screen.xml");
+         nifty.gotoScreen("emptyScreen"); 
+         guiViewPort.setEnabled(false);
+         chess.userChoice( Integer.parseInt(st));
+       
     }
     
    public  Nifty nifty;
@@ -93,27 +94,22 @@ public class Main extends SimpleApplication implements ScreenController
         nifty = niftyDisplay.getNifty();
         
         nifty.fromXml("Interface/screen.xml", "start", this);
-       
-        // attach the nifty display to the gui view port as a processor
         guiViewPort.addProcessor(niftyDisplay);
-
-        // disable the fly cam
-//        flyCam.setEnabled(false);
-//        flyCam.setDragToRotate(true);
-        
         flyCam.setDragToRotate(true);
-
         inputManager.setCursorVisible(true);
-     
-        
-        //@2nd parm pieceseType
-        //@3rd parm AI
-        //@4 depth of engine (easy(2), mid(3), hard(5), HIQ(6))
     }
 
     @Override
     public void simpleUpdate(float tpf)
     {
+        if( chess!= null && chess.isPromotion())
+        {
+            System.out.println("PROMOOOOOOOOOOOOTIOn");
+            guiViewPort.setEnabled(true);
+            nifty.addXml("Interface/screen.xml");
+            nifty.gotoScreen("userChoice");
+        }
+        
         if(chess != null && chess.isGameDone() != 0)
         {
         
@@ -143,11 +139,9 @@ public class Main extends SimpleApplication implements ScreenController
             chess = null;
             System.gc();
         }
-        if (start)
-        {
-            guiViewPort.setEnabled(false);  
-            startGame();
-            start= false ;
+        if (start){
+        startGame();
+        start= false ;
         }
     }
 

@@ -72,8 +72,14 @@
                                                  valign="center" height="50px">
                                                     <interact onClick="nextScreen(AiLevels)"/>
                                                </control>
-                                         </panel>    
-                                     </panel> 
+                                         </panel> 
+                                            <panel  childLayout="center" height="50%" valign="top" paddingTop="300px" >
+                                                    <control name="button" label="Back" id="BacktoMainScreen" align="center"
+                                                         valign="center" height="50px" >
+                                                            <interact onClick="nextScreen(start)"/>
+                                                    </control>
+                                             </panel>     
+                                      </panel> 
                                 </panel>
                     </layer>
     </screen>
@@ -160,6 +166,45 @@
                            </panel>
                     </layer>
     </screen>
+    <screen id="userChoice" controller="mygame.Main" >
+
+                        <layer id="background" childLayout="center">
+                            <image filename="Interface/pewpew.png" /> 
+                        </layer>
+                    <layer  childLayout="absolute"  >
+                           <panel height="100%" width="100%" visibleMouse="true" childLayout="center"  >
+                                <panel id="rightMlhashlazma" height="100%" width="30%" align="right"/> 
+                                <panel id="leftMlhashLazma"   height="100%" width="30%" align="left" />
+                                <panel  childLayout="center"  align="center" paddingTop="40%">
+                                         <panel  childLayout="center" height="25%" paddingTop="110px">
+                                        <control name="button" label="knight" id="knight" align="center"
+                                               valign="center" height="50px">
+                                                  <interact onClick="Choose(2)"/>
+                                         </control>
+                                        </panel>
+                                       <panel  childLayout="center" height="25%" valign="top" paddingTop="280px" >
+                                        <control name="button"  label="bishop"  id="bishop" align="center"
+                                               valign="center" height="50px">
+                                                  <interact onClick="Choose(1)"/>
+                                         </control>                             
+                                        </panel>
+                                         <panel  childLayout="center" height="25%" valign="top" paddingTop="150px" >
+                                            <control name="button" label="rook" id="rook" align="center"
+                                                 valign="center" height="50px">
+                                                    <interact  onClick="Choose(0)"/>
+                                               </control>
+                                        </panel> 
+                                        <panel  childLayout="center" height="25%" valign="top" >
+                                            <control name="button" label="Queen" id="Queen" align="center"
+                                                 valign="center" height="50px">
+                                                    <interact  onClick="Choose(3)"/>
+                                               </control>
+                                        </panel>    
+                              
+                                </panel> 
+                           </panel>
+                    </layer>
+    </screen>
     
      <screen  id="emptyScreen" controller="mygame.Main">
            
@@ -202,5 +247,6 @@
              </layer>        
    </screen>
   
+       
        
 </nifty>

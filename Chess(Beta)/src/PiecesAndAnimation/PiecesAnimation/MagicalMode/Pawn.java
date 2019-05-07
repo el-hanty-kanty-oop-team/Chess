@@ -112,6 +112,9 @@ public class Pawn extends PieceAnimation
     @Override
     public boolean isEquale(Spatial selectedObject)
     {
+        if(standNode == null)
+            return false;
+        
         boolean ok = selectedObject == (Spatial)standNode.getChild("pawnStand");
         for(int i= 0; i < 4; i ++)
             ok |= (selectedObject == (Spatial)standNode.getChild("pawnStand_" + String.valueOf(i)));

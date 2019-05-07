@@ -33,6 +33,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
+import java.sql.Time;
 import java.util.ArrayList;
 import javafx.util.Pair;
 
@@ -52,13 +53,13 @@ public class Chess extends AbstractAppState
     private Map defaultMap; 
     private Pair currentSelected, lastSelected, lastSelectedPiece; 
     private PiecesBehaviors piecesTypeSelected;
-    private boolean firstPlayer = true, moveDone = false, promotionDone = false, checkPromotion, engineMove = false, ok = false, updateCalledEngine = false, AI = true, isPromotion, userChoiceDone;
+    private boolean firstPlayer = true, moveDone = false, promotionDone = false, checkPromotion, engineMove = false, ok = false, updateCalledEngine = false, AI = true, isPromotion, userChoiceDone, loadIsDone = false;
     private final Vector3f camLocation1 = new Vector3f(-6.5f, 8.0f, 3.5f), camLocation2 = new Vector3f(13.5f, 8.0f, 3.5f), camDirection = new Vector3f(3.5f, 0.0f, 3.5f);
     private final Player p1 = new Player("hahaha", Color.White) ;
     private final Player p2 = new Player("hehehee", Color.Black) ;
     private final AI ai1 = new AI(Color.White), ai2 = new AI(Color.Black);
     private final Game game = new Game(GameMode.Multiplayer, ai1, ai2);
-    private AudioNode audioCheck;
+    private AudioNode audioCheck, soundTraack;
     private SimpleApplication app;
     private SpotLight spot;
     private DirectionalLight dl;
@@ -94,7 +95,7 @@ public class Chess extends AbstractAppState
             {
                 if(currentSelected != null && currentSelected.getValue().toString().equalsIgnoreCase("Piece") && ((firstPlayer && ((Vector3i)currentSelected.getKey()).x < 2) || (!firstPlayer && ((Vector3i)currentSelected.getKey()).x > 1)))
                     lastSelected = currentSelected;
-                
+
                 CollisionResults results = new CollisionResults();
                 // Convert screen click to 3d position
                 Vector2f click2d = inputManager.getCursorPosition(); // get mouse position on the screen
@@ -105,12 +106,12 @@ public class Chess extends AbstractAppState
                 // Collect intersections between ray and all nodes in results list.
                 rootNode.collideWith(ray, results);
                 Vector3i dimention = null;
-                
+
                 if(results.size() > 0)
                 {
                     Node selectedModel = results.getCollision(0).getGeometry().getParent();
                     dimention = piecesTypeSelected.getPieceIndex(selectedModel);                   
-                    
+
                     if(dimention != null && ((firstPlayer && dimention.x < 2 ) || (!firstPlayer && dimention.x > 1 )))
                     {
                         currentSelected = new Pair(new Vector3i(dimention), "Piece");
@@ -125,14 +126,13 @@ public class Chess extends AbstractAppState
                     else
                     {
                          dimention = defaultMap.getCellIndex(selectedModel);
-                        
+
                         if(dimention != null)
                             currentSelected = new Pair(new Vector3i(dimention), "Map");
                     }
-                    
+
                     System.out.println(currentSelected + " " + lastSelected);
                 }
-
             }
            
         }
@@ -174,7 +174,12 @@ public class Chess extends AbstractAppState
         setCam();
         addLight();
         stateManager.attach(defaultMap);
-        stateManager.attach((AppState)piecesTypeSelected); 
+        stateManager.attach((AppState)piecesTypeSelected);
+        synchronized(this)
+        {
+            loadIsDone = true;
+            notify();
+        }
     }  
     
     /**
@@ -182,6 +187,7 @@ public class Chess extends AbstractAppState
      */
     public void detach()
     {
+        soundTraack.stop();
         piecesTypeSelected.detach();
         rootNode.removeLight(spot);
         rootNode.removeLight(dl);
@@ -200,11 +206,15 @@ public class Chess extends AbstractAppState
     private void initAudio()
     {
         audioCheck = new AudioNode(app.getAssetManager(), "Sounds/kingCheck.ogg");
-        rootNode.removeLight(dl);
-        rootNode.removeLight(spot);
+        soundTraack = new AudioNode(app.getAssetManager(), "Sounds/TwoStepsFromHellVictory.ogg");
         audioCheck.setLooping(true);
         audioCheck.setPositional(false);
         audioCheck.setVolume(100);
+        
+        soundTraack.setLooping(true);
+        soundTraack.setPositional(false);
+        soundTraack.setVolume(0.2f);
+        soundTraack.play();
     }
     
     /**
@@ -257,7 +267,7 @@ public class Chess extends AbstractAppState
         spot.setSpotRange(1000);
         spot.setSpotInnerAngle(5*FastMath.DEG_TO_RAD);
         spot.setSpotOuterAngle(10*FastMath.DEG_TO_RAD);
-        spot.setPosition(new Vector3f(3.5f, 50.0f, 3.5f));
+        spot.setPosition(new Vector3f(3.5f, 45.0f, 3.5f));
         spot.setDirection(new Vector3f(3.5f, 0.0f, 3.5f).subtract(spot.getPosition()));     
         spot.setColor(ColorRGBA.White.mult(1));
         rootNode.addLight(spot);
@@ -282,6 +292,22 @@ public class Chess extends AbstractAppState
         if(AI && !updateCalledEngine)
         {
             Engine();
+        }
+        
+        if(lastSelectedPiece != null && (!AI || (AI && (int)lastSelectedPiece.getKey() < 2)))
+        {
+            int i = (int)lastSelectedPiece.getKey(), j = (int)lastSelectedPiece.getValue();
+            if(userChoiceDone)
+            {
+                int type = 3;
+                userChoiceDone = false;
+                type = userChoice();
+                Vector3i to = piecesTypeSelected.getPieceDimension(i, j);
+                Cell toC = new Cell(to.x, to.z);
+                game.makePromotion(toC, type);
+                piecesTypeSelected.promote(i, j, type);
+                checkPromotion = false  ;
+            }
         }
     }
     
@@ -467,39 +493,17 @@ public class Chess extends AbstractAppState
         {
             int i = (int)lastSelectedPiece.getKey(), j = (int)lastSelectedPiece.getValue();
             checkPromotion |= piecesTypeSelected.checkPromotion(i, j);
-            
-            if(!checkPromotion)
-            {
-                promotionDone = true;
-            }
-            else
+            isPromotion = checkPromotion;
+            if(checkPromotion && AI && i > 1)
             {
                 int type = 3;
                 Vector3i to = piecesTypeSelected.getPieceDimension(i, j);
                 Cell toC = new Cell(to.x, to.z);
-                if(!AI || (AI && i < 2))
-                {
-                    isPromotion = true;
-                    while(!userChoiceDone)
-                    {
-                        try
-                        {
-                            Thread.sleep(1000);// wait for user choice
-                        }
-                        catch(Exception e)
-                        {
-                            System.out.println("Waiting for user input");
-                        }
-                    } 
-                    userChoiceDone = false;
-                    type = userChoice();
-                    //Todo: get user selcted type "GUI" 0 -> rock, 1 -> bishop, 2 -> knight, 3 -> queen
-                }
                 game.makePromotion(toC, type);
                 piecesTypeSelected.promote(i, j, type);
-                checkPromotion = false;
-                promotionDone = true;
+                checkPromotion = false  ;
             }
+            promotionDone = true;
         }
         
         if(moveDone && promotionDone)
@@ -531,7 +535,12 @@ public class Chess extends AbstractAppState
     public void userChoice(int userChoice)
     {
         this.userChoice = userChoice;
-        userChoiceDone = true;
+        synchronized(this)
+        {
+            userChoiceDone = true;
+            notify();
+        }
+        
     }
     
     /**

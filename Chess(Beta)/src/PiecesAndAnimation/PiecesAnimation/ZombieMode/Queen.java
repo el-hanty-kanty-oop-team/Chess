@@ -112,6 +112,9 @@ public class Queen extends PieceAnimation
     @Override
     public boolean isEquale(Spatial selectedObject)
     {
+        if(standNode == null)
+            return false;
+        
         return selectedObject == (Spatial)standNode.getChild("queenStand") ||selectedObject == (Spatial)standNode.getChild("queenStand_") ;
     }
     

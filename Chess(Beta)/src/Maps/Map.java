@@ -33,15 +33,15 @@ public abstract class Map extends AbstractAppState
         cell = new MapCell[numOfRows][numOfColumns];
         Node floor = (Node)app.getAssetManager().loadModel("Models/Maps/map.j3o");
         Material mat = new Material(app.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
-        Texture text = app.getAssetManager().loadTexture("Textures/Maps/defaultMap/2.png");
+        Texture text = app.getAssetManager().loadTexture("Textures/Maps/defaultMap/Black.png");
         text.setWrap(Texture.WrapMode.Repeat);
         floor.setLocalTranslation(3.5f, 0.0f, 3.5f);
         mat.setTexture("DiffuseMap", text);
         floor.setMaterial(mat);
-        floor.setLocalScale(0.62f);
+        floor.setLocalScale(0.82f, 0.62f, 0.62f);
         Node deathFloor1 = floor.clone(true);
         Material mat2 = new Material(app.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
-        Texture text2 = app.getAssetManager().loadTexture("Textures/Maps/defaultMap/4.png");
+        Texture text2 = app.getAssetManager().loadTexture("Textures/Maps/defaultMap/Black.png");
         mat2.setTexture("DiffuseMap", text2);
         deathFloor1.setMaterial(mat2);
         deathFloor1.setLocalTranslation(3.5f, 1.0f, 10.5f);
@@ -60,7 +60,7 @@ public abstract class Map extends AbstractAppState
         {
             for(int j = 0; j < numOfColumns; j ++)
             {
-                if(this.cell[i][j].isEqual(cell))
+                if(this.cell[i][j] != null && this.cell[i][j].isEqual(cell))
                     return new Vector3i(i, 0 ,j);
             }
         }

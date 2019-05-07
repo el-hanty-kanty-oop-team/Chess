@@ -58,7 +58,7 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
         {
             for(int j = 0; j < piece[i].length; j ++)
             {
-                if(piece[i][j].isEquale(s))
+                if(piece[i][j] != null && piece[i][j].isEquale(s))
                     return new Vector3i((int)dimension[i][j].getKey(), 0, (int)dimension[i][j].getValue());
             }
         }
@@ -89,7 +89,7 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
         {
             for(int j = 0; j < piece[i].length; j ++)
             {
-                if(piece[i][j].isEquale(s) && !killed[i][j])
+                if(piece[i][j] != null && piece[i][j].isEquale(s) && !killed[i][j])
                     return new Vector3i(i, 0, j);
             }
         }
@@ -103,7 +103,7 @@ public abstract class AbstractAnimationPieces extends AbstractAppState implement
         {
             for(int j = 0; j < piece[i].length; j ++)
             {
-                if((int)dimension[i][j].getKey() == r && (int)dimension[i][j].getValue() == c && !killed[i][j])
+                if(dimension != null && (int)dimension[i][j].getKey() == r && (int)dimension[i][j].getValue() == c && !killed[i][j])
                     return new Vector3i(i, 0, j);
             }
         }

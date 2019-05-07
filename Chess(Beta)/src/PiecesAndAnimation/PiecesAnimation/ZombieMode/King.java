@@ -111,6 +111,9 @@ public class King extends PieceAnimation
     @Override
     public boolean isEquale(Spatial selectedObject)
     {
+        if(standNode == null)
+            return false;
+        
         return selectedObject == (Spatial)standNode.getChild("kingStand") || selectedObject == (Spatial)standNode.getChild("kingStand_") || selectedObject == (Spatial)standNode.getChild("kingStand__");
     }
 }

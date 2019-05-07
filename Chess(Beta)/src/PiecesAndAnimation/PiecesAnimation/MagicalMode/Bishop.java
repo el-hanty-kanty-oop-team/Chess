@@ -120,6 +120,8 @@ public class Bishop extends PieceAnimation
     @Override
     public boolean isEquale(Spatial selectedObject)
     {
+        if(standNode == null)
+            return false;
         return selectedObject == (Spatial)standNode.getChild("bishopStand");
     }
     
