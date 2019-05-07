@@ -33,7 +33,6 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
-import java.sql.Time;
 import java.util.ArrayList;
 import javafx.util.Pair;
 
@@ -64,7 +63,7 @@ public class Chess extends AbstractAppState
     private SpotLight spot;
     private DirectionalLight dl;
     private String pieceString;
-    private int win = 0, depth = 0, userChoice;
+    private int win = 0, depth = 0, userChoice, result;
    
     private final ActionListener actionListener = new ActionListener() 
     {
@@ -267,7 +266,7 @@ public class Chess extends AbstractAppState
         spot.setSpotRange(1000);
         spot.setSpotInnerAngle(5*FastMath.DEG_TO_RAD);
         spot.setSpotOuterAngle(10*FastMath.DEG_TO_RAD);
-        spot.setPosition(new Vector3f(3.5f, 45.0f, 3.5f));
+        spot.setPosition(new Vector3f(3.5f, 70.0f, 3.5f));
         spot.setDirection(new Vector3f(3.5f, 0.0f, 3.5f).subtract(spot.getPosition()));     
         spot.setColor(ColorRGBA.White.mult(1));
         rootNode.addLight(spot);
@@ -316,7 +315,7 @@ public class Chess extends AbstractAppState
      */
     public int isGameDone()
     {
-        return win;
+        return result;
     }
     
     /**
@@ -516,6 +515,7 @@ public class Chess extends AbstractAppState
                 cam.setLocation(camLocation2);
         
             moveDone = promotionDone = false;
+            result = win;
           //  System.out.println("Move is done");
         }
         cam.lookAt(camDirection, Vector3f.ZERO);  

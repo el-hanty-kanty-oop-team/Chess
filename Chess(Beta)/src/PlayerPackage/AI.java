@@ -122,7 +122,7 @@ public class AI extends Player {
  
     public SingleMove root(int depth, boolean is_max_player, Board board) {
         ArrayList< SingleMove> moves = generate_all_moves_on_all_pieces(board, this.color);
-        double best_score = Double.MIN_VALUE;
+        double best_score = -99999;
         Cell best_move_f = new Cell();
         Cell best_move_t=new Cell();
         if (moves.isEmpty()){
@@ -147,7 +147,7 @@ public class AI extends Player {
                 board.pieces[row_t][col_t].steps++;
                 board.pieces[row_t][col_t].setPos(new Cell(row_t, col_t));
                 ///finish_move
-                Double score = mini_max(depth - 1, Double.MIN_VALUE, Double.MAX_VALUE, !is_max_player, board);                ///undo_move
+                Double score = mini_max(depth - 1, -1000000, 1000000, !is_max_player, board);                ///undo_move
                 board.pieces[row_f][col_f] = cur;
                 board.pieces[row_t][col_t] = nxt;
                 board.pieces[row_f][col_f].steps--;
@@ -187,7 +187,7 @@ public class AI extends Player {
         ArrayList< SingleMove> moves = generate_all_moves_on_all_pieces(board, get_color_now(is_max_player));
  
         if (is_max_player == true) {
-            best_val = Double.MIN_VALUE;
+            best_val = -99999;
             for (int i = 0; i < (int) moves.size(); i++) {
                 ///do
                 SingleMove one_move = moves.get(i);
@@ -215,7 +215,7 @@ public class AI extends Player {
                 }
             }
         } else {
-            best_val = Double.MAX_VALUE;
+            best_val = 99999;
             for (int i = 0; i < (int) moves.size(); i++) {
                 ///do
                 SingleMove one_move = moves.get(i);

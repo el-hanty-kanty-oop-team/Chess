@@ -53,7 +53,7 @@ public class Bishop extends PieceAnimation
     @Override
     protected void loadAnim()
     {
-        System.out.println("Load Anim started");
+       // System.out.println("Load Anim started");
         
         attackNode = (Node)assetManager.loadModel("Models/Animations/Magical/bishopAttack01/bishopAttack.j3o");
         
@@ -62,13 +62,13 @@ public class Bishop extends PieceAnimation
         standNode = (Node)assetManager.loadModel("Models/Animations/Magical/bishopStand01/bishopStand.j3o");
         
         walkNode = (Node)assetManager.loadModel("Models/Animations/Magical/bishopWalk01/bishopWalk.j3o");
-        System.out.println("Load Anim Done");
+        //System.out.println("Load Anim Done");
     }
     
     @Override
     protected void loadTexture()
     {
-        System.out.println("Load Texture started");
+        //System.out.println("Load Texture started");
         Texture texture = assetManager.loadTexture("Textures/Animations/Magical/bishop/bishop_diffuse.png");
         if(!good)
             texture = assetManager.loadTexture("Textures/Animations/Magical/bishop/bishop_diffuse(evil).png");
@@ -79,7 +79,7 @@ public class Bishop extends PieceAnimation
         deathNode.setMaterial(mat);
         standNode.setMaterial(mat);
         walkNode.setMaterial(mat);
-        System.out.println("Load Texture Done");
+        //System.out.println("Load Texture Done");
     }
     
     
@@ -90,7 +90,7 @@ public class Bishop extends PieceAnimation
     @Override
     protected void setChannelsAndControls()
     {
-        System.out.println("Load Channels started");
+        //System.out.println("Load Channels started");
         attackAnimControl = attackNode.getChild("bishopAttack").getControl(AnimControl.class);
         attackCh = attackAnimControl.createChannel();
         attackCh.setAnim("Attack");
@@ -114,7 +114,7 @@ public class Bishop extends PieceAnimation
         walkCh.setAnim("WalkDig");
         walkCh.setLoopMode(LoopMode.DontLoop);
         walkAnimControl.addListener(this);
-        System.out.println("Load Chanels Done");
+        //System.out.println("Load Chanels Done");
     }
     
     @Override

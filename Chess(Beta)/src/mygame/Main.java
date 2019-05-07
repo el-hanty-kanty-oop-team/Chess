@@ -6,6 +6,8 @@ import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -19,6 +21,10 @@ public class Main extends SimpleApplication implements ScreenController
     private int AILevel ;
     private String piecesTypeSelected ;
     private Chess chess;
+    private String finalCase ;
+    private boolean  start = false ;
+    public  Nifty nifty;
+
     public static void main(String[] args) 
     {
         Main app = new Main();      
@@ -27,9 +33,10 @@ public class Main extends SimpleApplication implements ScreenController
 
     private void startGame()
     {
-        guiViewPort.setEnabled(false);
-        chess = new Chess(this,piecesTypeSelected , AIstate, AILevel);
-        stateManager.attach(chess); 
+             guiViewPort.setEnabled(false);
+             chess = new Chess(this,piecesTypeSelected , AIstate, AILevel);
+             stateManager.attach(chess);
+     
     }
     public void nextScreen(String s)
     {
@@ -48,8 +55,6 @@ public class Main extends SimpleApplication implements ScreenController
            nifty.gotoScreen(s);
     }
     
-    
-    private boolean  start = false ;
     
     public void piecesType(String s)
     {
@@ -77,15 +82,15 @@ public class Main extends SimpleApplication implements ScreenController
        
     }
     
-   public  Nifty nifty;
-
-    /**
-     *
-     */
-    @Override
-    public void simpleInitApp() 
+    
+    public String gameOver()
     {
-                
+        return finalCase  ;
+    }
+    
+    
+    private void intializeUI()
+    {
         NiftyJmeDisplay niftyDisplay = NiftyJmeDisplay.newNiftyJmeDisplay(
                 assetManager,
                 inputManager,
@@ -97,6 +102,16 @@ public class Main extends SimpleApplication implements ScreenController
         guiViewPort.addProcessor(niftyDisplay);
         flyCam.setDragToRotate(true);
         inputManager.setCursorVisible(true);
+   
+    }
+    /**
+     *
+     */
+    @Override
+    public void simpleInitApp() 
+    {
+        intializeUI();
+                
     }
 
     @Override
@@ -104,31 +119,56 @@ public class Main extends SimpleApplication implements ScreenController
     {
         if( chess!= null && chess.isPromotion())
         {
-            System.out.println("PROMOOOOOOOOOOOOTIOn");
-            guiViewPort.setEnabled(true);
+             guiViewPort.setEnabled(true);
             nifty.addXml("Interface/screen.xml");
             nifty.gotoScreen("userChoice");
+          
+        
         }
         
         if(chess != null && chess.isGameDone() != 0)
         {
         
-            if(chess.isGameDone() == 1) // white wins
+            if(chess.isGameDone() == 1) // Black wins
             {
+                
+            try {
+                    Thread.sleep((long) 10000.0);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            System.out.println("Black won");
+                
+             finalCase="Black Won" ;   
              nifty.addXml("Interface/screen.xml");
-             nifty.gotoScreen("gameOver");
+             nifty.gotoScreen("BlackWon");
              guiViewPort.setEnabled(true);
              }
-            else if(chess.isGameDone() == -1) // black wins
+            else if(chess.isGameDone() == -1) // White wins
             {
+                try {
+                    Thread.sleep((long) 10000.0);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                System.out.println("White won");
+                finalCase = "White Won" ;
                  nifty.addXml("Interface/screen.xml");
-                 nifty.gotoScreen("gameOver");
+                 nifty.gotoScreen("WhiteWon");
                 guiViewPort.setEnabled(true);
              }
             else
             {
+            try {
+                    Thread.sleep((long) 10000.0);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
+           
+                System.out.println("Draw");
+            finalCase= "Draw" ;
                  nifty.addXml("Interface/screen.xml");
-                 nifty.gotoScreen("gameOver");
+                 nifty.gotoScreen("Draaw");
                  guiViewPort.setEnabled(true);
             }
             //TODO: load gui again

@@ -18,6 +18,10 @@ import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
+import com.jme3.input.InputManager;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -47,12 +51,16 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     protected Vector3f startPosition;
    
     private final AppStateManager stateManager;
+    private final InputManager inputManager;
     private AudioNode audioWalk, audioDie;
     private final Camera cam;
     private final float animSpeed;
-    private boolean attack, attackUpdate, death, walk, attackIterationStarted, isMoveDone;
+    private boolean attack, attackUpdate, death, walk, attackIterationStarted, isMoveDone, isText;
     private float x, z;
     private int numOfIterations;
+    private ActionListener actionListener;
+    
+    
     
     /**
      * Initilaizing fileds
@@ -61,12 +69,36 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     public PieceAnimation(SimpleApplication app)
     {
         
+        actionListener = new ActionListener() 
+        {
+            @Override
+            public void onAction(String name, boolean isPressed, float tpf) 
+            {
+                if(name.equalsIgnoreCase("ShowNames") && !isPressed)
+                {
+                    if(localNode.hasChild(headText) && isText)
+                    {
+                        localNode.detachChild(headText);
+                        isText = false;
+                    }    
+                    else
+                    {
+                        localNode.attachChild(headText);
+                        isText = true;
+                    }
+                }
+            }
+        };
+        
+        
         animSpeed = 2.0f;
         attack = attackIterationStarted = death = isMoveDone = walk =  false;
+        isText =  true;
         modelScale = 0.5f;
         
         
         assetManager = app.getAssetManager();
+        inputManager = app.getInputManager();
         cam = app.getCamera();
         rootNode = app.getRootNode();    
         stateManager = app.getStateManager();
@@ -115,7 +147,7 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         dl.setDirection(new Vector3f(-0.1f, -1f, -1).normalizeLocal());
         
         LoadModel();
-        
+        initKeys();
         // font color
         if(good)
             headText.setColor(ColorRGBA.Blue);
@@ -192,6 +224,14 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
     }
     
     /**
+     * intitilaizing keys
+     */
+    private void initKeys()
+    {
+        inputManager.addMapping("ShowNames", new KeyTrigger(KeyInput.KEY_SPACE));
+        inputManager.addListener(actionListener, "ShowNames");
+    }
+    /**
      * A func called auto whene animaiton is setted 
      * settnig animation insteractions when a specific anim is setted
      * @param control 
@@ -205,7 +245,8 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         if(animName.equalsIgnoreCase("Stand"))
         {
             isMoveDone = true;
-            localNode.attachChild(headText);
+            if(isText)
+                localNode.attachChild(headText);
         }
         else if(animName.equalsIgnoreCase("Walk") || animName.equalsIgnoreCase("WalkDig"))
         {

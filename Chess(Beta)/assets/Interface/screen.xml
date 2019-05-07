@@ -222,15 +222,58 @@
              </layer>
     </screen>
     
-  <screen  id="gameOver" controller="mygame.Main">
+  <screen  id="WhiteWon" controller="mygame.Main">
            
            <layer id="backgroundFor2nd_Screen" childLayout="center">
-               <image filename="Interface/pewpew.png" /> 
-           </layer>
+            </layer>
          
-             <layer  childLayout="absolute">
+             <layer  childLayout="center">
+                 <image filename="Interface/Checkmate.png" />  
+           
+                   <panel childLayout="center"  paddingBottom="380px">                      
+                              <control name="button" label="White Won"  align="center"
+                                  height="30px" width="80px" backgroundColor="#8fff" >
+                             
+                        </control>  
+                                    
+                 </panel>
                     <panel  childLayout="center"  >
-                         
+                        
+                        
+                        <panel childLayout="center" paddingTop="500px" paddingLeft="300px" >
+                            <control name="button" label="main menu" id="BacktoMainScreen" align="center"
+                                 valign="center" height="60px" >
+                                    <interact onClick="nextScreen(start)"/>
+                            </control>
+                        </panel>
+                        <panel childLayout="center" paddingTop="500px" paddingLeft="550px" >
+                             <control name="button" label="Exit" id="Exit" align="center"
+                                 valign="center" height="60px" >
+                                    <interact onClick="quitGame()"/>
+                            </control>
+                        </panel>
+                    </panel>  
+             </layer>        
+   </screen>
+  
+  <screen  id="BlackWon" controller="mygame.Main">
+           
+           <layer id="backgroundFor2nd_Screen" childLayout="center">
+            </layer>
+         
+             <layer  childLayout="center"  >
+                 <panel childLayout="center"  >
+                        <image filename="Interface/Checkmate.png" />  
+                        <panel childLayout="center" paddingBottom="100px" valign="top">                      
+                         <control name="button" label="Black Won"  align="center" 
+                                 valign="top"  height="30px"  width="80px" backgroundColor="#8fff" >
+                             
+                        </control>
+                        </panel>              
+                 </panel>
+                    <panel  childLayout="center"  >
+                        
+                        
                         <panel childLayout="center" paddingTop="500px" paddingLeft="300px" >
                             <control name="button" label="main menu" id="BacktoMainScreen" align="center"
                                  valign="center" height="60px" >
@@ -248,5 +291,33 @@
    </screen>
   
        
+  <screen  id="Draaw" controller="mygame.Main">
+           
+           <layer id="backgroundFor2nd_Screen" childLayout="center">
+            </layer>
+         
+             <layer  childLayout="absolute">
+                 <panel childLayout="center"  paddingLeft="120px" paddingTop="200px">
+                        <image filename="Interface/Draw.png" />                      
+                 </panel>
+                    <panel  childLayout="center"  >
+                        
+                        
+                        <panel childLayout="center" paddingTop="500px" paddingLeft="300px" >
+                            <control name="button" label="main menu" id="BacktoMainScreen" align="center"
+                                 valign="center" height="60px" >
+                                    <interact onClick="nextScreen(start)"/>
+                            </control>
+                        </panel>
+                        <panel childLayout="center" paddingTop="500px" paddingLeft="550px" >
+                             <control name="button" label="Exit" id="Exit" align="center"
+                                 valign="center" height="60px" >
+                                    <interact onClick="quitGame()"/>
+                            </control>
+                        </panel>
+                    </panel>  
+             </layer>        
+   </screen>
+  
        
 </nifty>
