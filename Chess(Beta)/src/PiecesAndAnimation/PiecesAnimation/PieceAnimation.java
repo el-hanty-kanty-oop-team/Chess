@@ -81,7 +81,7 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
                         localNode.detachChild(headText);
                         isText = false;
                     }    
-                    else
+                    else if(!isText)
                     {
                         localNode.attachChild(headText);
                         isText = true;
