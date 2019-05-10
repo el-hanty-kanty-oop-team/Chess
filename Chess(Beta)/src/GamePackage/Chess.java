@@ -212,7 +212,7 @@ public class Chess extends AbstractAppState
         
         soundTraack.setLooping(true);
         soundTraack.setPositional(false);
-        soundTraack.setVolume(0.2f);
+        soundTraack.setVolume(0.05f);
         soundTraack.play();
     }
     
