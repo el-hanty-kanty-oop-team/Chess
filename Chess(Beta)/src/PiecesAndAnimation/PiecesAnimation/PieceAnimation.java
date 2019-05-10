@@ -76,15 +76,23 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
             {
                 if(name.equalsIgnoreCase("ShowNames") && !isPressed)
                 {
-                    if(localNode.hasChild(headText) && isText)
+                    if(isText)
                     {
-                        localNode.detachChild(headText);
+                        if(localNode.hasChild(headText))
+                        {   
+                            localNode.detachChild(headText);
+                        }
+                        
                         isText = false;
                     }    
                     else if(!isText)
                     {
-                        localNode.attachChild(headText);
-                        isText = true;
+                        if(!localNode.hasChild(headText))
+                        {
+                            localNode.attachChild(headText);
+                        }
+                     
+                        isText = true; 
                     }
                 }
             }
@@ -245,7 +253,7 @@ public abstract class PieceAnimation extends AbstractAppState  implements AnimEv
         if(animName.equalsIgnoreCase("Stand"))
         {
             isMoveDone = true;
-            if(isText)
+            if(isText && !localNode.hasChild(headText))
                 localNode.attachChild(headText);
         }
         else if(animName.equalsIgnoreCase("Walk") || animName.equalsIgnoreCase("WalkDig"))
